@@ -77,10 +77,13 @@ const Stats = React.memo(() => {
               transition={{ duration: 0.8, delay: index * 0.2 }}
             >
               <div className="relative group">
-                {/* Glassmorphism Card */}
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
-                  {/* Icon with Gradient Background */}
-                  <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300`}>
+                {/* Pre-rendered Glow Effect - Always present but invisible */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-200 blur-xl -z-10 will-change-auto`}></div>
+                
+                {/* Glassmorphism Card - Optimized transitions */}
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 transition-all duration-200 ease-out transform-gpu will-change-transform hover:bg-white/15 hover:scale-105 hover:shadow-2xl">
+                  {/* Icon with Gradient Background - Reduced rotation and optimized */}
+                  <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center transition-transform duration-200 ease-out transform-gpu will-change-transform group-hover:rotate-6`}>
                     <stat.icon className="h-8 w-8 text-white" />
                   </div>
                   
@@ -101,9 +104,6 @@ const Stats = React.memo(() => {
                     {stat.label}
                   </p>
                 </div>
-
-                {/* Glow Effect */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-xl -z-10`}></div>
               </div>
             </motion.div>
           ))}

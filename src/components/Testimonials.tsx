@@ -4,7 +4,6 @@ import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Testimonials = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showForm, setShowForm] = useState(false);
   
   const testimonials = [
     {
@@ -57,104 +56,94 @@ const Testimonials = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-5 w-5 ${
-          i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
-        }`}
+        className={`h-5 w-5 ${i < rating ? 'text-amber-400 fill-current' : 'text-gray-200'}`}
       />
     ));
   };
 
   return (
-    <section id="testimonials" className="py-20 bg-gradient-to-br from-[#F6FAFD] to-white relative overflow-hidden">
+    <section id="testimonials" className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007BBA' fill-opacity='0.1'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007BBA' fill-opacity='0.2'%3E%3Cpath d='M30 30c0-7.5-6-13.5-13.5-13.5s-13.5 6-13.5 13.5 6 13.5 13.5 13.5 13.5-6 13.5-13.5zm15 0c0-7.5-6-13.5-13.5-13.5s-13.5 6-13.5 13.5 6 13.5 13.5 13.5 13.5-6 13.5-13.5z'/%3E%3C/g%3E%3C/svg%3E")`,
         }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
+          className="text-center mb-12 md:mb-16"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#004F74] mb-4">
-            Real Stories from Real Patients
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            Voices of Our Patients
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover why thousands of families trust Al Nabi Hospital with their most precious asset - their health.
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Hear from those who have experienced exceptional care at Al Nabi Hospital.
           </p>
         </motion.div>
 
         {/* Testimonials Slider */}
-        <div className="max-w-5xl mx-auto mb-12 relative">
-          {/* Navigation Buttons - Next to the testimonial cards */}
-          <motion.button
+        <div className="max-w-4xl mx-auto relative">
+          {/* Navigation Buttons */}
+          <button
             onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-16 bg-white shadow-xl rounded-full p-4 hover:bg-[#F6FAFD] transition-all duration-300 hover:scale-110 z-10"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 bg-white shadow-lg rounded-full p-3 bg-gray-50"
           >
-            <ChevronLeft className="h-6 w-6 text-[#007BBA]" />
-          </motion.button>
+            <ChevronLeft className="h-5 w-5 text-blue-600" />
+          </button>
           
-          <motion.button
+          <button
             onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-16 bg-white shadow-xl rounded-full p-4 hover:bg-[#F6FAFD] transition-all duration-300 hover:scale-110 z-10"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 bg-white shadow-lg rounded-full p-3 bg-gray-50"
           >
-            <ChevronRight className="h-6 w-6 text-[#007BBA]" />
-          </motion.button>
+            <ChevronRight className="h-5 w-5 text-blue-600" />
+          </button>
 
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4 }}
               className="relative"
             >
-              {/* Chat Bubble Style Card */}
-              <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 relative overflow-hidden">
-                {/* Background Gradient */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#007BBA]/10 to-[#004F74]/10 rounded-full -translate-y-16 translate-x-16"></div>
-                
-                {/* Quote Icon */}
-                <div className="absolute top-6 left-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#007BBA] to-[#004F74] rounded-full flex items-center justify-center">
-                    <Quote className="h-6 w-6 text-white" />
+              {/* Testimonial Card */}
+              <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 relative border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                <div className="absolute top-4 left-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Quote className="h-5 w-5 text-blue-600" />
                   </div>
                 </div>
                 
-                <div className="grid md:grid-cols-3 gap-8 items-center pt-8">
+                <div className="grid md:grid-cols-3 gap-6 items-start pt-6">
                   {/* Testimonial Content */}
-                  <div className="md:col-span-2 space-y-6">
-                    <p className="text-xl text-gray-700 leading-relaxed font-medium italic">
+                  <div className="md:col-span-2 space-y-5">
+                    <p className="text-lg text-gray-700 leading-relaxed font-medium">
                       "{testimonials[currentIndex].quote}"
                     </p>
                     
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-3">
                       {renderStars(testimonials[currentIndex].rating)}
                       {testimonials[currentIndex].verified && (
-                        <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+                        <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full">
                           Verified Patient
                         </span>
                       )}
                     </div>
                     
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-[#004F74] text-xl">
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-gray-900 text-lg">
                         {testimonials[currentIndex].name}
                       </h4>
-                      <p className="text-gray-600 font-medium">
+                      <p className="text-gray-500 text-sm">
                         {testimonials[currentIndex].location}
                       </p>
-                      <p className="text-[#007BBA] text-sm font-medium">
+                      <p className="text-blue-600 text-sm font-medium">
                         Treatment: {testimonials[currentIndex].condition}
                       </p>
                     </div>
@@ -166,21 +155,17 @@ const Testimonials = () => {
                       <img
                         src={testimonials[currentIndex].image}
                         alt={testimonials[currentIndex].name}
-                        className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-[#007BBA]/20 shadow-lg"
+                        className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover mx-auto border-2 border-blue-100 shadow-md"
                       />
-                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       </div>
                     </div>
                   </div>
                 </div>
-                
-                {/* Speech Bubble Tail */}
-                <div className="absolute bottom-0 left-8 w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[20px] border-t-white transform translate-y-full"></div>
               </div>
             </motion.div>
           </AnimatePresence>
-
 
           {/* Dots Indicator */}
           <div className="flex justify-center space-x-2 mt-6">
@@ -188,72 +173,15 @@ const Testimonials = () => {
               <motion.button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'bg-[#007BBA] scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? 'bg-blue-600 scale-125' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
-                whileHover={{ scale: 1.2 }}
+                whileHover={{ scale: 1.3 }}
                 whileTap={{ scale: 0.9 }}
               />
             ))}
           </div>
         </div>
-
-        {/* Add Testimonial Section */}
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <motion.button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white px-8 py-4 rounded-full font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Share Your Experience
-          </motion.button>
-          
-          <AnimatePresence>
-            {showForm && (
-              <motion.div 
-                className="max-w-2xl mx-auto mt-8 bg-white rounded-3xl shadow-2xl p-8"
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -30, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-              >
-              <h3 className="text-xl font-semibold text-[#004F74] mb-6">Share Your Testimonial</h3>
-              <form className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#007BBA] focus:border-transparent"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Your City"
-                    className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#007BBA] focus:border-transparent"
-                  />
-                </div>
-                <textarea
-                  placeholder="Share your experience with us..."
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#007BBA] focus:border-transparent"
-                ></textarea>
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold"
-                >
-                  Submit Testimonial
-                </button>
-              </form>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
       </div>
     </section>
   );
