@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, Users, Award, CheckCircle, Phone, Mail } from 'lucide-react';
 import { Heart, Brain, Baby, Eye, Bone, Activity } from 'lucide-react';
@@ -8,7 +8,13 @@ import { useBookingStore } from '../store/bookingStore';
 const ServicePage = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { setIsModalOpen } = useBookingStore();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [serviceId]);
 
   const serviceIcons = {
     cardiology: Heart,
@@ -172,14 +178,32 @@ const ServicePage = () => {
     }
   };
 
-  const currentService = serviceData[serviceId as keyof typeof serviceData];
-  const ServiceIcon = serviceIcons[serviceId as keyof typeof serviceIcons];
+  const currentService = serviceId ? serviceData[serviceId as keyof typeof serviceData] : undefined;
+  const ServiceIcon = serviceId ? serviceIcons[serviceId as keyof typeof serviceIcons] : undefined;
+
+  // Enhanced back navigation
+  const handleBackNavigation = () => {
+    // Check if we came from the services section
+    if (location.state?.fromServices) {
+      navigate('/', { replace: true });
+      // Optional: scroll to services section after navigation
+      setTimeout(() => {
+        const servicesSection = document.getElementById('services');
+        if (servicesSection) {
+          servicesSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      navigate('/', { replace: true });
+    }
+  };
 
   if (!currentService) {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Service Not Found</h1>
+          <p className="text-gray-600 mb-6">The requested service could not be found.</p>
           <button
             onClick={() => navigate('/')}
             className="bg-[#007BBA] text-white px-6 py-3 rounded-full hover:bg-[#004F74] transition-colors"
@@ -212,7 +236,7 @@ const ServicePage = () => {
             className="text-white"
           >
             <button
-              onClick={() => navigate('/')}
+              onClick={handleBackNavigation}
               className="flex items-center space-x-2 text-blue-200 hover:text-white transition-colors mb-6"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -236,6 +260,7 @@ const ServicePage = () => {
         </div>
       </section>
 
+      {/* Rest of the component remains the same */}
       {/* Services & Features */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -248,7 +273,7 @@ const ServicePage = () => {
             >
               <h2 className="text-3xl font-bold text-[#004F74] mb-8">Our Services</h2>
               <div className="grid gap-4">
-                {currentService.services.map((service, index) => (
+                {currentService.services.map((service, index: number) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
@@ -271,7 +296,7 @@ const ServicePage = () => {
             >
               <h2 className="text-3xl font-bold text-[#004F74] mb-8">Why Choose Us</h2>
               <div className="space-y-6">
-                {currentService.features.map((feature, index) => (
+                {currentService.features.map((feature, index: number) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
@@ -308,7 +333,7 @@ const ServicePage = () => {
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {currentService.doctors.map((doctor, index) => (
+            {currentService.doctors.map((doctor: { name: string; specialization: string; experience: string }, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}

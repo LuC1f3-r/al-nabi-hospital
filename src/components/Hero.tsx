@@ -18,7 +18,7 @@ const Hero = () => {
         <div 
           className="w-full h-full bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif')`,
+            // backgroundImage: `url('https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             filter: 'brightness(0.7) contrast(1.1)'

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, X, Heart, Phone } from 'lucide-react';
 import { useBookingStore } from '../store/bookingStore';
 
@@ -7,6 +8,8 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { setIsModalOpen } = useBookingStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -17,8 +20,19 @@ const Navigation = () => {
   }, []);
 
   const scrollToSection = (sectionId: string) => {
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+    }
     setIsMenuOpen(false);
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
   };
 
   return (
@@ -37,7 +51,9 @@ const Navigation = () => {
           {/* Logo */}
           <motion.div 
             className="flex items-center space-x-2"
+            onClick={handleLogoClick}
             whileHover={{ scale: 1.05 }}
+            style={{ cursor: 'pointer' }}
           >
             <Heart className="h-8 w-8 text-[#007BBA]" />
             <span className="text-xl font-bold text-[#004F74]">Al Nabi Hospital</span>

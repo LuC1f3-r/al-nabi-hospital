@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-auto {
+  will-change: auto;
+}
+
 /* Glassmorphism Button Styles */
 @layer components {
   .glassmorphism-button {

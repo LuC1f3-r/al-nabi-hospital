@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Lenis from '@studio-freight/lenis';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -10,6 +11,7 @@ import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
+import ServicePage from './components/ServicePage';
 
 function App() {
   useEffect(() => {
@@ -31,18 +33,27 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      <Hero />
-      <Stats />
-      <About />
-      <Services />
-      <Doctors />
-      <Testimonials />
-      <Contact />
-      <Footer />
-      <BookingModal />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Hero />
+              <Stats />
+              <About />
+              <Services />
+              <Doctors />
+              <Testimonials />
+              <Contact />
+            </>
+          } />
+          <Route path="/services/:serviceId" element={<ServicePage />} />
+        </Routes>
+        <Footer />
+        <BookingModal />
+      </div>
+    </Router>
   );
 }
 

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const Services = () => {
   const navigate = useNavigate();
-  const [isNavigating, setIsNavigating] = useState(null);
+  const [isNavigating, setIsNavigating] = useState<string | null>(null);
 
   const services = [
     {
@@ -46,16 +46,34 @@ const Services = () => {
     }
   ];
 
-  const handleLearnMore = (serviceId: any) => {
+  const handleLearnMore = (serviceId: string) => {
+    // Validate service ID
     if (!services.some(service => service.id === serviceId)) {
       console.error(`Invalid service ID: ${serviceId}`);
       return;
     }
+    
     setIsNavigating(serviceId);
-    setTimeout(() => {
-      navigate(`/services/${serviceId}`);
+    
+    // Use a more reliable navigation approach
+    try {
+      // Clear any existing hash/anchor from URL
+      window.history.replaceState(null, '', window.location.pathname);
+      
+      // Navigate to the service page
+      navigate(`/services/${serviceId}`, { 
+        replace: false,
+        state: { fromServices: true } // Optional: pass state for better UX
+      });
+      
+      // Reset loading state after navigation
+      setTimeout(() => {
+        setIsNavigating(null);
+      }, 500);
+    } catch (error) {
+      console.error('Navigation error:', error);
       setIsNavigating(null);
-    }, 300); // Delay to allow animation to complete
+    }
   };
 
   return (
@@ -74,7 +92,7 @@ const Services = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
             <motion.div
-              key={index}
+              key={service.id} // Use service.id instead of index for better React keys
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -100,8 +118,10 @@ const Services = () => {
                   isNavigating === service.id ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
-                <span>{isNavigating === service.id ? 'Navigating...' : 'Learn More'}</span>
-                <span>→</span>
+                <span>{isNavigating === service.id ? 'Loading...' : 'Learn More'}</span>
+                <span className={`transition-transform duration-200 ${isNavigating === service.id ? 'animate-spin' : ''}`}>
+                  {isNavigating === service.id ? '⟳' : '→'}
+                </span>
               </button>
             </motion.div>
           ))}
