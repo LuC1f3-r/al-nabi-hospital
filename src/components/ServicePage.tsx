@@ -48,8 +48,22 @@ const ServiceDetail: React.FC = () => {
 
   // Handle back button navigation properly
   const handleBackClick = () => {
-    navigate('/services');
-    window.scrollTo(0, 0);
+    // Navigate to home page
+    navigate('/');
+    
+    // Use a timeout to ensure the page has loaded before scrolling to services section
+    setTimeout(() => {
+      const servicesSection = document.getElementById('services');
+      if (servicesSection) {
+        servicesSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Fallback to scrolling to top if services section not found
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    }, 300);
   };
 
   const serviceData: Record<string, Service> = {

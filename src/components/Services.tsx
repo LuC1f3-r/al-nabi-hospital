@@ -174,17 +174,18 @@ const Services: React.FC = () => {
     setIsNavigating(serviceId);
     
     try {
-      // Ensure we're at the top of the page before navigating
-      window.scrollTo(0, 0);
-      
+      // Navigate to the service detail page
       navigate(`/services/${serviceId}`, { 
         replace: false,
         state: { fromServices: true },
       });
       
-      setTimeout(() => {
+      // Use a timeout to reset the navigating state
+      const timer = setTimeout(() => {
         setIsNavigating(null);
       }, 500);
+      
+      return () => clearTimeout(timer);
     } catch (error) {
       console.error('Navigation error:', error);
       setIsNavigating(null);
