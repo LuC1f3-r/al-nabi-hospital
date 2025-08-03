@@ -18,6 +18,10 @@ function App() {
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      // Improve smooth scrolling behavior
+      smoothWheel: true,
+      touchMultiplier: 2.0,
+      wheelMultiplier: 1.0,
     });
 
     function raf(time: number) {
@@ -27,8 +31,16 @@ function App() {
 
     requestAnimationFrame(raf);
 
+    // Handle route changes to reset scroll position
+    const handleRouteChange = () => {
+      lenis.scrollTo(0, { immediate: true });
+    };
+
+    window.addEventListener('popstate', handleRouteChange);
+
     return () => {
       lenis.destroy();
+      window.removeEventListener('popstate', handleRouteChange);
     };
   }, []);
 

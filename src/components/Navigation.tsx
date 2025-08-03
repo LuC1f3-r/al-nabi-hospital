@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, Phone } from 'lucide-react';
+import { Menu, X, Heart, Phone, ChevronRight } from 'lucide-react';
 import { useBookingStore } from '../store/bookingStore';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const { setIsModalOpen } = useBookingStore();
   const navigate = useNavigate();
   const location = useLocation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
+      // Set scrolled state based on scroll position
       setScrolled(window.scrollY > 50);
+      
+      // Calculate scroll progress for smooth transitions (0 to 1)
+      const scrollPosition = window.scrollY;
+      const maxScroll = 100; // Maximum scroll value for full effect
+      const progress = Math.min(scrollPosition / maxScroll, 1);
+      setScrollProgress(progress);
     };
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -22,32 +31,70 @@ const Navigation = () => {
   const scrollToSection = (sectionId: string) => {
     if (location.pathname !== '/') {
       navigate('/');
+      // Increase timeout to ensure the page has fully loaded before scrolling
       setTimeout(() => {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // If element not found, at least scroll to top
+          window.scrollTo(0, 0);
+        }
+      }, 300);
     } else {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setIsMenuOpen(false);
   };
 
   const handleLogoClick = () => {
     navigate('/');
+    // Ensure we scroll to the top when clicking the logo
+    window.scrollTo(0, 0);
   };
 
   return (
     <motion.nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg' 
-          : 'bg-white/80 backdrop-blur-sm'
-      }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6 }}
+      className={`fixed z-50 transition-all duration-300`}
+      initial={{ y: -100, width: '100%' }}
+      animate={{ 
+        y: scrolled ? 10 : 0,
+        width: scrolled ? '94%' : '100%',
+        top: scrolled ? '10px' : '0',
+        left: scrolled ? '3%' : '0',
+        right: scrolled ? '3%' : '0',
+      }}
+      style={{
+        backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.4)',
+        backdropFilter: `blur(${scrolled ? 12 : 4}px)`,
+        borderRadius: scrolled ? '16px' : '0px',
+        boxShadow: scrolled ? '0 10px 30px -10px rgba(0, 0, 0, 0.15), 0 4px 6px -4px rgba(0, 0, 0, 0.1)' : 'none',
+        border: scrolled ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
+      }}
+      transition={{ 
+        type: 'spring',
+        stiffness: 260,
+        damping: 20,
+        duration: 0.5 
+      }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      {/* Floating shadow effect */}
+      {scrolled && (
+        <motion.div 
+          className="absolute inset-0 -z-10 rounded-[16px] opacity-30"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: scrollProgress * 0.3 }}
+          style={{ 
+            boxShadow: '0 20px 80px -20px rgba(0, 123, 186, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.3)',
+            transform: 'translateY(4px)'
+          }}
+        />
+      )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className={`flex justify-between items-center transition-all duration-300 ${scrolled ? 'h-14' : 'h-20'}`}>
           {/* Logo */}
           <motion.div 
             className="flex items-center space-x-2"
@@ -55,94 +102,173 @@ const Navigation = () => {
             whileHover={{ scale: 1.05 }}
             style={{ cursor: 'pointer' }}
           >
-            <Heart className="h-8 w-8 text-[#007BBA]" />
-            <span className="text-xl font-bold text-[#004F74]">Al Nabi Hospital</span>
+            <motion.div
+              animate={{ 
+                scale: scrolled ? 0.85 : 1,
+                rotate: scrolled ? -5 : 0
+              }}
+              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            >
+              <Heart className={`transition-all duration-300 ${scrolled ? 'h-7 w-7' : 'h-9 w-9'} text-[#007BBA]`} />
+            </motion.div>
+            <motion.span 
+              className={`font-bold text-[#004F74] transition-all duration-300 ${scrolled ? 'text-lg' : 'text-2xl'}`}
+              animate={{ 
+                opacity: 1,
+                x: 0
+              }}
+              initial={{ opacity: 0, x: -20 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              Al Nabi Hospital
+            </motion.span>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <button onClick={() => scrollToSection('hero')} className="text-gray-700 hover:text-[#007BBA] transition-colors">
-              Home
-            </button>
-            <button onClick={() => scrollToSection('about')} className="text-gray-700 hover:text-[#007BBA] transition-colors">
-              About
-            </button>
-            <button onClick={() => scrollToSection('services')} className="text-gray-700 hover:text-[#007BBA] transition-colors">
-              Services
-            </button>
-            <button onClick={() => scrollToSection('doctors')} className="text-gray-700 hover:text-[#007BBA] transition-colors">
-              Doctors
-            </button>
-            <button onClick={() => scrollToSection('testimonials')} className="text-gray-700 hover:text-[#007BBA] transition-colors">
-              Testimonials
-            </button>
-            <button onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-[#007BBA] transition-colors">
-              Contact
-            </button>
+          <div className="hidden md:flex items-center justify-center space-x-1 lg:space-x-2">
+            {['hero', 'about', 'services', 'doctors', 'testimonials', 'contact'].map((section, index) => (
+              <motion.button 
+                key={section}
+                onClick={() => scrollToSection(section)}
+                className={`relative px-3 py-1 text-gray-700 hover:text-[#007BBA] transition-all duration-300 ${scrolled ? 'text-sm' : 'text-base'}`}
+                whileHover={{ y: -2 }}
+                custom={index}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index, duration: 0.5 }}
+              >
+                <span className="relative z-10">
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </span>
+                <motion.span 
+                  className="absolute bottom-0 left-0 h-[2px] bg-[#007BBA] rounded-full"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: '100%' }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.button>
+            ))}
             <motion.button
               onClick={() => setIsModalOpen(true)}
-              className="bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 animate-pulse"
-              whileHover={{ scale: 1.05 }}
+              className={`bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white rounded-full hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-1 ml-4 ${scrolled ? 'px-5 py-1.5 text-sm' : 'px-6 py-2 text-base'}`}
+              whileHover={{ scale: 1.05, boxShadow: '0 10px 25px -5px rgba(0, 123, 186, 0.4)' }}
               whileTap={{ scale: 0.95 }}
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
             >
-              Book Appointment
+              <span>Book Appointment</span>
+              <ChevronRight className="h-4 w-4" />
             </motion.button>
           </div>
 
           {/* Emergency Contact */}
-          <div className="hidden lg:flex items-center space-x-2 text-[#007BBA]">
-            <Phone className="h-4 w-4" />
-            <span className="text-sm font-medium">Emergency: (123) 456-7890</span>
-          </div>
+          <motion.div 
+            className="hidden xl:flex items-center space-x-2 text-[#007BBA] whitespace-nowrap"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <div className="flex items-center justify-center rounded-full bg-[#007BBA]/10 p-1.5">
+              <Phone className={`transition-all duration-300 ${scrolled ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-[#007BBA]`} />
+            </div>
+            <span className={`font-medium transition-all duration-300 ${scrolled ? 'text-xs' : 'text-sm'}`}>
+              Emergency: (123) 456-7890
+            </span>
+          </motion.div>
 
           {/* Mobile Menu Button */}
-          <button
+          <motion.button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2"
+            className="md:hidden p-2 relative z-50"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+            <AnimatePresence mode="wait">
+              {isMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X className="h-6 w-6 text-[#007BBA]" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu className="h-6 w-6 text-[#007BBA]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
 
         {/* Mobile Menu */}
         <motion.div
-          className="md:hidden overflow-hidden"
+          className="md:hidden overflow-hidden absolute top-full left-0 right-0 mt-2 rounded-b-2xl"
           initial={false}
-          animate={{ height: isMenuOpen ? 'auto' : 0 }}
-          transition={{ duration: 0.3 }}
+          animate={{ 
+            height: isMenuOpen ? 'auto' : 0,
+            opacity: isMenuOpen ? 1 : 0
+          }}
+          style={{
+            boxShadow: isMenuOpen ? '0 15px 30px -10px rgba(0, 0, 0, 0.2)' : 'none',
+            backdropFilter: 'blur(12px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.3)',
+          }}
+          transition={{ 
+            type: 'spring',
+            stiffness: 300,
+            damping: 30,
+            duration: 0.4 
+          }}
         >
-          <div className="bg-white/95 backdrop-blur-md border-t border-gray-200">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <button onClick={() => scrollToSection('hero')} className="block px-3 py-2 text-gray-700 hover:text-[#007BBA] w-full text-left">
-                Home
-              </button>
-              <button onClick={() => scrollToSection('about')} className="block px-3 py-2 text-gray-700 hover:text-[#007BBA] w-full text-left">
-                About
-              </button>
-              <button onClick={() => scrollToSection('services')} className="block px-3 py-2 text-gray-700 hover:text-[#007BBA] w-full text-left">
-                Services
-              </button>
-              <button onClick={() => scrollToSection('doctors')} className="block px-3 py-2 text-gray-700 hover:text-[#007BBA] w-full text-left">
-                Doctors
-              </button>
-              <button onClick={() => scrollToSection('testimonials')} className="block px-3 py-2 text-gray-700 hover:text-[#007BBA] w-full text-left">
-                Testimonials
-              </button>
-              <button onClick={() => scrollToSection('contact')} className="block px-3 py-2 text-gray-700 hover:text-[#007BBA] w-full text-left">
-                Contact
-              </button>
-              <button
+          <div className="border-t border-gray-100/30">
+            <div className="px-4 pt-3 pb-4 space-y-2">
+              {['hero', 'about', 'services', 'doctors', 'testimonials', 'contact'].map((section, index) => (
+                <motion.button 
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  className="flex items-center justify-between w-full px-4 py-2.5 text-gray-700 hover:text-[#007BBA] hover:bg-[#007BBA]/5 rounded-lg transition-all duration-200"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: isMenuOpen ? 1 : 0, x: isMenuOpen ? 0 : -20 }}
+                  transition={{ delay: 0.05 * index, duration: 0.3 }}
+                  whileHover={{ x: 5 }}
+                >
+                  <span>{section.charAt(0).toUpperCase() + section.slice(1)}</span>
+                  <ChevronRight className="h-4 w-4 opacity-50" />
+                </motion.button>
+              ))}
+              <motion.button
                 onClick={() => {setIsModalOpen(true); setIsMenuOpen(false);}}
-                className="block w-full mx-3 mt-4 bg-[#007BBA] text-white px-6 py-2 rounded-full hover:bg-[#004F74] transition-colors text-center"
+                className="block w-full mt-4 bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center font-medium"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: isMenuOpen ? 1 : 0, y: isMenuOpen ? 0 : 10 }}
+                transition={{ delay: 0.4, duration: 0.3 }}
+                whileHover={{ y: -2, boxShadow: '0 10px 25px -5px rgba(0, 123, 186, 0.4)' }}
+                whileTap={{ y: 0 }}
               >
                 Book Appointment
-              </button>
-              <div className="flex items-center justify-center space-x-2 text-[#007BBA] pt-4">
-                <Phone className="h-4 w-4" />
+              </motion.button>
+              <motion.div 
+                className="flex items-center justify-center space-x-2 text-[#007BBA] pt-4 mt-2 bg-[#007BBA]/5 p-3 rounded-lg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isMenuOpen ? 1 : 0 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+              >
+                <div className="flex items-center justify-center rounded-full bg-[#007BBA]/10 p-1.5">
+                  <Phone className="h-4 w-4" />
+                </div>
                 <span className="text-sm font-medium">Emergency: (123) 456-7890</span>
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
