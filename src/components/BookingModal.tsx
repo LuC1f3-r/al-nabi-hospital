@@ -1,86 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { X, Calendar, User, Phone, Mail, MessageSquare, Building } from 'lucide-react';
-import { useBookingStore } from '../store/bookingStore';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState, useEffect } from "react";
+import { X, Calendar, User, MessageSquare, Building } from "lucide-react";
+import { useBookingStore } from "../store/bookingStore";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const BookingModal = () => {
+interface FormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  department: string;
+  doctor: string;
+  selectedDate: Date;
+  notes: string;
+}
+
+interface Department {
+  id: string;
+  name: string;
+}
+
+interface DoctorsByDepartment {
+  [key: string]: string[];
+}
+
+const BookingModal: React.FC = () => {
   const { isModalOpen, setIsModalOpen, selectedDoctor } = useBookingStore();
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    department: '',
-    doctor: '',
+  const [formData, setFormData] = useState<FormData>({
+    fullName: "",
+    phone: "",
+    email: "",
+    department: "",
+    doctor: "",
     selectedDate: new Date(),
-    notes: ''
+    notes: "",
   });
 
-  const departments = [
-    { id: 'cardiology', name: 'Cardiology' },
-    { id: 'neurology', name: 'Neurology' },
-    { id: 'pediatrics', name: 'Pediatrics' },
-    { id: 'ophthalmology', name: 'Ophthalmology' },
-    { id: 'orthopedics', name: 'Orthopedics' },
-    { id: 'general', name: 'General Medicine' }
+  const departments: Department[] = [
+    { id: "cardiology", name: "Cardiology" },
+    { id: "neurology", name: "Neurology" },
+    { id: "pediatrics", name: "Pediatrics" },
+    { id: "ophthalmology", name: "Ophthalmology" },
+    { id: "orthopedics", name: "Orthopedics" },
+    { id: "general", name: "General Medicine" },
   ];
 
-  const doctorsByDepartment = {
-    cardiology: ['Dr. Ahmed Hassan', 'Dr. Sarah Al-Rashid'],
-    neurology: ['Dr. Sarah Ahmed', 'Dr. Mohamed El-Sayed'],
-    pediatrics: ['Dr. Mohamed Ali', 'Dr. Fatima Al-Zahra'],
-    ophthalmology: ['Dr. Fatima Omar', 'Dr. Ahmad Khalil'],
-    orthopedics: ['Dr. John Smith', 'Dr. Omar Abdallah'],
-    general: ['Dr. Layla Hassan', 'Dr. Youssef Ali']
+  const doctorsByDepartment: DoctorsByDepartment = {
+    cardiology: ["Dr. Ahmed Hassan", "Dr. Sarah Al-Rashid"],
+    neurology: ["Dr. Sarah Ahmed", "Dr. Mohamed El-Sayed"],
+    pediatrics: ["Dr. Mohamed Ali", "Dr. Fatima Al-Zahra"],
+    ophthalmology: ["Dr. Fatima Omar", "Dr. Ahmad Khalil"],
+    orthopedics: ["Dr. John Smith", "Dr. Omar Abdallah"],
+    general: ["Dr. Layla Hassan", "Dr. Youssef Ali"],
   };
+
+  // Fix body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "15px"; // Prevent layout shift
+    } else {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+    };
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (selectedDoctor) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         department: selectedDoctor.department,
-        doctor: selectedDoctor.name
+        doctor: selectedDoctor.name,
       }));
     }
   }, [selectedDoctor]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    console.log('Appointment booked:', formData);
-    alert('Appointment successfully booked! We will contact you shortly to confirm.');
+    console.log("Appointment booked:", formData);
+    alert(
+      "Appointment successfully booked! We will contact you shortly to confirm."
+    );
     setIsModalOpen(false);
     setFormData({
-      fullName: '',
-      phone: '',
-      email: '',
-      department: '',
-      doctor: '',
+      fullName: "",
+      phone: "",
+      email: "",
+      department: "",
+      doctor: "",
       selectedDate: new Date(),
-      notes: ''
+      notes: "",
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ): void => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === 'department' && { doctor: '' }) // Reset doctor when department changes
+      ...(name === "department" && { doctor: "" }), // Reset doctor when department changes
     }));
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    if (e.target === e.currentTarget) {
+      setIsModalOpen(false);
+    }
   };
 
   if (!isModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[95vh] overflow-y-auto shadow-2xl">
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 p-4 overflow-y-auto"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-white rounded-3xl max-w-4xl w-full my-8 shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white p-6 sm:p-8 rounded-t-3xl">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <Calendar className="h-6 w-6 sm:h-8 sm:w-8" />
               <div>
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Book Your Appointment</h2>
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+                  Book Your Appointment
+                </h2>
                 <p className="text-sm sm:text-base text-blue-100 mt-1">
                   Schedule your visit with our expert medical professionals
                 </p>
@@ -103,10 +156,12 @@ const BookingModal = () => {
               <User className="h-5 w-5" />
               <span>Personal Information</span>
             </h3>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Full Name *</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Full Name *
+                </label>
                 <input
                   type="text"
                   name="fullName"
@@ -118,7 +173,9 @@ const BookingModal = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Phone Number *</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Phone Number *
+                </label>
                 <input
                   type="tel"
                   name="phone"
@@ -130,9 +187,11 @@ const BookingModal = () => {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Email Address *</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Email Address *
+              </label>
               <input
                 type="email"
                 name="email"
@@ -151,10 +210,12 @@ const BookingModal = () => {
               <Building className="h-5 w-5" />
               <span>Medical Information</span>
             </h3>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Department *</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Department *
+                </label>
                 <select
                   name="department"
                   value={formData.department}
@@ -163,13 +224,17 @@ const BookingModal = () => {
                   className="w-full px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#007BBA] focus:border-transparent transition-all duration-300 text-base bg-white"
                 >
                   <option value="">Choose Department</option>
-                  {departments.map(dept => (
-                    <option key={dept.id} value={dept.id}>{dept.name}</option>
+                  {departments.map((dept: Department) => (
+                    <option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </option>
                   ))}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Preferred Doctor *</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Preferred Doctor *
+                </label>
                 <select
                   name="doctor"
                   value={formData.doctor}
@@ -179,42 +244,112 @@ const BookingModal = () => {
                   className="w-full px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#007BBA] focus:border-transparent transition-all duration-300 disabled:bg-gray-100 text-base bg-white"
                 >
                   <option value="">Select Doctor</option>
-                  {formData.department && doctorsByDepartment[formData.department as keyof typeof doctorsByDepartment]?.map(doctor => (
-                    <option key={doctor} value={doctor}>{doctor}</option>
-                  ))}
+                  {formData.department &&
+                    doctorsByDepartment[formData.department]?.map(
+                      (doctor: string) => (
+                        <option key={doctor} value={doctor}>
+                          {doctor}
+                        </option>
+                      )
+                    )}
                 </select>
               </div>
             </div>
           </div>
 
-          {/* Date Selection */}
+          {/* Date Selection - Improved Responsive Calendar */}
           <div className="space-y-6">
             <h3 className="text-lg sm:text-xl font-semibold text-[#004F74] flex items-center space-x-2 border-b border-gray-200 pb-2">
               <Calendar className="h-5 w-5" />
               <span>Preferred Date & Time</span>
             </h3>
-            
-            <div className="bg-[#F6FAFD] border-2 border-gray-200 rounded-xl p-4 sm:p-6">
-              <div className="text-center">
-                <label className="block text-sm font-medium text-gray-700 mb-3">Select Date and Time *</label>
-                <DatePicker
-                  selected={formData.selectedDate}
-                  onChange={(date) => setFormData(prev => ({ ...prev, selectedDate: date || new Date() }))}
-                  showTimeSelect
-                  timeIntervals={30}
-                  timeCaption="Time"
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  minDate={new Date()}
-                  filterTime={(time) => {
-                    const hours = time.getHours();
-                    return hours >= 8 && hours <= 18; // 8 AM to 6 PM
-                  }}
-                  className="w-full text-center text-base sm:text-lg font-medium text-[#004F74] bg-transparent border-none outline-none"
-                />
+
+            <div className="bg-gradient-to-br from-[#F6FAFD] to-[#E8F4F8] border-2 border-gray-200 rounded-xl p-4 sm:p-6">
+              <div className="flex flex-col items-center space-y-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Date and Time *
+                </label>
+
+                {/* Custom DatePicker Container */}
+                <div className="w-full max-w-md mx-auto">
+                  <DatePicker
+                    selected={formData.selectedDate}
+                    onChange={(date: Date | null) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        selectedDate: date || new Date(),
+                      }))
+                    }
+                    showTimeSelect
+                    timeIntervals={30}
+                    timeCaption="Time"
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    minDate={new Date()}
+                    filterTime={(time: Date) => {
+                      const hours = time.getHours();
+                      return hours >= 8 && hours <= 18; // 8 AM to 6 PM
+                    }}
+                    className="w-full text-center text-base sm:text-lg font-semibold text-[#004F74] bg-white border-2 border-[#007BBA]/20 rounded-lg py-3 px-4 hover:border-[#007BBA] focus:border-[#007BBA] focus:ring-2 focus:ring-[#007BBA]/20 transition-all duration-300"
+                    wrapperClassName="w-full"
+                    calendarClassName="responsive-calendar"
+                    popperClassName="responsive-popper"
+                    popperPlacement="bottom"
+                    popperModifiers={[
+                      {
+                        name: "preventOverflow",
+                        fn: ({ x, y, placement }) => {
+                          return {
+                            x,
+                            y,
+                            data: { placement },
+                          };
+                        },
+                        options: {
+                          rootBoundary: "viewport",
+                          tether: false,
+                          altAxis: true,
+                        },
+                      },
+                    ]}
+                  />
+                </div>
+
+                {/* Selected Date Display */}
+                <div className="bg-white rounded-lg p-3 border border-[#007BBA]/20 w-full max-w-md mx-auto">
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600">
+                      Selected Appointment
+                    </p>
+                    <p className="text-lg font-semibold text-[#004F74] mt-1">
+                      {formData.selectedDate.toLocaleDateString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                    <p className="text-base text-[#007BBA] font-medium">
+                      {formData.selectedDate.toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="mt-4 text-center text-sm text-gray-600">
-                <p>Available Hours: 8:00 AM - 6:00 PM</p>
-                <p>Emergency services available 24/7</p>
+
+              <div className="mt-6 text-center space-y-2">
+                <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span>Available Hours: 8:00 AM - 6:00 PM</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span>Emergency: 24/7</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -225,9 +360,11 @@ const BookingModal = () => {
               <MessageSquare className="h-5 w-5" />
               <span>Additional Information</span>
             </h3>
-            
+
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">Additional Notes (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Additional Notes (Optional)
+              </label>
               <textarea
                 name="notes"
                 placeholder="Please describe any specific concerns, symptoms, or requirements..."
@@ -243,7 +380,7 @@ const BookingModal = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300"
+              className="w-full bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-[#0086CC] hover:to-[#005A85]"
             >
               Confirm Appointment
             </button>
@@ -254,7 +391,8 @@ const BookingModal = () => {
         <div className="bg-[#F6FAFD] px-6 sm:px-8 py-4 sm:py-6 rounded-b-3xl border-t border-gray-100">
           <div className="text-center space-y-2">
             <p className="text-sm sm:text-base text-gray-600">
-              📞 We will contact you within 24 hours to confirm your appointment details.
+              📞 We will contact you within 24 hours to confirm your appointment
+              details.
             </p>
             <p className="text-xs sm:text-sm text-gray-500">
               For urgent matters, please call our emergency line: +91 4 123 4568
@@ -262,6 +400,82 @@ const BookingModal = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom CSS for DatePicker responsiveness */}
+      <style>{`
+        .responsive-calendar {
+          font-family: inherit !important;
+        }
+        
+        .responsive-popper {
+          z-index: 9999 !important;
+        }
+        
+        .react-datepicker {
+          border: 2px solid #007BBA20 !important;
+          border-radius: 12px !important;
+          box-shadow: 0 10px 25px rgba(0, 123, 186, 0.15) !important;
+        }
+        
+        .react-datepicker__header {
+          background: linear-gradient(135deg, #007BBA, #004F74) !important;
+          border-bottom: none !important;
+          border-radius: 10px 10px 0 0 !important;
+          color: white !important;
+        }
+        
+        .react-datepicker__current-month,
+        .react-datepicker__navigation-icon::before {
+          color: white !important;
+        }
+        
+        .react-datepicker__day-name {
+          color: white !important;
+          font-weight: 600 !important;
+        }
+        
+        .react-datepicker__day--selected {
+          background-color: #007BBA !important;
+          color: white !important;
+          border-radius: 50% !important;
+        }
+        
+        .react-datepicker__day--keyboard-selected {
+          background-color: #007BBA80 !important;
+        }
+        
+        .react-datepicker__day:hover {
+          background-color: #007BBA20 !important;
+          border-radius: 50% !important;
+        }
+        
+        .react-datepicker__time-container {
+          border-left: 1px solid #007BBA20 !important;
+        }
+        
+        .react-datepicker__time-list-item--selected {
+          background-color: #007BBA !important;
+          color: white !important;
+        }
+        
+        .react-datepicker__time-list-item:hover {
+          background-color: #007BBA20 !important;
+        }
+        
+        @media (max-width: 768px) {
+          .react-datepicker {
+            font-size: 0.9rem !important;
+          }
+          
+          .react-datepicker__day,
+          .react-datepicker__day-name,
+          .react-datepicker__time-list-item {
+            width: 2rem !important;
+            height: 2rem !important;
+            line-height: 2rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
