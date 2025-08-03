@@ -12,6 +12,8 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import ServicePage from './components/ServicePage';
+import ParallaxBackground from './components/ParallaxBackground';
+import './styles/background.css';
 
 function App() {
   useEffect(() => {
@@ -46,25 +48,27 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-white">
-        <Navigation />
-        <Routes>
-          <Route path="/" element={
-            <>
-              <Hero />
-              <Stats />
-              <About />
-              <Services />
-              <Doctors />
-              <Testimonials />
-              <Contact />
-            </>
-          } />
-          <Route path="/services/:serviceId" element={<ServicePage />} />
-        </Routes>
-        <Footer />
-        <BookingModal />
-      </div>
+      <ParallaxBackground>
+        <div className="min-h-screen">
+          <Navigation />
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Hero />
+                <Stats />
+                <About />
+                <Services />
+                <Doctors />
+                <Testimonials />
+                <Contact />
+              </>
+            } />
+            <Route path="/services/:serviceId" element={<ServicePage />} />
+          </Routes>
+          <Footer />
+          <BookingModal />
+        </div>
+      </ParallaxBackground>
     </Router>
   );
 }

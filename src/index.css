@@ -8,6 +8,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Global styles for gradient background */
+:root {
+  --scroll-y: 0px;
+}
+
+body {
+  overflow-x: hidden;
+  background-color: white; /* Fallback */
+}
+
+/* Ensure text contrast for accessibility */
+p, h1, h2, h3, h4, h5, h6 {
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
 .will-change-transform {
   will-change: transform;
 }
