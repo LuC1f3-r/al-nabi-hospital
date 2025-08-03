@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, Phone, ChevronRight } from 'lucide-react';
+import { Menu, X, Heart, ChevronRight } from 'lucide-react';
 import { useBookingStore } from '../store/bookingStore';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [visible, setVisible] = useState(false);
   const { setIsModalOpen } = useBookingStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,7 +16,11 @@ const Navigation = () => {
   useEffect(() => {
     const handleScroll = () => {
       // Set scrolled state based on scroll position
-      setScrolled(window.scrollY > 50);
+      const isScrolled = window.scrollY > 50;
+      setScrolled(isScrolled);
+      
+      // Only show navigation when scrolled down
+      setVisible(isScrolled);
       
       // Calculate scroll progress for smooth transitions (0 to 1)
       const scrollPosition = window.scrollY;
@@ -59,13 +64,15 @@ const Navigation = () => {
   return (
     <motion.nav 
       className={`fixed z-50 transition-all duration-300`}
-      initial={{ y: -100, width: '100%' }}
+      initial={{ y: -100, width: '100%', opacity: 0 }}
       animate={{ 
         y: scrolled ? 10 : 0,
         width: scrolled ? '94%' : '100%',
         top: scrolled ? '10px' : '0',
         left: scrolled ? '3%' : '0',
         right: scrolled ? '3%' : '0',
+        opacity: visible ? 1 : (location.pathname !== '/' ? 1 : 0),
+        pointerEvents: visible || location.pathname !== '/' ? 'auto' : 'none',
       }}
       style={{
         backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.4)',
@@ -162,20 +169,8 @@ const Navigation = () => {
             </motion.button>
           </div>
 
-          {/* Emergency Contact */}
-          <motion.div 
-            className="hidden xl:flex items-center space-x-2 text-[#007BBA] whitespace-nowrap"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <div className="flex items-center justify-center rounded-full bg-[#007BBA]/10 p-1.5">
-              <Phone className={`transition-all duration-300 ${scrolled ? 'h-3.5 w-3.5' : 'h-4 w-4'} text-[#007BBA]`} />
-            </div>
-            <span className={`font-medium transition-all duration-300 ${scrolled ? 'text-xs' : 'text-sm'}`}>
-              Emergency: (123) 456-7890
-            </span>
-          </motion.div>
+          {/* Right spacing element to maintain layout balance */}
+          <div className="hidden xl:block"></div>
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -258,17 +253,8 @@ const Navigation = () => {
               >
                 Book Appointment
               </motion.button>
-              <motion.div 
-                className="flex items-center justify-center space-x-2 text-[#007BBA] pt-4 mt-2 bg-[#007BBA]/5 p-3 rounded-lg"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isMenuOpen ? 1 : 0 }}
-                transition={{ delay: 0.5, duration: 0.3 }}
-              >
-                <div className="flex items-center justify-center rounded-full bg-[#007BBA]/10 p-1.5">
-                  <Phone className="h-4 w-4" />
-                </div>
-                <span className="text-sm font-medium">Emergency: (123) 456-7890</span>
-              </motion.div>
+              {/* Mobile menu bottom spacing */}
+              <div className="h-2"></div>
             </div>
           </div>
         </motion.div>
