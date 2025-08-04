@@ -8,6 +8,8 @@ export default {
       },
       colors: {
         primary: {
+          // To customize the primary color of the website, change these values.
+          // The main colors used are 500 and 700.
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',

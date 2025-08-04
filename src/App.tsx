@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense, memo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Lenis from '@studio-freight/lenis';
+import lenis from './lib/lenis';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
 import About from './components/About';
@@ -9,70 +9,45 @@ import Doctors from './components/Doctors';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import BookingModal from './components/BookingModal';
-import ServicePage from './components/ServicePage';
 import ParallaxBackground from './components/ParallaxBackground';
 import './styles/background.css';
 import Layout from './components/Layout';
-import Careers from './components/pages/Careers';
-import Terms from './components/pages/Terms';
-import CookiePolicy from './components/pages/CookiePolicy';
-import PrivacyPolicy from './components/pages/PrivacyPolicy';
+
+const ServicePage = lazy(() => import('./components/ServicePage'));
+const Careers = lazy(() => import('./components/pages/Careers'));
+const Terms = lazy(() => import('./components/pages/Terms'));
+const CookiePolicy = lazy(() => import('./components/pages/CookiePolicy'));
+const PrivacyPolicy = lazy(() => import('./components/pages/PrivacyPolicy'));
+
+const MemoizedHomePage = memo(() => (
+  <>
+    <Hero />
+    <Stats />
+    <About />
+    <Services />
+    <Doctors />
+    <Testimonials />
+    <Contact />
+  </>
+));
 
 function App() {
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      // Improve smooth scrolling behavior
-      smoothWheel: true,
-      touchMultiplier: 2.0,
-      wheelMultiplier: 1.0,
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    // Handle route changes to reset scroll position
-    const handleRouteChange = () => {
-      lenis.scrollTo(0, { immediate: true });
-    };
-
-    window.addEventListener('popstate', handleRouteChange);
-
-    return () => {
-      lenis.destroy();
-      window.removeEventListener('popstate', handleRouteChange);
-    };
-  }, []);
-
   return (
     <Router>
       <ParallaxBackground>
         <div className="min-h-screen">
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={
-                <>
-                  <Hero />
-                  <Stats />
-                  <About />
-                  <Services />
-                  <Doctors />
-                  <Testimonials />
-                  <Contact />
-                </>
-              } />
-              <Route path="/services/:serviceId" element={<ServicePage />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/cookie-policy" element={<CookiePolicy />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            </Route>
-          </Routes>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<MemoizedHomePage />} />
+                <Route path="/services/:serviceId" element={<ServicePage />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/cookie-policy" element={<CookiePolicy />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              </Route>
+            </Routes>
+          </Suspense>
           <BookingModal />
         </div>
       </ParallaxBackground>
