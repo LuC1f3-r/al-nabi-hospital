@@ -125,7 +125,7 @@ const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [visible, setVisible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { setIsModalOpen } = useBookingStore();
   const navigate = useNavigate();
@@ -195,8 +195,7 @@ const Navigation: React.FC = () => {
       top: currentStyles.topOffset,
       left: currentStyles.leftOffset,
       right: scrolled ? '3%' : '0',
-      opacity: visible ? 1 : (location.pathname !== '/' ? 1 : 0),
-      pointerEvents: (visible || location.pathname !== '/') ? 'auto' as const : 'none' as const,
+      opacity: 1,
     }
   };
 
