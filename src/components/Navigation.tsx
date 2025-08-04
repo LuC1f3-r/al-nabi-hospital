@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, ChevronRight, LucideIcon } from 'lucide-react';
+import { Menu, X, Heart, ChevronRight, LucideIcon, ChevronDown } from 'lucide-react';
 import { useBookingStore } from '../store/bookingStore';
+import { Link } from 'react-router-dom';
 
 // Type definitions
 interface MenuItem {
   id: string;
   label: string;
-  section: string;
+  type: 'link' | 'scroll' | 'dropdown';
+  path?: string;
+  section?: string;
+  subItems?: SubMenuItem[];
+}
+
+interface SubMenuItem {
+  id: string;
+  label:string;
+  path: string;
 }
 
 interface BrandConfig {
   name: string;
   icon: LucideIcon;
-  colors: {
-    primary: string;
-    secondary: string;
-  };
 }
 
 interface CTAConfig {
@@ -64,18 +70,19 @@ const NAVIGATION_CONFIG: NavigationConfig = {
   brand: {
     name: 'Al Nabi Hospital',
     icon: Heart,
-    colors: {
-      primary: '#007BBA',
-      secondary: '#004F74'
-    }
   },
   menuItems: [
-    { id: 'hero', label: 'Home', section: 'hero' },
-    { id: 'about', label: 'About Us', section: 'about' },
-    { id: 'services', label: 'Services', section: 'services' },
-    { id: 'doctors', label: 'Our Doctors', section: 'doctors' },
-    { id: 'testimonials', label: 'Testimonials', section: 'testimonials' },
-    { id: 'contact', label: 'Contact', section: 'contact' }
+    { id: 'home', label: 'Home', type: 'scroll', section: 'hero' },
+    { id: 'about', label: 'About Us', type: 'scroll', section: 'about' },
+    { id: 'services', label: 'Services', type: 'scroll', section: 'services' },
+    { id: 'doctors', label: 'Our Doctors', type: 'scroll', section: 'doctors' },
+    { id: 'pages', label: 'Pages', type: 'dropdown', subItems: [
+      { id: 'careers', label: 'Careers', path: '/careers' },
+      { id: 'terms', label: 'Terms & Conditions', path: '/terms' },
+      { id: 'cookie-policy', label: 'Cookie Policy', path: '/cookie-policy' },
+      { id: 'privacy-policy', label: 'Privacy Policy', path: '/privacy-policy' },
+    ]},
+    { id: 'contact', label: 'Contact', type: 'scroll', section: 'contact' }
   ],
   cta: {
     text: 'Book Appointment',
@@ -119,6 +126,7 @@ const Navigation: React.FC = () => {
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { setIsModalOpen } = useBookingStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -158,6 +166,11 @@ const Navigation: React.FC = () => {
     } else {
       performScroll();
     }
+    setIsMenuOpen(false);
+  };
+
+  const handleLinkClick = (path: string) => {
+    navigate(path);
     setIsMenuOpen(false);
   };
 
@@ -257,10 +270,10 @@ const Navigation: React.FC = () => {
               }}
               transition={{ type: 'spring', ...animations.springConfig }}
             >
-              <BrandIcon className={`transition-all duration-300 ${currentStyles.iconSize} text-[${brand.colors.primary}]`} />
+              <BrandIcon className={`transition-all duration-300 ${currentStyles.iconSize} text-primary-500`} />
             </motion.div>
             <motion.span 
-              className={`font-bold text-[${brand.colors.secondary}] transition-all duration-300 ${currentStyles.fontSize}`}
+              className={`font-bold text-primary-700 transition-all duration-300 ${currentStyles.fontSize}`}
               animate={{ opacity: 1, x: 0 }}
               initial={{ opacity: 0, x: -20 }}
               transition={{ delay: 0.2, duration: 0.5 }}
@@ -271,31 +284,72 @@ const Navigation: React.FC = () => {
 
           {/* Desktop Navigation Menu */}
           <div className="hidden md:flex items-center justify-center space-x-1 lg:space-x-2">
-            {menuItems.map((item, index) => (
-              <motion.button 
-                key={item.id}
-                onClick={() => scrollToSection(item.section)}
-                className={`relative px-3 py-1 text-gray-700 hover:text-[${brand.colors.primary}] transition-all duration-300 ${currentStyles.menuFontSize}`}
-                whileHover={{ y: -2 }}
-                custom={index}
-                variants={menuItemVariants}
-                initial="initial"
-                animate="animate"
-              >
-                <span className="relative z-10">{item.label}</span>
-                <motion.span 
-                  className={`absolute bottom-0 left-0 h-[2px] bg-[${brand.colors.primary}] rounded-full`}
-                  initial={{ width: 0 }}
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.button>
-            ))}
+            {menuItems.map((item, index) => {
+              if (item.type === 'dropdown') {
+                return (
+                  <div
+                    key={item.id}
+                    className="relative"
+                    onMouseEnter={() => setOpenDropdown(item.id)}
+                    onMouseLeave={() => setOpenDropdown(null)}
+                  >
+                    <motion.button
+                      className={`relative px-3 py-1 text-gray-700 hover:text-primary-500 transition-all duration-300 ${currentStyles.menuFontSize} flex items-center`}
+                      whileHover={{ y: -2 }}
+                    >
+                      <span className="relative z-10">{item.label}</span>
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    </motion.button>
+                    <AnimatePresence>
+                      {openDropdown === item.id && (
+                        <motion.div
+                          className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                        >
+                          {item.subItems?.map(subItem => (
+                            <Link
+                              key={subItem.id}
+                              to={subItem.path}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setOpenDropdown(null)}
+                            >
+                              {subItem.label}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              }
+              return (
+                <motion.button
+                  key={item.id}
+                  onClick={() => item.type === 'scroll' && item.section ? scrollToSection(item.section) : item.path ? handleLinkClick(item.path) : null}
+                  className={`relative px-3 py-1 text-gray-700 hover:text-primary-500 transition-all duration-300 ${currentStyles.menuFontSize}`}
+                  whileHover={{ y: -2 }}
+                  custom={index}
+                  variants={menuItemVariants}
+                  initial="initial"
+                  animate="animate"
+                >
+                  <span className="relative z-10">{item.label}</span>
+                  <motion.span
+                    className={`absolute bottom-0 left-0 h-[2px] bg-primary-500 rounded-full`}
+                    initial={{ width: 0 }}
+                    whileHover={{ width: '100%' }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.button>
+              )
+            })}
             
             {/* CTA Button */}
             <motion.button
               onClick={handleCTAClick}
-              className={`bg-gradient-to-r from-[${brand.colors.primary}] to-[${brand.colors.secondary}] text-white rounded-full hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-1 ml-4 ${currentStyles.buttonPadding} ${currentStyles.menuFontSize}`}
+              className={`bg-gradient-to-r from-primary-500 to-primary-700 text-white rounded-full hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-1 ml-4 ${currentStyles.buttonPadding} ${currentStyles.menuFontSize}`}
               whileHover={{ 
                 scale: animations.hoverScale, 
                 boxShadow: `0 10px 25px -5px rgba(0, 123, 186, 0.4)` 
@@ -329,7 +383,7 @@ const Navigation: React.FC = () => {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <X className={`h-6 w-6 text-[${brand.colors.primary}]`} />
+                  <X className={`h-6 w-6 text-primary-500`} />
                 </motion.div>
               ) : (
                 <motion.div
@@ -339,7 +393,7 @@ const Navigation: React.FC = () => {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Menu className={`h-6 w-6 text-[${brand.colors.primary}]`} />
+                  <Menu className={`h-6 w-6 text-primary-500`} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -369,26 +423,50 @@ const Navigation: React.FC = () => {
         >
           <div className="border-t border-gray-100/30">
             <div className="px-4 pt-3 pb-4 space-y-2">
-              {menuItems.map((item, index) => (
-                <motion.button 
-                  key={item.id}
-                  onClick={() => scrollToSection(item.section)}
-                  className={`flex items-center justify-between w-full px-4 py-2.5 text-gray-700 hover:text-[${brand.colors.primary}] hover:bg-[${brand.colors.primary}]/5 rounded-lg transition-all duration-200`}
-                  custom={index}
-                  variants={mobileMenuItemVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover={{ x: 5 }}
-                >
-                  <span>{item.label}</span>
-                  <ChevronRight className="h-4 w-4 opacity-50" />
-                </motion.button>
-              ))}
+              {menuItems.map((item, index) => {
+                if (item.type === 'dropdown') {
+                  return (
+                    <div key={item.id}>
+                      <h3 className="px-4 pt-2 pb-1 text-sm font-semibold text-gray-500">{item.label}</h3>
+                      {item.subItems?.map(subItem => (
+                        <motion.button
+                          key={subItem.id}
+                          onClick={() => handleLinkClick(subItem.path)}
+                          className={`flex items-center justify-between w-full px-4 py-2.5 text-gray-700 hover:text-primary-500 hover:bg-primary-500/5 rounded-lg transition-all duration-200`}
+                          custom={index}
+                          variants={mobileMenuItemVariants}
+                          initial="initial"
+                          animate="animate"
+                          whileHover={{ x: 5 }}
+                        >
+                          <span>{subItem.label}</span>
+                          <ChevronRight className="h-4 w-4 opacity-50" />
+                        </motion.button>
+                      ))}
+                    </div>
+                  )
+                }
+                return (
+                  <motion.button
+                    key={item.id}
+                    onClick={() => item.type === 'scroll' && item.section ? scrollToSection(item.section) : item.path ? handleLinkClick(item.path) : null}
+                    className={`flex items-center justify-between w-full px-4 py-2.5 text-gray-700 hover:text-primary-500 hover:bg-primary-500/5 rounded-lg transition-all duration-200`}
+                    custom={index}
+                    variants={mobileMenuItemVariants}
+                    initial="initial"
+                    animate="animate"
+                    whileHover={{ x: 5 }}
+                  >
+                    <span>{item.label}</span>
+                    <ChevronRight className="h-4 w-4 opacity-50" />
+                  </motion.button>
+                )
+              })}
               
               {/* Mobile CTA Button */}
               <motion.button
                 onClick={handleCTAClick}
-                className={`block w-full mt-4 bg-gradient-to-r from-[${brand.colors.primary}] to-[${brand.colors.secondary}] text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center font-medium`}
+                className={`block w-full mt-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-center font-medium`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: isMenuOpen ? 1 : 0, y: isMenuOpen ? 0 : 10 }}
                 transition={{ delay: 0.4, duration: 0.3 }}
