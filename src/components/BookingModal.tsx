@@ -55,17 +55,20 @@ const BookingModal: React.FC = () => {
 
   // Fix body scroll when modal is open
   useEffect(() => {
+    const originalOverflow = window.getComputedStyle(document.body).overflow;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
     if (isModalOpen) {
       document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "15px"; // Prevent layout shift
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = originalOverflow;
       document.body.style.paddingRight = "0px";
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = originalOverflow;
       document.body.style.paddingRight = "0px";
     };
   }, [isModalOpen]);
@@ -401,81 +404,6 @@ const BookingModal: React.FC = () => {
         </div>
       </div>
 
-      {/* Custom CSS for DatePicker responsiveness */}
-      <style>{`
-        .responsive-calendar {
-          font-family: inherit !important;
-        }
-        
-        .responsive-popper {
-          z-index: 9999 !important;
-        }
-        
-        .react-datepicker {
-          border: 2px solid #007BBA20 !important;
-          border-radius: 12px !important;
-          box-shadow: 0 10px 25px rgba(0, 123, 186, 0.15) !important;
-        }
-        
-        .react-datepicker__header {
-          background: linear-gradient(135deg, #007BBA, #004F74) !important;
-          border-bottom: none !important;
-          border-radius: 10px 10px 0 0 !important;
-          color: white !important;
-        }
-        
-        .react-datepicker__current-month,
-        .react-datepicker__navigation-icon::before {
-          color: white !important;
-        }
-        
-        .react-datepicker__day-name {
-          color: white !important;
-          font-weight: 600 !important;
-        }
-        
-        .react-datepicker__day--selected {
-          background-color: #007BBA !important;
-          color: white !important;
-          border-radius: 50% !important;
-        }
-        
-        .react-datepicker__day--keyboard-selected {
-          background-color: #007BBA80 !important;
-        }
-        
-        .react-datepicker__day:hover {
-          background-color: #007BBA20 !important;
-          border-radius: 50% !important;
-        }
-        
-        .react-datepicker__time-container {
-          border-left: 1px solid #007BBA20 !important;
-        }
-        
-        .react-datepicker__time-list-item--selected {
-          background-color: #007BBA !important;
-          color: white !important;
-        }
-        
-        .react-datepicker__time-list-item:hover {
-          background-color: #007BBA20 !important;
-        }
-        
-        @media (max-width: 768px) {
-          .react-datepicker {
-            font-size: 0.9rem !important;
-          }
-          
-          .react-datepicker__day,
-          .react-datepicker__day-name,
-          .react-datepicker__time-list-item {
-            width: 2rem !important;
-            height: 2rem !important;
-            line-height: 2rem !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

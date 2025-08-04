@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Lenis from '@studio-freight/lenis';
-import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
 import About from './components/About';
@@ -9,11 +8,15 @@ import Services from './components/Services';
 import Doctors from './components/Doctors';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
-import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import ServicePage from './components/ServicePage';
 import ParallaxBackground from './components/ParallaxBackground';
 import './styles/background.css';
+import Layout from './components/Layout';
+import Careers from './components/pages/Careers';
+import Terms from './components/pages/Terms';
+import CookiePolicy from './components/pages/CookiePolicy';
+import PrivacyPolicy from './components/pages/PrivacyPolicy';
 
 function App() {
   useEffect(() => {
@@ -50,22 +53,26 @@ function App() {
     <Router>
       <ParallaxBackground>
         <div className="min-h-screen">
-          <Navigation />
           <Routes>
-            <Route path="/" element={
-              <>
-                <Hero />
-                <Stats />
-                <About />
-                <Services />
-                <Doctors />
-                <Testimonials />
-                <Contact />
-              </>
-            } />
-            <Route path="/services/:serviceId" element={<ServicePage />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={
+                <>
+                  <Hero />
+                  <Stats />
+                  <About />
+                  <Services />
+                  <Doctors />
+                  <Testimonials />
+                  <Contact />
+                </>
+              } />
+              <Route path="/services/:serviceId" element={<ServicePage />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/cookie-policy" element={<CookiePolicy />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            </Route>
           </Routes>
-          <Footer />
           <BookingModal />
         </div>
       </ParallaxBackground>
