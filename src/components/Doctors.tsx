@@ -52,39 +52,15 @@ const Doctors = () => {
         availability: 'Tuesdays',
         department: 'dermatology'
       }
-    ],
-    nurses: [
-      {
-        name: 'Nurse Aisha Khan',
-        specialization: 'Head Nurse',
-        image: 'https://images.pexels.com/photos/6749755/pexels-photo-6749755.jpeg?auto=compress&cs=tinysrgb&w=400',
-        availability: 'Available',
-        department: 'general'
-      },
-      {
-        name: 'Nurse Omar Malik',
-        specialization: 'ICU Specialist',
-        image: 'https://images.pexels.com/photos/7446991/pexels-photo-7446991.jpeg?auto=compress&cs=tinysrgb&w=400',
-        availability: 'Night Shift',
-        department: 'icu'
-      },
-      {
-        name: 'Nurse Layla Ahmed',
-        specialization: 'Pediatric Nurse',
-        image: 'https://images.pexels.com/photos/8376174/pexels-photo-8376174.jpeg?auto=compress&cs=tinysrgb&w=400',
-        availability: 'Available',
-        department: 'pediatrics'
-      }
     ]
   };
 
   const categories = [
     { id: 'main', label: 'Main Doctors' },
     { id: 'visiting', label: 'Visiting Doctors' },
-    { id: 'nurses', label: 'Nurses' }
   ];
 
-  const handleBookAppointment = (doctor: any) => {
+  const handleBookAppointment = (doctor) => {
     setSelectedDoctor(doctor);
     setIsModalOpen(true);
   };

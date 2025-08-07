@@ -1,56 +1,82 @@
-import React, { useEffect, lazy, Suspense, memo } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import lenis from './lib/lenis';
+import Layout from './components/Layout';
 import Hero from './components/Hero';
-import Stats from './components/Stats';
 import About from './components/About';
 import Services from './components/Services';
 import Doctors from './components/Doctors';
+import Stats from './components/Stats';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
-import BookingModal from './components/BookingModal';
-import ParallaxBackground from './components/ParallaxBackground';
-import './styles/background.css';
-import Layout from './components/Layout';
+import Careers from './components/pages/Careers';
+import PrivacyPolicy from './components/pages/PrivacyPolicy';
+import Terms from './components/pages/Terms';
+import CookiePolicy from './components/pages/CookiePolicy';
+import './lib/lenis'; // Initialize smooth scrolling
+import './styles/background.css'; // Import enhanced styles
 
-const ServicePage = lazy(() => import('./components/ServicePage'));
-const Careers = lazy(() => import('./components/pages/Careers'));
-const Terms = lazy(() => import('./components/pages/Terms'));
-const CookiePolicy = lazy(() => import('./components/pages/CookiePolicy'));
-const PrivacyPolicy = lazy(() => import('./components/pages/PrivacyPolicy'));
-
-const MemoizedHomePage = memo(() => (
-  <>
-    <Hero />
-    <Stats />
-    <About />
-    <Services />
-    <Doctors />
-    <Testimonials />
-    <Contact />
-  </>
-));
-
+/**
+ * Main App Component
+ * Enhanced with immersive UI, smooth scrolling, and comprehensive routing
+ */
 function App() {
+  useEffect(() => {
+    // Add liquid background animation
+    const liquidBg = document.createElement('div');
+    liquidBg.className = 'liquid-bg';
+    document.body.appendChild(liquidBg);
+
+    return () => {
+      // Cleanup on unmount
+      if (document.body.contains(liquidBg)) {
+        document.body.removeChild(liquidBg);
+      }
+    };
+  }, []);
+
   return (
     <Router>
-      <ParallaxBackground>
-        <div className="min-h-screen">
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<MemoizedHomePage />} />
-                <Route path="/services/:serviceId" element={<ServicePage />} />
-                <Route path="/careers" element={<Careers />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/cookie-policy" element={<CookiePolicy />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              </Route>
-            </Routes>
-          </Suspense>
-          <BookingModal />
-        </div>
-      </ParallaxBackground>
+      <div className="App">
+        <Routes>
+          {/* Main Website */}
+          <Route path="/" element={
+            <Layout>
+              <Hero />
+              <Stats />
+              <About />
+              <Services />
+              <Doctors />
+              <Testimonials />
+              <Contact />
+            </Layout>
+          } />
+          
+          {/* Policy Pages */}
+          <Route path="/privacy" element={
+            <Layout>
+              <PrivacyPolicy />
+            </Layout>
+          } />
+          
+          <Route path="/terms" element={
+            <Layout>
+              <Terms />
+            </Layout>
+          } />
+          
+          <Route path="/cookies" element={
+            <Layout>
+              <CookiePolicy />
+            </Layout>
+          } />
+          
+          <Route path="/careers" element={
+            <Layout>
+              <Careers />
+            </Layout>
+          } />
+        </Routes>
+      </div>
     </Router>
   );
 }

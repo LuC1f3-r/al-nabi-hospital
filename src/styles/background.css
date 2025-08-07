@@ -1,61 +1,71 @@
-/* Background Styles */
-.elegant-gradient-bg {
-  background-image: linear-gradient(315deg, #fce043 0%, #fb7ba2 74%);
-  background-size: 400% 400%;
-  animation: shimmer 20s ease-in-out infinite alternate;
+:root {
+  /* Immersive Liquid Gradient Colors */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+  --gradient-hero: conic-gradient(from 180deg at 50% 50%, #43cea2 0%, #185a9d 50%, #667eea 100%);
+  --gradient-accent: radial-gradient(circle at 20% 80%, #ffecd2 0%, #fcb69f 100%);
+  --gradient-dark: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+  
+  /* Surface Colors */
+  --color-bg-primary: #0f2027;
+  --color-bg-secondary: rgba(255, 255, 255, 0.05);
+  --color-surface: rgba(255, 255, 255, 0.08);
+  --color-surface-hover: rgba(255, 255, 255, 0.12);
+  
+  /* Glass Effects */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --glass-backdrop: blur(8px);
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-accent: #64b5f6;
 }
 
-/* Grain texture overlay */
-.grain-overlay {
+/* Global Body Styling */
+body {
+  background: var(--gradient-dark);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Animated Background Elements */
+.liquid-bg {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%;
-  width: 100%;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* Parallax effect */
-.parallax-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.parallax-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  will-change: transform;
-  transition: transform 0.1s ease-out;
+  z-index: -1;
+  background: var(--gradient-hero);
+  opacity: 0.1;
+  animation: liquidFlow 20s ease-in-out infinite;
 }
 
-/* Animation for the shimmer effect */
-@keyframes shimmer {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+@keyframes liquidFlow {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  33% { transform: scale(1.1) rotate(120deg); }
+  66% { transform: scale(0.9) rotate(240deg); }
 }
 
-/* Ensure high-res display support */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .elegant-gradient-bg {
-    background-image: linear-gradient(315deg, hsla(216, 100%, 88%, 1) 0%, hsla(280, 100%, 89%, 1) 25%, hsla(319, 86%, 91%, 1) 50%, hsla(319, 100%, 92%, 1) 75%, hsla(0, 0%, 100%, 1) 100%);
-  }
+/* Glass Morphism Utility Classes */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
-/* Cross-browser support */
-.elegant-gradient-bg {
-  background-image: -webkit-linear-gradient(315deg, hsla(216, 100%, 88%, 1) 0%, hsla(280, 100%, 89%, 1) 25%, hsla(319, 86%, 91%, 1) 50%, hsla(319, 100%, 92%, 1) 75%, hsla(0, 0%, 100%, 1) 100%);
-  background-image: -moz-linear-gradient(315deg, hsla(216, 100%, 88%, 1) 0%, hsla(280, 100%, 89%, 1) 25%, hsla(319, 86%, 91%, 1) 50%, hsla(319, 100%, 92%, 1) 75%, hsla(0, 0%, 100%, 1) 100%);
+.glass-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-hover:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
 }
