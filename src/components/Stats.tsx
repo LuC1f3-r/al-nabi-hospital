@@ -59,15 +59,16 @@ const Stats = React.memo(() => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-serif" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             Trusted by Thousands
           </h2>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+          <p className="text-xl text-blue-100 max-w-2xl mx-auto font-serif" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}>
             Our commitment to excellence is reflected in the numbers that matter most
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Responsive Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -77,18 +78,18 @@ const Stats = React.memo(() => {
               transition={{ duration: 0.8, delay: index * 0.2 }}
             >
               <div className="relative group">
-                {/* Pre-rendered Glow Effect - Always present but invisible */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-200 blur-xl -z-10 will-change-auto`}></div>
+                {/* Enhanced Glow Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-xl -z-10 will-change-auto`}></div>
                 
-                {/* Glassmorphism Card - Optimized transitions */}
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 transition-all duration-200 ease-out transform-gpu will-change-transform hover:bg-white/15 hover:scale-105 hover:shadow-2xl">
-                  {/* Icon with Gradient Background - Reduced rotation and optimized */}
-                  <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center transition-transform duration-200 ease-out transform-gpu will-change-transform group-hover:rotate-6`}>
-                    <stat.icon className="h-8 w-8 text-white" />
+                {/* Enhanced Glassmorphism Card */}
+                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-4 sm:p-6 lg:p-8 transition-all duration-300 ease-out transform-gpu will-change-transform hover:bg-white/15 hover:scale-105 hover:shadow-2xl">
+                  {/* Icon with Gradient Background */}
+                  <div className={`w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 mx-auto mb-4 sm:mb-6 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center transition-transform duration-300 ease-out transform-gpu will-change-transform group-hover:rotate-6`}>
+                    <stat.icon className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-white" />
                   </div>
                   
-                  {/* Animated Counter */}
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                  {/* Animated Counter - Responsive Text Sizes */}
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 font-serif" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                     {inView && (
                       <CountUp
                         end={stat.number}
@@ -100,13 +101,27 @@ const Stats = React.memo(() => {
                     <span className="text-blue-200">{stat.suffix}</span>
                   </div>
                   
-                  <p className="text-blue-100 font-medium text-lg">
+                  {/* Label - Responsive Text Sizes */}
+                  <p className="text-blue-100 font-medium text-sm sm:text-base lg:text-lg font-serif" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>
                     {stat.label}
                   </p>
                 </div>
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Additional responsive spacing for mobile */}
+        <div className="mt-8 sm:mt-12 lg:mt-16 text-center">
+          <motion.p 
+            className="text-blue-200 text-sm sm:text-base font-serif"
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 1 }}
+          >
+            Excellence in healthcare, measured by trust and results
+          </motion.p>
         </div>
       </div>
     </section>
