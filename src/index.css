@@ -1,98 +1,388 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import './styles/background.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Enhanced Global Styles */
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Performance optimizations */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+/* Global styles for gradient background */
+:root {
+  --scroll-y: 0px;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+body {
+  overflow-x: hidden;
+  background: linear-gradient(315deg, hsla(0, 0%, 100%, 1) 0%, hsla(319, 100%, 92%, 1) 12%, hsla(319, 86%, 91%, 1) 30%, hsla(280, 100%, 89%, 1) 50%, hsla(216, 100%, 88%, 1) 100%);
+  background-attachment: fixed;
+  background-size: 400% 400%;
+  animation: liquidFlow 25s ease-in-out infinite alternate;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-/* Text Selection */
-::selection {
-  background: rgba(102, 126, 234, 0.3);
-  color: white;
-}
-
-/* Focus Styles */
-:focus {
-  outline: 2px solid #667eea;
-  outline-offset: 2px;
-}
-
-/* Utility Classes */
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Animation Classes */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+/* Liquid flow animation for body background */
+@keyframes liquidFlow {
+  0% {
+    background-position: 0% 50%;
   }
-  to {
-    opacity: 1;
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Enhanced Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+p {
+  line-height: 1.7;
+}
+
+/* Ensure text contrast for accessibility */
+p, h1, h2, h3, h4, h5, h6 {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-auto {
+  will-change: auto;
+}
+
+/* Enhanced Glassmorphism Button Styles */
+@layer components {
+  .glassmorphism-button {
+    @apply relative overflow-hidden backdrop-blur-xl;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  
+  .glassmorphism-button::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-white/30 to-white/15 opacity-0 transition-opacity duration-300;
+  }
+  
+  .glassmorphism-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 15px 35px -5px rgba(0, 0, 0, 0.15), 
+      0 10px 20px -5px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  
+  .glassmorphism-button:hover::before {
+    @apply opacity-100;
+  }
+
+  .glassmorphism-button:active {
     transform: translateY(0);
   }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
+/* Enhanced Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Loading States */
-.loading {
-  position: relative;
-  overflow: hidden;
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
 }
 
-.loading::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #007BBA, #004F74);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #0086CC, #005A85);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #007BBA #f1f5f9;
+}
+
+/* Enhanced React DatePicker Custom Styles */
+.react-datepicker-wrapper {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.react-datepicker__input-container input {
+  @apply w-full text-center text-lg font-medium text-gray-700 bg-transparent border-none outline-none;
+}
+
+.react-datepicker {
+  @apply border-2 border-primary-200 rounded-xl shadow-2xl;
+  font-family: inherit;
+}
+
+.react-datepicker__header {
+  @apply bg-gradient-to-r from-primary-500 to-primary-600 border-b-2 border-primary-200 rounded-t-xl;
+}
+
+.react-datepicker__current-month {
+  @apply text-white font-semibold text-lg;
+}
+
+.react-datepicker__day-name {
+  @apply text-primary-100 font-medium;
+}
+
+.react-datepicker__day {
+  @apply hover:bg-primary-100 rounded-lg transition-colors duration-200;
+}
+
+.react-datepicker__day--selected {
+  @apply bg-primary-500 text-white rounded-lg font-semibold;
+}
+
+.react-datepicker__day--keyboard-selected {
+  @apply bg-primary-400 text-white rounded-lg;
+}
+
+.react-datepicker__time-container {
+  @apply border-l-2 border-primary-200;
+}
+
+.react-datepicker__time-list-item {
+  @apply hover:bg-primary-100 transition-colors duration-200;
+}
+
+.react-datepicker__time-list-item--selected {
+  @apply bg-primary-500 text-white font-semibold;
+}
+
+/* Enhanced responsive calendar styles */
+.responsive-calendar {
+  font-family: inherit !important;
+}
+
+.responsive-popper {
+  z-index: 9999 !important;
+}
+
+.react-datepicker {
+  border: 2px solid rgba(0, 123, 186, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.react-datepicker__header {
+  background: linear-gradient(135deg, #007BBA, #004F74) !important;
+  border-bottom: none !important;
+  border-radius: 10px 10px 0 0 !important;
+  color: white !important;
+  padding: 12px 0 !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__navigation-icon::before {
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__day-name {
+  color: white !important;
+  font-weight: 600 !important;
+  margin: 0.5rem !important;
+}
+
+.react-datepicker__day {
+  margin: 0.2rem !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  line-height: 2rem !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #007BBA !important;
+  color: white !important;
+  font-weight: 600 !important;
+  transform: scale(1.1) !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: rgba(0, 123, 186, 0.5) !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: rgba(0, 123, 186, 0.2) !important;
+  transform: scale(1.05) !important;
+}
+
+.react-datepicker__time-container {
+  border-left: 1px solid rgba(0, 123, 186, 0.2) !important;
+}
+
+.react-datepicker__time-list-item {
+  padding: 8px 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-datepicker__time-list-item--selected {
+  background-color: #007BBA !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__time-list-item:hover {
+  background-color: rgba(0, 123, 186, 0.2) !important;
+}
+
+/* Enhanced responsive breakpoints */
+@media (max-width: 768px) {
+  .react-datepicker {
+    font-size: 0.9rem !important;
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+
+  .react-datepicker__day,
+  .react-datepicker__day-name {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    line-height: 1.8rem !important;
+    margin: 0.15rem !important;
+  }
+
+  .react-datepicker__time-list-item {
+    padding: 6px 10px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .react-datepicker {
+    font-size: 0.8rem !important;
+    max-width: 280px !important;
+  }
+
+  .react-datepicker__day,
+  .react-datepicker__day-name {
+    width: 1.6rem !important;
+    height: 1.6rem !important;
+    line-height: 1.6rem !important;
+    margin: 0.1rem !important;
+  }
+}
+
+/* Enhanced focus styles for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid #007BBA;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Enhanced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Enhanced print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .bg-gradient-to-br,
+  .bg-gradient-to-r,
+  .bg-primary-500,
+  .bg-primary-600 {
+    background: #007BBA !important;
+    color: white !important;
+  }
+}
+
+/* Enhanced selection styles */
+::selection {
+  background-color: rgba(0, 123, 186, 0.2);
+  color: #004F74;
+}
+
+::-moz-selection {
+  background-color: rgba(0, 123, 186, 0.2);
+  color: #004F74;
+}
+
+/* Enhanced loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }
 
 @keyframes loading {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Enhanced utility classes */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Enhanced container queries support */
+@container (min-width: 768px) {
+  .container-md\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* Enhanced dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-auto {
+    color-scheme: dark;
+  }
 }
