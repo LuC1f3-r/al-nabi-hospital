@@ -5,45 +5,85 @@
 <!-- Replace the placeholder image above with an actual screenshot of your website -->
 <!-- Example: ![Al Nabi Hospital](./src/assets/screenshot.png) -->
 
-A modern, responsive website for Al Nabi Hospital built with React, TypeScript, and Tailwind CSS. The website features a beautiful, elegant gradient background with parallax effects and provides comprehensive information about the hospital's services and facilities.
+A modern, responsive website for Al Nabi Hospital built with React, TypeScript, and Tailwind CSS. The website features a luxurious floating chandelier navigation, elegant liquid gradient backgrounds, and sophisticated animations that create a premium medical experience.
 
-## Features
+## 🌟 Key Features
 
-- **Modern UI/UX Design**: Elegant gradient background with parallax effects and subtle animations
-- **Responsive Layout**: Fully responsive design that works on all devices
-- **Smooth Scrolling**: Enhanced user experience with smooth scrolling using Lenis
-- **Interactive Components**: Animated UI elements using Framer Motion
-- **Service Showcase**: Detailed information about various medical services
-- **Doctor Profiles**: Showcase of hospital's medical professionals
-- **Appointment Booking**: Interactive appointment scheduling system
-- **Testimonials**: Patient reviews and testimonials
-- **Contact Information**: Easy access to hospital contact details
+### 🏥 **Floating Chandelier Navigation**
+- **Suspended Design**: Navigation bar appears weightlessly suspended from the top with sophisticated glassmorphism effects
+- **Multi-layered Shadows**: Enhanced drop shadows create a true chandelier-like floating illusion
+- **Elegant Transparency**: Backdrop blur and refined transparency effects for a premium feel
+- **Responsive Behavior**: Adapts beautifully across all screen sizes while maintaining luxury aesthetics
 
-## Technologies Used
+### 🎨 **Liquid Gradient Background System**
+- **Silk-like Animation**: Smooth 25-second liquid flow animation with elegant color transitions
+- **Premium Color Palette**: Custom gradient using soft whites, pinks, lavenders, and blues
+- **Glass-like Effects**: Enhanced transparency and blur effects throughout the design
+- **Performance Optimized**: Respects `prefers-reduced-motion` for accessibility
+
+### ✨ **Sophisticated Typography**
+- **Medical Authority Fonts**: Cormorant Garamond, DM Serif Display, and Playfair Display
+- **Trust & Elegance**: Typography that evokes professionalism and medical expertise
+- **Consistent Hierarchy**: Well-structured font weights and sizes across all components
+
+### 🎭 **Advanced Motion Design**
+- **Framer Motion Integration**: Professional-grade animations with spring physics
+- **Subtle Interactions**: Fade-in, slide-down, and parallax effects
+- **Smooth Transitions**: Enhanced hover states with scale and shadow animations
+- **Accessibility First**: Reduced motion support for better user experience
+
+### 📱 **Responsive Excellence**
+- **Mobile-First Design**: Perfect alignment across mobile, tablet, and desktop
+- **Adaptive Components**: Stats, navigation, and content scale beautifully
+- **Touch-Friendly**: Optimized interactions for all device types
+
+## 🚀 Live Demo
+
+**Website**: [https://meek-horse-e3aab5.netlify.app](https://meek-horse-e3aab5.netlify.app)
+
+## 🛠 Technologies Used
 
 - **Frontend Framework**: React 18 with TypeScript
 - **Routing**: React Router v7
 - **Styling**: Tailwind CSS for utility-first styling
-- **Animations**: Framer Motion for smooth animations
+- **Animations**: Framer Motion for sophisticated animations
 - **Smooth Scrolling**: Studio Freight Lenis
 - **State Management**: Zustand for lightweight state management
 - **Icons**: Lucide React for beautiful SVG icons
 - **Date Picker**: React DatePicker for appointment scheduling
 - **Build Tool**: Vite for fast development and optimized production builds
 
-## Visual Features
+## 🎨 Design Features
 
 ### Elegant Gradient Background
 
-The website features a modern, elegant, and realistic linear gradient background with:
+The website features a luxurious liquid gradient background with:
 
-- Linear gradient at 315 degrees with specific HSLA color stops (pure white, soft pink, light blush, gentle lavender, airy blue)
-- Fluid and responsive design that dynamically shifts on scroll or mouse movement
-- Subtle parallax shimmer effect for enhanced visual appeal
-- Light grain texture overlay for added realism
-- Cross-browser compatibility and high-resolution screen support
+```css
+background: linear-gradient(315deg, 
+  hsla(0, 0%, 100%, 1) 0%, 
+  hsla(319, 100%, 92%, 1) 12%, 
+  hsla(319, 86%, 91%, 1) 30%, 
+  hsla(280, 100%, 89%, 1) 50%, 
+  hsla(216, 100%, 88%, 1) 100%
+);
+```
 
-## Getting Started
+- **Liquid Flow Animation**: 25-second smooth animation creating silk-like movement
+- **Responsive Design**: Adapts animation speed and intensity based on screen size
+- **Cross-browser Compatibility**: Vendor prefixes and fallbacks included
+- **High-resolution Support**: Optimized for retina and high-DPI displays
+
+### Floating Chandelier Navigation
+
+The navigation system features:
+
+- **Glassmorphism Effects**: Advanced backdrop blur and transparency
+- **Multi-layered Shadows**: Complex shadow system for true floating appearance
+- **Elegant Typography**: Premium serif fonts for medical authority
+- **Smooth Interactions**: Spring-based animations with custom easing curves
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -84,7 +124,7 @@ yarn build
 
 The built files will be in the `dist` directory.
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 ├── public/              # Static assets
@@ -96,223 +136,309 @@ The built files will be in the `dist` directory.
 │   │   ├── Doctors.tsx
 │   │   ├── Footer.tsx
 │   │   ├── Hero.tsx
-│   │   ├── Navigation.tsx
+│   │   ├── Layout.tsx
+│   │   ├── Navigation.tsx      # ✨ Enhanced floating chandelier nav
 │   │   ├── ParallaxBackground.tsx
 │   │   ├── ServicePage.tsx
 │   │   ├── Services.tsx
-│   │   ├── Stats.tsx
-│   │   └── Testimonials.tsx
+│   │   ├── Stats.tsx           # 📊 Responsive stats component
+│   │   ├── Testimonials.tsx
+│   │   └── pages/              # Additional pages
+│   │       ├── Careers.tsx
+│   │       ├── Terms.tsx
+│   │       ├── CookiePolicy.tsx
+│   │       └── PrivacyPolicy.tsx
 │   ├── store/           # State management
 │   │   └── bookingStore.ts
 │   ├── styles/          # CSS styles
-│   │   └── background.css
+│   │   └── background.css      # 🌊 Liquid gradient animations
+│   ├── lib/             # Utilities
+│   │   └── lenis.ts
 │   ├── App.tsx          # Main application component
-│   ├── index.css        # Global styles
+│   ├── index.css        # 🎨 Enhanced global styles
 │   └── main.tsx         # Entry point
 ├── index.html           # HTML template
 ├── package.json         # Project dependencies
-├── tailwind.config.js   # Tailwind CSS configuration
+├── tailwind.config.js   # 🎨 Enhanced Tailwind configuration
 ├── tsconfig.json        # TypeScript configuration
 └── vite.config.ts       # Vite configuration
 ```
 
-## Key Components
+## 🎯 Key Components
 
-### ParallaxBackground
+### Enhanced Navigation Component
 
-The `ParallaxBackground` component creates an elegant gradient background with parallax effects that respond to mouse movement and scrolling.
+The `Navigation` component creates a luxurious floating chandelier effect:
 
 ```tsx
-// src/components/ParallaxBackground.tsx
-import React, { useEffect, useState } from 'react';
-import '../styles/background.css';
-
-interface ParallaxBackgroundProps {
-  children: React.ReactNode;
-}
-
-const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({ children }) => {
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+// Enhanced floating chandelier navigation with glassmorphism
+const Navigation: React.FC = () => {
+  // Advanced scroll handling with performance optimization
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
   
-  useEffect(() => {
-    // Handle mouse movement for parallax effect
-    const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 10;
-      const y = (e.clientY / window.innerHeight - 0.5) * 10;
-      
-      setOffset({ x, y });
-    };
-    
-    // Handle scroll for additional parallax effect
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const scrollFactor = scrollY * 0.002;
-      
-      document.documentElement.style.setProperty('--scroll-y', `${scrollFactor}px`);
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  // Sophisticated animation variants for chandelier effect
+  const navVariants: Variants = {
+    initial: { 
+      y: -120, 
+      opacity: 0,
+      scale: 0.95,
+      filter: 'blur(10px)'
+    },
+    animate: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      filter: 'blur(0px)',
+      transition: {
+        type: 'spring',
+        stiffness: 400,
+        damping: 30,
+        duration: 1.2,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+  
+  // Dynamic styling with glassmorphism effects
+  const getNavStyles = (): React.CSSProperties => ({
+    background: `linear-gradient(135deg, 
+      rgba(255, 255, 255, ${scrolled ? '0.95' : '0.85'}) 0%,
+      rgba(255, 255, 255, ${scrolled ? '0.90' : '0.75'}) 100%
+    )`,
+    backdropFilter: `blur(${scrolled ? '20px' : '16px'}) saturate(180%)`,
+    boxShadow: scrolled 
+      ? `0 25px 50px -12px rgba(0, 0, 0, 0.08),
+         0 8px 32px rgba(0, 0, 0, 0.04),
+         0 0 0 1px rgba(255, 255, 255, 0.05),
+         inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+      : `0 20px 40px -8px rgba(0, 0, 0, 0.06),
+         0 8px 24px rgba(0, 0, 0, 0.04),
+         0 0 0 1px rgba(255, 255, 255, 0.05),
+         inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+  });
   
   return (
-    <div className="parallax-container min-h-screen">
-      {/* Gradient background with parallax effect */}
-      <div 
-        className="parallax-layer elegant-gradient-bg" 
-        style={{ 
-          transform: `translate3d(${offset.x * 0.5}px, ${offset.y * 0.5}px, 0)`,
-          backgroundSize: '200% 200%',
-        }}
-      />
-      
-      {/* Grain texture overlay */}
-      <div className="grain-overlay" />
-      
-      {/* Content */}
-      <div className="relative z-10">
-        {children}
-      </div>
-    </div>
+    <motion.nav 
+      className="fixed z-50 transition-all duration-700 ease-out"
+      variants={navVariants}
+      initial="initial"
+      animate="animate"
+      style={getNavStyles()}
+    >
+      {/* Navigation content with elegant typography */}
+    </motion.nav>
   );
 };
-
-export default ParallaxBackground;
 ```
 
-#### Gradient Background CSS
+### Responsive Stats Component
 
-The elegant gradient background is implemented in `background.css` with cross-browser support and high-resolution display optimization:
+The `Stats` component ensures perfect alignment across all devices:
+
+```tsx
+// Responsive stats with elegant animations
+const Stats = React.memo(() => {
+  const stats = useMemo(() => [
+    {
+      icon: Users,
+      number: 20000,
+      suffix: '+',
+      label: 'Patients Treated',
+      color: 'from-blue-500 to-cyan-500'
+    },
+    // ... more stats
+  ], []);
+
+  return (
+    <section className="py-20 bg-gradient-to-br from-[#004F74] to-[#007BBA]">
+      {/* Responsive grid: 2 columns on mobile, 4 on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        {stats.map((stat, index) => (
+          <motion.div
+            key={index}
+            className="text-center"
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: index * 0.2 }}
+          >
+            {/* Responsive typography and spacing */}
+            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 font-serif">
+              <CountUp end={stat.number} duration={2.5} />
+              <span className="text-blue-200">{stat.suffix}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+});
+```
+
+### Liquid Gradient Background System
+
+Enhanced background with silk-like animations:
 
 ```css
-/* Background Styles */
+/* Enhanced Liquid Gradient Background */
 .elegant-gradient-bg {
-  background-image: linear-gradient(315deg, hsla(216, 100%, 88%, 1) 0%, hsla(280, 100%, 89%, 1) 25%, hsla(319, 86%, 91%, 1) 50%, hsla(319, 100%, 92%, 1) 75%, hsla(0, 0%, 100%, 1) 100%);
-  background-size: 200% 200%;
-  animation: shimmer 15s ease-in-out infinite alternate;
+  background: linear-gradient(315deg, 
+    hsla(0, 0%, 100%, 1) 0%, 
+    hsla(319, 100%, 92%, 1) 12%, 
+    hsla(319, 86%, 91%, 1) 30%, 
+    hsla(280, 100%, 89%, 1) 50%, 
+    hsla(216, 100%, 88%, 1) 100%
+  );
+  background-size: 400% 400%;
+  animation: liquidFlow 20s ease-in-out infinite alternate;
 }
 
-/* Grain texture overlay */
-.grain-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* Animation for the shimmer effect */
-@keyframes shimmer {
+/* Enhanced liquid flow animation */
+@keyframes liquidFlow {
   0% {
     background-position: 0% 50%;
+    filter: hue-rotate(0deg) saturate(100%) brightness(100%);
+  }
+  25% {
+    background-position: 100% 25%;
+    filter: hue-rotate(5deg) saturate(105%) brightness(102%);
   }
   50% {
-    background-position: 100% 50%;
+    background-position: 100% 75%;
+    filter: hue-rotate(10deg) saturate(110%) brightness(105%);
+  }
+  75% {
+    background-position: 0% 75%;
+    filter: hue-rotate(5deg) saturate(105%) brightness(102%);
   }
   100% {
     background-position: 0% 50%;
+    filter: hue-rotate(0deg) saturate(100%) brightness(100%);
   }
+}
+
+/* Silk-like shimmer effect */
+.silk-shimmer::before {
+  content: '';
+  position: absolute;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmerMove 3s ease-in-out infinite;
+}
+
+/* Enhanced glass morphism effects */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 ```
 
-### Hero Section
+## 🎨 Design Philosophy
 
-The `Hero` component displays the main landing section with a call-to-action for booking appointments and exploring services. It features animated text and buttons using Framer Motion for a dynamic user experience.
+### Medical Authority & Trust
+- **Professional Typography**: Serif fonts that convey medical expertise
+- **Sophisticated Color Palette**: Calming blues and whites with elegant gradients
+- **Clean Layout**: Minimal design that prioritizes content and usability
 
-```tsx
-// Excerpt from src/components/Hero.tsx
-<motion.div 
-  className="text-center space-y-8 max-w-4xl mx-auto"
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8 }}
->
-  <div className="space-y-4">
-    <motion.h1 
-      className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
-    >
-      Trusted Healthcare, 
-      <span className="text-[#38bdf8]"> Compassionate Care</span>
-    </motion.h1>
-    <motion.p 
-      className="text-xl text-blue-100 leading-relaxed"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.4 }}
-    >
-      Providing exceptional medical services with 24/7 emergency care, experienced doctors, and family-centered approach to your health and wellness.
-    </motion.p>
-  </div>
-  
-  {/* CTA Buttons */}
-  <motion.div 
-    className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8, delay: 0.8 }}
-  >
-    <motion.button
-      onClick={() => setIsModalOpen(true)}
-      className="glassmorphism-button text-white px-8 py-4 rounded-3xl font-semibold transition-all duration-300 transform hover:scale-105"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-    >
-      <Calendar className="h-5 w-5" />
-      <span>Book Appointment</span>
-    </motion.button>
-  </motion.div>
-</motion.div>
+### Luxury & Elegance
+- **Floating Elements**: Chandelier-inspired navigation with weightless appearance
+- **Smooth Animations**: Spring-based physics for natural movement
+- **Premium Materials**: Glassmorphism and liquid gradients for modern luxury
+
+### Accessibility & Performance
+- **Reduced Motion Support**: Respects user preferences for motion sensitivity
+- **High Contrast**: Ensures readability across all components
+- **Performance Optimized**: Efficient animations and responsive images
+
+## 📱 Responsive Design
+
+### Mobile (320px - 768px)
+- **2-column Stats Grid**: Perfect alignment on small screens
+- **Compact Navigation**: Touch-friendly mobile menu
+- **Optimized Typography**: Scaled font sizes for readability
+
+### Tablet (768px - 1024px)
+- **Adaptive Layouts**: Flexible grid systems
+- **Enhanced Interactions**: Hover states for touch devices
+- **Balanced Spacing**: Optimal padding and margins
+
+### Desktop (1024px+)
+- **4-column Stats Grid**: Full desktop layout
+- **Advanced Animations**: Complete motion design system
+- **Premium Experience**: Full chandelier navigation effects
+
+## 🔧 Configuration
+
+### Tailwind CSS Enhancements
+
+```javascript
+// Enhanced Tailwind configuration
+module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        serif: [
+          'Cormorant Garamond',
+          'DM Serif Display', 
+          'Playfair Display',
+          'Georgia',
+          'serif'
+        ],
+      },
+      animation: {
+        'liquidFlow': 'liquidFlow 20s ease-in-out infinite alternate',
+        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
+      },
+      backdropBlur: {
+        'xs': '2px',
+      },
+    },
+  },
+};
 ```
 
-### Services Section
+## 🚀 Deployment
 
-The `Services` component showcases the various medical services offered by the hospital, including cardiology, neurology, pediatrics, and more. Each service is presented as an interactive card with an icon, title, and description.
+The website is deployed on Netlify with automatic deployments from the main branch.
 
-```tsx
-// Excerpt from src/components/Services.tsx
-const services: Service[] = [
-  {
-    id: 'cardiology',
-    icon: Heart,
-    title: 'Cardiology',
-    description: 'Advanced heart care with cutting-edge diagnostics and treatments.',
-  },
-  {
-    id: 'neurology',
-    icon: Brain,
-    title: 'Neurology',
-    description: 'Expert care for brain and nervous system disorders.',
-  },
-  {
-    id: 'pediatrics',
-    icon: Baby,
-    title: 'Pediatrics',
-    description: 'Specialized care for infants, children, and adolescents.',
-  },
-  // More services...
-];
-```
+**Live URL**: [https://meek-horse-e3aab5.netlify.app](https://meek-horse-e3aab5.netlify.app)
 
-The services are displayed in a responsive grid layout with smooth animations when they come into view.
+### Deploy Your Own
 
-## License
+1. Fork this repository
+2. Connect to Netlify
+3. Deploy with build command: `npm run build`
+4. Set publish directory: `dist`
+
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- Design inspiration from modern healthcare websites
-- Icons provided by Lucide React
-- Smooth scrolling powered by Studio Freight Lenis
+- **Design Inspiration**: Modern medical websites and luxury healthcare brands
+- **Icons**: Lucide React for beautiful, consistent iconography
+- **Animations**: Framer Motion for professional-grade motion design
+- **Smooth Scrolling**: Studio Freight Lenis for enhanced user experience
+- **Typography**: Google Fonts for elegant serif typefaces
+
+## 🔮 Future Enhancements
+
+- **Dark Mode**: Elegant dark theme with adjusted gradients
+- **Micro-interactions**: Enhanced button and form animations
+- **Advanced Parallax**: Multi-layer background effects
+- **Performance Monitoring**: Real-time performance analytics
+- **A11y Improvements**: Enhanced accessibility features
+
+---
+
+**Built with ❤️ for Al Nabi Hospital - Where Healthcare Meets Excellence**
