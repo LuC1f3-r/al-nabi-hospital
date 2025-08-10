@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Import elegant serif fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 /* Performance optimizations */
 * {
@@ -18,11 +18,19 @@
 
 body {
   overflow-x: hidden;
-  background: linear-gradient(315deg, hsla(0, 0%, 100%, 1) 0%, hsla(319, 100%, 92%, 1) 12%, hsla(319, 86%, 91%, 1) 30%, hsla(280, 100%, 89%, 1) 50%, hsla(216, 100%, 88%, 1) 100%);
+  background: linear-gradient(
+    315deg,
+    hsla(0, 0%, 100%, 1) 0%,
+    hsla(319, 100%, 92%, 1) 12%,
+    hsla(319, 86%, 91%, 1) 30%,
+    hsla(280, 100%, 89%, 1) 50%,
+    hsla(216, 100%, 88%, 1) 100%
+  );
   background-attachment: fixed;
   background-size: 400% 400%;
-  animation: liquidFlow 25s ease-in-out infinite alternate;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  animation: liquidFlow 15s linear infinite alternate;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", sans-serif;
   line-height: 1.6;
 }
 
@@ -31,16 +39,18 @@ body {
   0% {
     background-position: 0% 50%;
   }
-  50% {
-    background-position: 100% 50%;
-  }
   100% {
     background-position: 0% 50%;
   }
 }
 
 /* Enhanced Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.025em;
@@ -51,7 +61,13 @@ p {
 }
 
 /* Ensure text contrast for accessibility */
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
@@ -71,26 +87,24 @@ p, h1, h2, h3, h4, h5, h6 {
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.1),
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-  
+
   .glassmorphism-button::before {
-    content: '';
+    content: "";
     @apply absolute inset-0 bg-gradient-to-r from-white/30 to-white/15 opacity-0 transition-opacity duration-300;
   }
-  
+
   .glassmorphism-button:hover {
     background: rgba(255, 255, 255, 0.25);
     border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-2px);
-    box-shadow: 
-      0 15px 35px -5px rgba(0, 0, 0, 0.15), 
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.15),
       0 10px 20px -5px rgba(0, 0, 0, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
-  
+
   .glassmorphism-button:hover::before {
     @apply opacity-100;
   }
@@ -112,19 +126,19 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #007BBA, #004F74);
+  background: linear-gradient(135deg, #007bba, #004f74);
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #0086CC, #005A85);
+  background: linear-gradient(135deg, #0086cc, #005a85);
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #007BBA #f1f5f9;
+  scrollbar-color: #007bba #f1f5f9;
 }
 
 /* Enhanced React DatePicker Custom Styles */
@@ -189,11 +203,12 @@ p, h1, h2, h3, h4, h5, h6 {
 .react-datepicker {
   border: 2px solid rgba(0, 123, 186, 0.2) !important;
   border-radius: 12px !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
 .react-datepicker__header {
-  background: linear-gradient(135deg, #007BBA, #004F74) !important;
+  background: linear-gradient(135deg, #007bba, #004f74) !important;
   border-bottom: none !important;
   border-radius: 10px 10px 0 0 !important;
   color: white !important;
@@ -222,7 +237,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 .react-datepicker__day--selected {
-  background-color: #007BBA !important;
+  background-color: #007bba !important;
   color: white !important;
   font-weight: 600 !important;
   transform: scale(1.1) !important;
@@ -247,7 +262,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 .react-datepicker__time-list-item--selected {
-  background-color: #007BBA !important;
+  background-color: #007bba !important;
   color: white !important;
   font-weight: 600 !important;
 }
@@ -299,7 +314,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 a:focus-visible {
-  outline: 2px solid #007BBA;
+  outline: 2px solid #007bba;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -321,17 +336,17 @@ a:focus-visible {
   .no-print {
     display: none !important;
   }
-  
+
   body {
     background: white !important;
     color: black !important;
   }
-  
+
   .bg-gradient-to-br,
   .bg-gradient-to-r,
   .bg-primary-500,
   .bg-primary-600 {
-    background: #007BBA !important;
+    background: #007bba !important;
     color: white !important;
   }
 }
@@ -339,12 +354,12 @@ a:focus-visible {
 /* Enhanced selection styles */
 ::selection {
   background-color: rgba(0, 123, 186, 0.2);
-  color: #004F74;
+  color: #004f74;
 }
 
 ::-moz-selection {
   background-color: rgba(0, 123, 186, 0.2);
-  color: #004F74;
+  color: #004f74;
 }
 
 /* Enhanced loading states */
@@ -385,4 +400,25 @@ a:focus-visible {
   .dark-mode-auto {
     color-scheme: dark;
   }
+}
+
+.dot-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.dot-grid__wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.dot-grid__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
