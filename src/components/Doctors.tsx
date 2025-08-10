@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { Calendar, MapPin } from "lucide-react";
-import { useBookingStore } from "../store/bookingStore";
+import { useState } from "react";
+import { MapPin } from "lucide-react";
 
 const Doctors = () => {
   const [activeCategory, setActiveCategory] = useState("main");
-  const { setIsModalOpen, setSelectedDoctor } = useBookingStore();
 
   const doctors = {
     main: [
@@ -40,6 +38,54 @@ const Doctors = () => {
         availability: "Busy",
         department: "ophthalmology",
       },
+      {
+        name: "Dr. Mohamed Ali",
+        specialization: "Pediatrician",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "pediatrics",
+      },
+      {
+        name: "Dr. Fatima Omar",
+        specialization: "Ophthalmologist",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Busy",
+        department: "ophthalmology",
+      },
+      {
+        name: "Dr. Mohamed Ali",
+        specialization: "Pediatrician",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "pediatrics",
+      },
+      {
+        name: "Dr. Fatima Omar",
+        specialization: "Ophthalmologist",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Busy",
+        department: "ophthalmology",
+      },
+      {
+        name: "Dr. Mohamed Ali",
+        specialization: "Pediatrician",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "pediatrics",
+      },
+      {
+        name: "Dr. Fatima Omar",
+        specialization: "Ophthalmologist",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Busy",
+        department: "ophthalmology",
+      },
     ],
     visiting: [
       {
@@ -58,6 +104,54 @@ const Doctors = () => {
         availability: "Tuesdays",
         department: "dermatology",
       },
+      {
+        name: "Dr. Mohamed Ali",
+        specialization: "Pediatrician",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "pediatrics",
+      },
+      {
+        name: "Dr. Fatima Omar",
+        specialization: "Ophthalmologist",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Busy",
+        department: "ophthalmology",
+      },
+      {
+        name: "Dr. Mohamed Ali",
+        specialization: "Pediatrician",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "pediatrics",
+      },
+      {
+        name: "Dr. Fatima Omar",
+        specialization: "Ophthalmologist",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Busy",
+        department: "ophthalmology",
+      },
+      {
+        name: "Dr. Mohamed Ali",
+        specialization: "Pediatrician",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "pediatrics",
+      },
+      {
+        name: "Dr. Fatima Omar",
+        specialization: "Ophthalmologist",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Busy",
+        department: "ophthalmology",
+      },
     ],
   };
 
@@ -65,11 +159,6 @@ const Doctors = () => {
     { id: "main", label: "Main Doctors" },
     { id: "visiting", label: "Visiting Doctors" },
   ];
-
-  const handleBookAppointment = (doctor: any) => {
-    setSelectedDoctor(doctor);
-    setIsModalOpen(true);
-  };
 
   return (
     <section id="doctors" className="py-20 bg-white">
