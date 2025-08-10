@@ -1,36 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, ChevronRight, DivideIcon as LucideIcon, ChevronDown } from 'lucide-react';
-import { useBookingStore } from '../store/bookingStore';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import {
+  Menu,
+  X,
+  Heart,
+  ChevronRight,
+  DivideIcon as LucideIcon,
+  ChevronDown,
+} from "lucide-react";
+import { useBookingStore } from "../store/bookingStore";
 
 // Type definitions
 interface MenuItem {
   id: string;
   label: string;
-  type: 'link' | 'scroll' | 'dropdown';
+  type: "link" | "scroll" | "dropdown";
   path?: string;
   section?: string;
   subItems?: SubMenuItem[];
 }
-
 interface SubMenuItem {
   id: string;
   label: string;
   path: string;
 }
-
 interface BrandConfig {
   name: string;
-  icon: LucideIcon;
+  icon: typeof LucideIcon;
 }
-
 interface CTAConfig {
   text: string;
-  action: 'booking' | 'contact' | 'custom';
+  action: "booking" | "contact" | "custom";
 }
-
 interface AnimationConfig {
   staggerDelay: number;
   springConfig: {
@@ -41,7 +43,6 @@ interface AnimationConfig {
   scrollThreshold: number;
   maxScrollForProgress: number;
 }
-
 interface StyleConfig {
   height: string;
   iconSize: string;
@@ -53,7 +54,6 @@ interface StyleConfig {
   width: string;
   leftOffset: string;
 }
-
 interface NavigationConfig {
   brand: BrandConfig;
   menuItems: MenuItem[];
@@ -64,66 +64,60 @@ interface NavigationConfig {
     default: StyleConfig;
   };
 }
-
-// Enhanced Navigation configuration with chandelier floating design
+// Configuration
 const NAVIGATION_CONFIG: NavigationConfig = {
   brand: {
-    name: 'Al Nabi Hospital',
+    name: "Al Nabi Hospital",
     icon: Heart,
   },
   menuItems: [
-    { id: 'home', label: 'Home', type: 'scroll', section: 'hero' },
-    { id: 'about', label: 'About Us', type: 'scroll', section: 'about' },
-    { id: 'services', label: 'Services', type: 'scroll', section: 'services' },
-    { id: 'doctors', label: 'Our Doctors', type: 'scroll', section: 'doctors' },
-    { 
-      id: 'pages', 
-      label: 'Pages', 
-      type: 'dropdown', 
-      subItems: [
-        { id: 'careers', label: 'Careers', path: '/careers' },
-        { id: 'terms', label: 'Terms & Conditions', path: '/terms' },
-        { id: 'cookie-policy', label: 'Cookie Policy', path: '/cookie-policy' },
-        { id: 'privacy-policy', label: 'Privacy Policy', path: '/privacy-policy' },
-      ]
+    { id: "home", label: "Home", type: "scroll", section: "hero" },
+    { id: "about", label: "About Us", type: "scroll", section: "about" },
+    { id: "services", label: "Services", type: "scroll", section: "services" },
+    { id: "doctors", label: "Our Doctors", type: "scroll", section: "doctors" },
+    {
+      id: "testimonials",
+      label: "Testimonials",
+      type: "scroll",
+      section: "testimonials",
     },
-    { id: 'contact', label: 'Contact', type: 'scroll', section: 'contact' }
+    { id: "contact", label: "Contact", type: "scroll", section: "contact" },
   ],
   cta: {
-    text: 'Book Appointment',
-    action: 'booking'
+    text: "Book Appointment",
+    action: "booking",
   },
   animations: {
     staggerDelay: 0.1,
     springConfig: { stiffness: 400, damping: 30 },
     hoverScale: 1.02,
     scrollThreshold: 80,
-    maxScrollForProgress: 120
+    maxScrollForProgress: 120,
   },
   styles: {
     scrolled: {
-      height: 'h-16',
-      iconSize: 'h-7 w-7',
-      fontSize: 'text-lg',
-      menuFontSize: 'text-sm',
-      buttonPadding: 'px-4 py-2.5',
-      borderRadius: '24px',
-      topOffset: '16px',
-      width: '95%',
-      leftOffset: '2.5%'
+      height: "h-16",
+      iconSize: "h-7 w-7",
+      fontSize: "text-lg",
+      menuFontSize: "text-sm",
+      buttonPadding: "px-4 py-2.5",
+      borderRadius: "24px",
+      topOffset: "16px",
+      width: "95%",
+      leftOffset: "2.5%",
     },
     default: {
-      height: 'h-20',
-      iconSize: 'h-8 w-8',
-      fontSize: 'text-xl',
-      menuFontSize: 'text-base',
-      buttonPadding: 'px-5 py-3',
-      borderRadius: '28px',
-      topOffset: '12px',
-      width: '96%',
-      leftOffset: '2%'
-    }
-  }
+      height: "h-20",
+      iconSize: "h-8 w-8",
+      fontSize: "text-xl",
+      menuFontSize: "text-base",
+      buttonPadding: "px-5 py-3",
+      borderRadius: "28px",
+      topOffset: "12px",
+      width: "96%",
+      leftOffset: "2%",
+    },
+  },
 };
 
 const Navigation: React.FC = () => {
@@ -139,51 +133,45 @@ const Navigation: React.FC = () => {
   const { brand, menuItems, cta, animations, styles } = NAVIGATION_CONFIG;
   const currentStyles = scrolled ? styles.scrolled : styles.default;
 
-  // Enhanced scroll handling with performance optimization
   useEffect(() => {
     let ticking = false;
-    
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
           const isScrolled = scrollY > animations.scrollThreshold;
-          
           setScrolled(isScrolled);
           setVisible(true);
-          
-          const progress = Math.min(scrollY / animations.maxScrollForProgress, 1);
+          const progress = Math.min(
+            scrollY / animations.maxScrollForProgress,
+            1
+          );
           setScrollProgress(progress);
-          
           ticking = false;
         });
         ticking = true;
       }
     };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [animations.scrollThreshold, animations.maxScrollForProgress]);
 
-  // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (isMenuOpen && !target.closest('.mobile-menu-container')) {
+      if (isMenuOpen && !target.closest(".mobile-menu-container")) {
         setIsMenuOpen(false);
       }
     };
-
     if (isMenuOpen) {
-      document.addEventListener('click', handleClickOutside);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("click", handleClickOutside);
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
-
     return () => {
-      document.removeEventListener('click', handleClickOutside);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("click", handleClickOutside);
+      document.body.style.overflow = "unset";
     };
   }, [isMenuOpen]);
 
@@ -193,19 +181,18 @@ const Navigation: React.FC = () => {
       if (element) {
         const headerOffset = 100;
         const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
         window.scrollTo({
           top: offsetPosition,
-          behavior: 'smooth'
+          behavior: "smooth",
         });
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     };
-
-    if (location.pathname !== '/') {
-      navigate('/');
+    if (location.pathname !== "/") {
+      navigate("/");
       setTimeout(performScroll, 300);
     } else {
       performScroll();
@@ -221,106 +208,102 @@ const Navigation: React.FC = () => {
   };
 
   const handleLogoClick = (): void => {
-    navigate('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setIsMenuOpen(false);
   };
 
   const handleCTAClick = (): void => {
-    if (cta.action === 'booking') {
+    if (cta.action === "booking") {
       setIsModalOpen(true);
     }
     setIsMenuOpen(false);
   };
 
-  // Enhanced animation variants for chandelier effect
   const navVariants: Variants = {
-    initial: { 
-      y: -120, 
+    initial: {
+      y: -120,
       opacity: 0,
       scale: 0.95,
-      filter: 'blur(10px)'
+      filter: "blur(10px)",
     },
     animate: {
       y: 0,
       opacity: 1,
       scale: 1,
-      filter: 'blur(0px)',
+      filter: "blur(0px)",
       transition: {
-        type: 'spring',
+        type: "spring",
         ...animations.springConfig,
         duration: 1.2,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
   };
-
   const menuItemVariants: Variants = {
     initial: { opacity: 0, y: -15, scale: 0.95 },
     animate: (index: number) => ({
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { 
-        delay: animations.staggerDelay * index + 0.3, 
+      transition: {
+        delay: animations.staggerDelay * index + 0.3,
         duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    })
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    }),
   };
-
   const mobileMenuVariants: Variants = {
     initial: { opacity: 0, height: 0, scale: 0.95 },
-    animate: { 
-      opacity: 1, 
-      height: 'auto',
+    animate: {
+      opacity: 1,
+      height: "auto",
       scale: 1,
       transition: {
         duration: 0.4,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
     },
-    exit: { 
-      opacity: 0, 
+    exit: {
+      opacity: 0,
       height: 0,
       scale: 0.95,
       transition: {
         duration: 0.3,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
   };
-
   const mobileMenuItemVariants: Variants = {
     initial: { opacity: 0, x: -20 },
     animate: (index: number) => ({
       opacity: 1,
       x: 0,
-      transition: { 
-        delay: 0.05 * index, 
+      transition: {
+        delay: 0.05 * index,
         duration: 0.4,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    })
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    }),
   };
 
   const getNavStyles = (): React.CSSProperties => ({
     background: `
       linear-gradient(135deg, 
-        rgba(255, 255, 255, ${scrolled ? '0.95' : '0.85'}) 0%,
-        rgba(255, 255, 255, ${scrolled ? '0.90' : '0.75'}) 100%
+        rgba(255, 255, 255, ${scrolled ? "0.95" : "0.85"}) 0%,
+        rgba(255, 255, 255, ${scrolled ? "0.90" : "0.75"}) 100%
       )
     `,
-    backdropFilter: `blur(${scrolled ? '20px' : '16px'}) saturate(180%)`,
+    backdropFilter: `blur(${scrolled ? "20px" : "16px"}) saturate(180%)`,
     borderRadius: currentStyles.borderRadius,
-    border: `1px solid rgba(255, 255, 255, ${scrolled ? '0.4' : '0.3'})`,
-    boxShadow: scrolled 
+    border: `1px solid rgba(255, 255, 255, ${scrolled ? "0.4" : "0.3"})`,
+    boxShadow: scrolled
       ? `
           0 25px 50px -12px rgba(0, 0, 0, 0.08),
           0 8px 32px rgba(0, 0, 0, 0.04),
           0 0 0 1px rgba(255, 255, 255, 0.05),
           inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        ` 
+        `
       : `
           0 20px 40px -8px rgba(0, 0, 0, 0.06),
           0 8px 24px rgba(0, 0, 0, 0.04),
@@ -329,11 +312,19 @@ const Navigation: React.FC = () => {
         `,
   });
 
-  const BrandIcon: LucideIcon = brand.icon;
+  const BrandIcon: typeof LucideIcon = brand.icon;
+
+  // CLEAN SIMPLE LINK STYLES FOR NAV MENU ITEMS
+  const navTextLinkBase = `
+    relative px-3 py-1 text-gray-700 hover:text-primary-700 font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none
+  `;
+  const navTextLinkUnderline = `
+    after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary-300 hover:after:bg-primary-700 after:transition-all after:duration-300
+  `;
 
   return (
     <>
-      <motion.nav 
+      <motion.nav
         className="fixed z-50 transition-all duration-700 ease-out"
         variants={navVariants}
         initial="initial"
@@ -342,20 +333,19 @@ const Navigation: React.FC = () => {
           ...getNavStyles(),
           top: currentStyles.topOffset,
           left: currentStyles.leftOffset,
-          right: scrolled ? '2.5%' : '2%',
+          right: scrolled ? "2.5%" : "2%",
           width: currentStyles.width,
         }}
       >
-        {/* Enhanced floating chandelier shadow effect */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 -z-10"
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ 
-            opacity: scrolled ? 0.6 : 0.4, 
-            scale: scrolled ? 1.02 : 1.05 
+          animate={{
+            opacity: scrolled ? 0.6 : 0.4,
+            scale: scrolled ? 1.02 : 1.05,
           }}
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          style={{ 
+          style={{
             background: `
               radial-gradient(ellipse 80% 60% at 50% -20%, 
                 rgba(0, 123, 186, 0.15) 0%,
@@ -364,16 +354,15 @@ const Navigation: React.FC = () => {
               )
             `,
             borderRadius: currentStyles.borderRadius,
-            transform: 'translateY(8px)',
-            filter: 'blur(12px)',
+            transform: "translateY(8px)",
+            filter: "blur(12px)",
           }}
         />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
           <div className={`flex justify-between items-center transition-all duration-700 ${currentStyles.height}`}>
-            
-            {/* Enhanced Logo Section with chandelier elegance */}
-            <motion.div 
+            {/* Logo Section */}
+            <motion.div
               className="flex items-center space-x-3 cursor-pointer group"
               onClick={handleLogoClick}
               whileHover={{ scale: animations.hoverScale }}
@@ -381,27 +370,30 @@ const Navigation: React.FC = () => {
             >
               <motion.div
                 className="relative"
-                animate={{ 
+                animate={{
                   scale: scrolled ? 0.9 : 1,
-                  rotate: scrolled ? -2 : 0
+                  rotate: scrolled ? -2 : 0,
                 }}
-                transition={{ 
-                  type: 'spring', 
+                transition={{
+                  type: "spring",
                   ...animations.springConfig,
-                  duration: 0.7
+                  duration: 0.7,
                 }}
               >
-                <BrandIcon className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`} />
+                <BrandIcon
+                  className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`}
+                />
                 <motion.div
                   className="absolute inset-0 bg-primary-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
                   initial={false}
                 />
               </motion.div>
-              <motion.span 
+              <motion.span
                 className={`font-serif font-bold text-primary-800 transition-all duration-700 ${currentStyles.fontSize} group-hover:text-primary-900`}
-                style={{ 
-                  fontFamily: "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
-                  letterSpacing: '-0.02em'
+                style={{
+                  fontFamily:
+                    "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
+                  letterSpacing: "-0.02em",
                 }}
                 animate={{ opacity: 1, x: 0 }}
                 initial={{ opacity: 0, x: -20 }}
@@ -411,10 +403,10 @@ const Navigation: React.FC = () => {
               </motion.span>
             </motion.div>
 
-            {/* Enhanced Desktop Navigation Menu */}
+            {/* Desktop Navigation Menu */}
             <div className="hidden lg:flex items-center justify-center space-x-1">
               {menuItems.map((item, index) => {
-                if (item.type === 'dropdown') {
+                if (item.type === "dropdown") {
                   return (
                     <div
                       key={item.id}
@@ -423,26 +415,30 @@ const Navigation: React.FC = () => {
                       onMouseLeave={() => setOpenDropdown(null)}
                     >
                       <motion.button
-                        className={`relative ${currentStyles.buttonPadding} text-gray-700 hover:text-primary-700 transition-all duration-300 ${currentStyles.menuFontSize} flex items-center font-medium rounded-2xl hover:bg-primary-50/50 backdrop-blur-sm`}
-                        style={{ 
-                          fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
-                          fontWeight: 500
+                        className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize}`}
+                        style={{
+                          fontFamily:
+                            "'Cormorant Garamond', 'DM Serif Display', serif",
+                          fontWeight: 500,
                         }}
-                        whileHover={{ y: -1, scale: 1.02 }}
                         custom={index}
                         variants={menuItemVariants}
                         initial="initial"
                         animate="animate"
                       >
-                        <span className="relative z-10">{item.label}</span>
+                        <span>{item.label}</span>
                         <motion.div
-                          animate={{ rotate: openDropdown === item.id ? 180 : 0 }}
-                          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                          animate={{
+                            rotate: openDropdown === item.id ? 180 : 0,
+                          }}
+                          transition={{
+                            duration: 0.3,
+                            ease: [0.25, 0.46, 0.45, 0.94],
+                          }}
                         >
                           <ChevronDown className="h-4 w-4 ml-1" />
                         </motion.div>
                       </motion.button>
-                      
                       <AnimatePresence>
                         {openDropdown === item.id && (
                           <motion.div
@@ -450,21 +446,27 @@ const Navigation: React.FC = () => {
                             initial={{ opacity: 0, y: 15, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            transition={{
+                              duration: 0.3,
+                              ease: [0.25, 0.46, 0.45, 0.94],
+                            }}
                           >
                             {item.subItems?.map((subItem, subIndex) => (
                               <motion.div
                                 key={subItem.id}
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: subIndex * 0.05, duration: 0.3 }}
+                                transition={{
+                                  delay: subIndex * 0.05,
+                                  duration: 0.3,
+                                }}
                               >
                                 <Link
                                   to={subItem.path}
-                                  className="block px-6 py-4 text-sm text-gray-700 hover:bg-primary-50/70 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0"
-                                  style={{ 
+                                  className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
+                                  style={{
                                     fontFamily: "'Cormorant Garamond', serif",
-                                    fontWeight: 400
+                                    fontWeight: 400,
                                   }}
                                   onClick={() => setOpenDropdown(null)}
                                 >
@@ -476,59 +478,64 @@ const Navigation: React.FC = () => {
                         )}
                       </AnimatePresence>
                     </div>
-                  )
+                  );
                 }
                 return (
                   <motion.button
                     key={item.id}
-                    onClick={() => item.type === 'scroll' && item.section ? scrollToSection(item.section) : item.path ? handleLinkClick(item.path) : null}
-                    className={`relative ${currentStyles.buttonPadding} text-gray-700 hover:text-primary-700 transition-all duration-300 ${currentStyles.menuFontSize} font-medium rounded-2xl hover:bg-primary-50/50 backdrop-blur-sm`}
-                    style={{ 
-                      fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
-                      fontWeight: 500
+                    onClick={() =>
+                      item.type === "scroll" && item.section
+                        ? scrollToSection(item.section)
+                        : item.path
+                        ? handleLinkClick(item.path)
+                        : null
+                    }
+                    className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize}`}
+                    style={{
+                      fontFamily:
+                        "'Cormorant Garamond', 'DM Serif Display', serif",
+                      fontWeight: 500,
                     }}
-                    whileHover={{ y: -1, scale: 1.02 }}
+                    whileHover={{ y: -1 }}
                     custom={index}
                     variants={menuItemVariants}
                     initial="initial"
                     animate="animate"
                   >
-                    <span className="relative z-10">{item.label}</span>
-                    <motion.span
-                      className={`absolute bottom-1 left-1/2 h-0.5 bg-primary-500 rounded-full`}
-                      initial={{ width: 0, x: '-50%' }}
-                      whileHover={{ width: '70%' }}
-                      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    />
+                    <span>{item.label}</span>
                   </motion.button>
-                )
+                );
               })}
-              
-              {/* Enhanced CTA Button with chandelier elegance */}
+
+              {/* CTA Button */}
               <motion.button
                 onClick={handleCTAClick}
                 className={`bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 ml-8 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
-                style={{ 
+                style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontWeight: 600,
-                  boxShadow: '0 8px 25px -8px rgba(0, 123, 186, 0.4)'
+                  boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
                 }}
-                whileHover={{ 
+                whileHover={{
                   scale: animations.hoverScale,
                   y: -1,
-                  boxShadow: '0 12px 35px -8px rgba(0, 123, 186, 0.5)' 
+                  boxShadow: "0 12px 35px -8px rgba(0, 123, 186, 0.5)",
                 }}
                 whileTap={{ scale: 0.96 }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.8, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                transition={{
+                  delay: 0.8,
+                  duration: 0.6,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
               >
                 <span>{cta.text}</span>
                 <ChevronRight className="h-4 w-4" />
               </motion.button>
             </div>
 
-            {/* Enhanced Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle */}
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-3 relative z-50 rounded-2xl hover:bg-primary-50/50 transition-colors duration-200 mobile-menu-container backdrop-blur-sm"
@@ -542,7 +549,10 @@ const Navigation: React.FC = () => {
                     initial={{ rotate: -90, opacity: 0 }}
                     animate={{ rotate: 0, opacity: 1 }}
                     exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{
+                      duration: 0.3,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
                   >
                     <X className={`h-6 w-6 text-primary-700`} />
                   </motion.div>
@@ -552,7 +562,10 @@ const Navigation: React.FC = () => {
                     initial={{ rotate: 90, opacity: 0 }}
                     animate={{ rotate: 0, opacity: 1 }}
                     exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    transition={{
+                      duration: 0.3,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
                   >
                     <Menu className={`h-6 w-6 text-primary-700`} />
                   </motion.div>
@@ -563,7 +576,7 @@ const Navigation: React.FC = () => {
         </div>
       </motion.nav>
 
-      {/* Enhanced Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -576,7 +589,7 @@ const Navigation: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Mobile Menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -588,11 +601,11 @@ const Navigation: React.FC = () => {
           >
             <div className="px-6 py-6 space-y-2 max-h-[70vh] overflow-y-auto">
               {menuItems.map((item, index) => {
-                if (item.type === 'dropdown') {
+                if (item.type === "dropdown") {
                   return (
                     <div key={item.id} className="space-y-2">
                       <motion.div
-                        className="px-4 py-3 text-sm font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100"
+                        className="px-4 pt-3 pb-1 text-base font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-100 bg-transparent rounded-none"
                         style={{ fontFamily: "'Cormorant Garamond', serif" }}
                         custom={index}
                         variants={mobileMenuItemVariants}
@@ -605,27 +618,38 @@ const Navigation: React.FC = () => {
                         <motion.button
                           key={subItem.id}
                           onClick={() => handleLinkClick(subItem.path)}
-                          className="flex items-center justify-between w-full px-6 py-3 text-gray-700 hover:text-primary-700 hover:bg-primary-50/50 rounded-2xl transition-all duration-200 text-left"
-                          style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
+                          className="block w-full px-6 py-2 text-gray-700 hover:text-primary-700 transition-all duration-200 text-left bg-transparent rounded-none font-medium"
+                          style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontWeight: 500,
+                          }}
                           custom={index + subIndex}
                           variants={mobileMenuItemVariants}
                           initial="initial"
                           animate="animate"
                           whileHover={{ x: 4 }}
                         >
-                          <span className="font-medium">{subItem.label}</span>
-                          <ChevronRight className="h-4 w-4 opacity-50" />
+                          <span>{subItem.label}</span>
                         </motion.button>
                       ))}
                     </div>
-                  )
+                  );
                 }
                 return (
                   <motion.button
                     key={item.id}
-                    onClick={() => item.type === 'scroll' && item.section ? scrollToSection(item.section) : item.path ? handleLinkClick(item.path) : null}
-                    className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:text-primary-700 hover:bg-primary-50/50 rounded-2xl transition-all duration-200 font-medium"
-                    style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
+                    onClick={() =>
+                      item.type === "scroll" && item.section
+                        ? scrollToSection(item.section)
+                        : item.path
+                        ? handleLinkClick(item.path)
+                        : null
+                    }
+                    className="block w-full px-4 py-2 text-gray-700 hover:text-primary-700 transition-all duration-200 bg-transparent rounded-none font-medium text-left"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontWeight: 500,
+                    }}
                     custom={index}
                     variants={mobileMenuItemVariants}
                     initial="initial"
@@ -633,25 +657,28 @@ const Navigation: React.FC = () => {
                     whileHover={{ x: 4 }}
                   >
                     <span>{item.label}</span>
-                    <ChevronRight className="h-4 w-4 opacity-50" />
                   </motion.button>
-                )
+                );
               })}
-              
-              {/* Enhanced Mobile CTA Button */}
+
+              {/* CTA remains styled */}
               <motion.button
                 onClick={handleCTAClick}
                 className="w-full mt-6 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-2xl font-semibold text-center hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-lg"
-                style={{ 
+                style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontWeight: 600
+                  fontWeight: 600,
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                whileHover={{ 
-                  y: -2, 
-                  boxShadow: `0 12px 28px -8px rgba(0, 123, 186, 0.4)` 
+                transition={{
+                  delay: 0.4,
+                  duration: 0.4,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                whileHover={{
+                  y: -2,
+                  boxShadow: `0 12px 28px -8px rgba(0, 123, 186, 0.4)`,
                 }}
                 whileTap={{ y: 0 }}
               >

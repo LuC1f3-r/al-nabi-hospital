@@ -14,28 +14,28 @@ const Stats = React.memo(() => {
   const stats = useMemo(() => [
     {
       icon: Users,
-      number: 20000,
+      number: 50000,
       suffix: '+',
       label: 'Patients Treated',
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Award,
-      number: 15,
+      number: 30,
       suffix: '+',
       label: 'Years of Experience',
       color: 'from-emerald-500 to-teal-500'
     },
     {
       icon: Heart,
-      number: 120,
+      number: 60,
       suffix: '+',
       label: 'Doctors Onboard',
       color: 'from-rose-500 to-pink-500'
     },
     {
       icon: Activity,
-      number: 10000,
+      number: 25000,
       suffix: '+',
       label: 'Surgeries Performed',
       color: 'from-violet-500 to-purple-500'
