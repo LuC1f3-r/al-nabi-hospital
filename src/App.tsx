@@ -12,6 +12,7 @@ import BookingModal from './components/BookingModal';
 import ParallaxBackground from './components/ParallaxBackground';
 import './styles/background.css';
 import Layout from './components/Layout';
+import Chatbot from './components/Chatbot/Chatbot';
 
 const ServicePage = lazy(() => import('./components/ServicePage'));
 const Careers = lazy(() => import('./components/pages/Careers'));
@@ -49,6 +50,7 @@ function App() {
             </Routes>
           </Suspense>
           <BookingModal />
+          <Chatbot />
         </div>
       </ParallaxBackground>
     </Router>

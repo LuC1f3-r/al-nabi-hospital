@@ -1,10 +1,10 @@
-import React, { FC } from "react";
 import { motion } from "framer-motion";
 import { Calendar, Shield, Clock, Users } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
-import DotGrid from "./DotGrid";
+import heroVideo from "../assets/hero.mp4";
+import BlurText from "./BlurText";
 
-const Hero: FC = () => {
+const Hero = () => {
   const { setIsModalOpen } = useBookingStore();
 
   const scrollToServices = () => {
@@ -16,37 +16,27 @@ const Hero: FC = () => {
       id="hero"
       className="pt-16 min-h-screen relative overflow-hidden"
       style={{
-        background: `linear-gradient(
-      to bottom right,
-      hsla(0, 0%, 100%, 1) 0%,
-      hsla(319, 100%, 92%, 1) 12%,
-      hsla(319, 86%, 91%, 1) 30%,
-      hsla(280, 100%, 89%, 1) 50%,
-      hsla(216, 100%, 88%, 1) 100%
-    )`,
+        background: `linear-gradient(to right top, #e20070, #c52891, #9b41a8, #6651b1, #1859ad)`,
       }}
     >
-      {/* Animated DotGrid Background */}
-      <div className="absolute inset-0 w-full h-full z-0">
-        <DotGrid
-          dotSize={2}
-          gap={59}
-          baseColor="#330066"
-          activeColor="#FFFF00"
-          proximity={90}
-          shockRadius={190}
-          shockStrength={13}
-          resistance={1550}
-          returnDuration={2.1}
-        />
-
-        {/* Other overlays/gradients if any */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#004F74]/60 via-[#007BBA]/50 to-[#004F74]/60 z-10"></div>
-        {/* Background image or effects */}
-        <div className="w-full h-full bg-cover bg-center bg-no-repeat"></div>
+      {/* Background 4K Medical GIF */}
+      <div className="absolute inset-0 z-0">
+        {/* <div className="absolute inset-0 bg-gradient-to-br from-[#004F74]/60 via-[#007BBA]/50 to-[#004F74]/60 z-10"></div> */}
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            filter: "brightness(0.7) contrast(1.1)",
+          }}
+        >
+          <source src={heroVideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
 
-      {/* Hero Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="flex items-center justify-center min-h-[80vh] relative z-20">
           <motion.div
@@ -55,26 +45,43 @@ const Hero: FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="space-y-4">
-              <motion.h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                Trusted Healthcare,{" "}
-                <span className="text-[#38bdf8]">Compassionate Care</span>
-              </motion.h1>
-              <motion.p
-                className="text-xl text-blue-100 leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                Providing exceptional medical services with 24/7 emergency care,
-                experienced doctors, and a family-centered approach to your
-                health and wellness.
-              </motion.p>
+            <div className="space-y-4 flex flex-col items-center justify-center">
+              <div className="flex flex-wrap justify-center">
+                <BlurText
+                  text="Trusted Healthcare,"
+                  animateBy="words"
+                  direction="top"
+                  delay={150}
+                  stepDuration={0.35}
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
+                />
+                <BlurText
+                  text="Compassionate Care"
+                  animateBy="words"
+                  direction="top"
+                  delay={150}
+                  stepDuration={0.35}
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#38bdf8] leading-tight"
+                />
+              </div>
+                <div className="flex flex-wrap justify-center text-center w-full items-center">
+                <BlurText
+                  text="Providing exceptional medical services with 24/7 emergency care, experienced doctors, and"
+                  animateBy="words"
+                  direction="bottom"
+                  delay={100}
+                  stepDuration={0.25}
+                  className="text-xl text-blue-100 leading-relaxed text-center mx-auto"
+                />
+                <BlurText
+                  text="family-centered approach to your health and wellness."
+                  animateBy="words"
+                  direction="bottom"
+                  delay={100}
+                  stepDuration={0.25}
+                  className="text-xl text-blue-100 leading-relaxed text-center mx-auto"
+                />
+                </div>
             </div>
 
             {/* Features */}
