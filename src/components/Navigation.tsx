@@ -10,6 +10,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
+import "../styles/BookAppointment.css";
 
 // Type definitions
 interface MenuItem {
@@ -100,7 +101,7 @@ const NAVIGATION_CONFIG: NavigationConfig = {
       iconSize: "h-7 w-7",
       fontSize: "text-lg",
       menuFontSize: "text-sm",
-      buttonPadding: "px-4 py-2.5",
+      buttonPadding: "px-3 py-2",
       borderRadius: "24px",
       topOffset: "16px",
       width: "95%",
@@ -111,7 +112,7 @@ const NAVIGATION_CONFIG: NavigationConfig = {
       iconSize: "h-8 w-8",
       fontSize: "text-xl",
       menuFontSize: "text-base",
-      buttonPadding: "px-5 py-3",
+      buttonPadding: "px-4 py-2.5",
       borderRadius: "28px",
       topOffset: "12px",
       width: "96%",
@@ -316,7 +317,7 @@ const Navigation: React.FC = () => {
 
   // CLEAN SIMPLE LINK STYLES FOR NAV MENU ITEMS
   const navTextLinkBase = `
-    relative px-3 py-1 text-gray-700 hover:text-primary-700 font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none
+    relative px-1 py-1 text-gray-700 hover:text-primary-700 font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none
   `;
   const navTextLinkUnderline = `
     after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary-300 hover:after:bg-primary-700 after:transition-all after:duration-300
@@ -359,11 +360,13 @@ const Navigation: React.FC = () => {
           }}
         />
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
-          <div className={`flex justify-between items-center transition-all duration-700 ${currentStyles.height}`}>
+        <div className="max-w-8xl mx-auto px-10 lg:px-10 w-full">
+          <div
+            className={`flex items-center transition-all duration-700 ${currentStyles.height}`}
+          >
             {/* Logo Section */}
             <motion.div
-              className="flex items-center space-x-3 cursor-pointer group"
+              className="flex items-center space-x-2 cursor-pointer group"
               onClick={handleLogoClick}
               whileHover={{ scale: animations.hoverScale }}
               whileTap={{ scale: 0.96 }}
@@ -404,136 +407,146 @@ const Navigation: React.FC = () => {
             </motion.div>
 
             {/* Desktop Navigation Menu */}
-            <div className="hidden lg:flex items-center justify-center space-x-1">
-              {menuItems.map((item, index) => {
-                if (item.type === "dropdown") {
-                  return (
-                    <div
-                      key={item.id}
-                      className="relative group"
-                      onMouseEnter={() => setOpenDropdown(item.id)}
-                      onMouseLeave={() => setOpenDropdown(null)}
-                    >
-                      <motion.button
-                        className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize}`}
-                        style={{
-                          fontFamily:
-                            "'Cormorant Garamond', 'DM Serif Display', serif",
-                          fontWeight: 500,
-                        }}
-                        custom={index}
-                        variants={menuItemVariants}
-                        initial="initial"
-                        animate="animate"
+            <div className="hidden lg:flex flex-1 items-center justify-center">
+              <div className="flex items-center space-x-6">
+                {menuItems.map((item, index) => {
+                  if (item.type === "dropdown") {
+                    return (
+                      <div
+                        key={item.id}
+                        className="relative group"
+                        onMouseEnter={() => setOpenDropdown(item.id)}
+                        onMouseLeave={() => setOpenDropdown(null)}
                       >
-                        <span>{item.label}</span>
-                        <motion.div
-                          animate={{
-                            rotate: openDropdown === item.id ? 180 : 0,
+                        <motion.button
+                          className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize}`}
+                          style={{
+                            fontFamily:
+                              "'Cormorant Garamond', 'DM Serif Display', serif",
+                            fontWeight: 500,
                           }}
-                          transition={{
-                            duration: 0.3,
-                            ease: [0.25, 0.46, 0.45, 0.94],
-                          }}
+                          custom={index}
+                          variants={menuItemVariants}
+                          initial="initial"
+                          animate="animate"
                         >
-                          <ChevronDown className="h-4 w-4 ml-1" />
-                        </motion.div>
-                      </motion.button>
-                      <AnimatePresence>
-                        {openDropdown === item.id && (
+                          <span>{item.label}</span>
                           <motion.div
-                            className="absolute top-full left-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 overflow-hidden z-50"
-                            initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                            animate={{
+                              rotate: openDropdown === item.id ? 180 : 0,
+                            }}
                             transition={{
                               duration: 0.3,
                               ease: [0.25, 0.46, 0.45, 0.94],
                             }}
                           >
-                            {item.subItems?.map((subItem, subIndex) => (
-                              <motion.div
-                                key={subItem.id}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{
-                                  delay: subIndex * 0.05,
-                                  duration: 0.3,
-                                }}
-                              >
-                                <Link
-                                  to={subItem.path}
-                                  className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
-                                  style={{
-                                    fontFamily: "'Cormorant Garamond', serif",
-                                    fontWeight: 400,
-                                  }}
-                                  onClick={() => setOpenDropdown(null)}
-                                >
-                                  {subItem.label}
-                                </Link>
-                              </motion.div>
-                            ))}
+                            <ChevronDown className="h-4 w-4 ml-1" />
                           </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                        </motion.button>
+                        <AnimatePresence>
+                          {openDropdown === item.id && (
+                            <motion.div
+                              className="absolute top-full left-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 overflow-hidden z-50"
+                              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                              transition={{
+                                duration: 0.3,
+                                ease: [0.25, 0.46, 0.45, 0.94],
+                              }}
+                            >
+                              {item.subItems?.map((subItem, subIndex) => (
+                                <motion.div
+                                  key={subItem.id}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{
+                                    delay: subIndex * 0.05,
+                                    duration: 0.3,
+                                  }}
+                                >
+                                  <Link
+                                    to={subItem.path}
+                                    className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
+                                    style={{
+                                      fontFamily: "'Cormorant Garamond', serif",
+                                      fontWeight: 400,
+                                    }}
+                                    onClick={() => setOpenDropdown(null)}
+                                  >
+                                    {subItem.label}
+                                  </Link>
+                                </motion.div>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+                  return (
+                    <motion.button
+                      key={item.id}
+                      onClick={() =>
+                        item.type === "scroll" && item.section
+                          ? scrollToSection(item.section)
+                          : item.path
+                          ? handleLinkClick(item.path)
+                          : null
+                      }
+                      className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize}`}
+                      style={{
+                        fontFamily:
+                          "'Cormorant Garamond', 'DM Serif Display', serif",
+                        fontWeight: 500,
+                      }}
+                      whileHover={{ y: -1 }}
+                      custom={index}
+                      variants={menuItemVariants}
+                      initial="initial"
+                      animate="animate"
+                    >
+                      <span>{item.label}</span>
+                    </motion.button>
                   );
-                }
-                return (
-                  <motion.button
-                    key={item.id}
-                    onClick={() =>
-                      item.type === "scroll" && item.section
-                        ? scrollToSection(item.section)
-                        : item.path
-                        ? handleLinkClick(item.path)
-                        : null
-                    }
-                    className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize}`}
-                    style={{
-                      fontFamily:
-                        "'Cormorant Garamond', 'DM Serif Display', serif",
-                      fontWeight: 500,
-                    }}
-                    whileHover={{ y: -1 }}
-                    custom={index}
-                    variants={menuItemVariants}
-                    initial="initial"
-                    animate="animate"
-                  >
-                    <span>{item.label}</span>
-                  </motion.button>
-                );
-              })}
-
-              {/* CTA Button */}
-              <motion.button
-                onClick={handleCTAClick}
-                className={`bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 ml-8 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontWeight: 600,
-                  boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
-                }}
-                whileHover={{
-                  scale: animations.hoverScale,
-                  y: -1,
-                  boxShadow: "0 12px 35px -8px rgba(0, 123, 186, 0.5)",
-                }}
-                whileTap={{ scale: 0.96 }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  delay: 0.8,
-                  duration: 0.6,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-              >
-                <span>{cta.text}</span>
-                <ChevronRight className="h-4 w-4" />
-              </motion.button>
+                })}
+              </div>
             </div>
+
+            {/* CTA Button */}
+            <motion.button
+              onClick={handleCTAClick}
+              className="animated-button"
+              whileHover={{
+                scale: animations.hoverScale ?? 1.05,
+                y: -1,
+              }}
+              whileTap={{ scale: 0.96 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                delay: 0.8,
+                duration: 0.6,
+                ease: [0.25, 0.46, 0.45, 0.94],
+              }}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="arr-2"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z" />
+              </svg>
+              <span className="text">{cta.text}</span>
+              <span className="circle"></span>
+              <svg
+                viewBox="0 0 24 24"
+                className="arr-1"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z" />
+              </svg>
+            </motion.button>
 
             {/* Mobile Menu Toggle */}
             <motion.button
