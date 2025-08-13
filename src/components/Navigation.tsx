@@ -10,7 +10,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
-import "../styles/BookAppointment.css";
 
 // Type definitions
 interface MenuItem {
@@ -516,10 +515,16 @@ const Navigation: React.FC = () => {
             {/* CTA Button */}
             <motion.button
               onClick={handleCTAClick}
-              className="animated-button"
+              className={`hidden lg:flex bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 600,
+                boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
+              }}
               whileHover={{
-                scale: animations.hoverScale ?? 1.05,
+                scale: animations.hoverScale,
                 y: -1,
+                boxShadow: "0 12px 35px -8px rgba(0, 123, 186, 0.5)",
               }}
               whileTap={{ scale: 0.96 }}
               initial={{ opacity: 0, scale: 0.8 }}
@@ -530,61 +535,49 @@ const Navigation: React.FC = () => {
                 ease: [0.25, 0.46, 0.45, 0.94],
               }}
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="arr-2"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z" />
-              </svg>
-              <span className="text">{cta.text}</span>
-              <span className="circle"></span>
-              <svg
-                viewBox="0 0 24 24"
-                className="arr-1"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z" />
-              </svg>
+              <span>{cta.text}</span>
+              <ChevronRight className="h-4 w-4" />
             </motion.button>
 
             {/* Mobile Menu Toggle */}
-            <motion.button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-3 relative z-50 rounded-2xl hover:bg-primary-50/50 transition-colors duration-200 mobile-menu-container backdrop-blur-sm"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <AnimatePresence mode="wait">
-                {isMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{
-                      duration: 0.3,
-                      ease: [0.25, 0.46, 0.45, 0.94],
-                    }}
-                  >
-                    <X className={`h-6 w-6 text-primary-700`} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{
-                      duration: 0.3,
-                      ease: [0.25, 0.46, 0.45, 0.94],
-                    }}
-                  >
-                    <Menu className={`h-6 w-6 text-primary-700`} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+            <div className="flex items-center ml-auto">
+              <motion.button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="lg:hidden p-3 relative z-50 rounded-2xl hover:bg-primary-50/50 transition-colors duration-200 mobile-menu-container backdrop-blur-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <AnimatePresence mode="wait">
+                  {isMenuOpen ? (
+                    <motion.div
+                      key="close"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      }}
+                    >
+                      <X className="h-6 w-6 text-primary-700" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="menu"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      }}
+                    >
+                      <Menu className="h-6 w-6 text-primary-700" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            </div>
           </div>
         </div>
       </motion.nav>
