@@ -87,7 +87,12 @@ const Contact = () => {
                     <h4 className="font-semibold text-[#004F74] mb-1">Hours</h4>
                     <p className="text-gray-600">
                       Mon - Fri: 8:00 AM - 8:00 PM<br />
+                      Tue - Fri: 8:00 AM - 8:00 PM<br />
+                      Wed - Fri: 8:00 AM - 8:00 PM<br />
+                      Thur - Fri: 8:00 AM - 8:00 PM<br />
+                      Fri - Fri: 8:00 AM - 8:00 PM<br />
                       Sat - Sun: 9:00 AM - 6:00 PM<br />
+                      Sun - Fri: 8:00 AM - 8:00 PM<br />
                       <span className="text-[#007BBA] font-medium">Emergency: 24/7</span>
                     </p>
                   </div>
@@ -95,18 +100,23 @@ const Contact = () => {
               </div>
             </div>
 
-            {/* Map Placeholder */}
-            <div className="bg-[#F6FAFD] rounded-2xl h-64 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="h-12 w-12 text-[#007BBA] mx-auto mb-4" />
-                <h4 className="font-semibold text-[#004F74] mb-2">Interactive Map</h4>
-                <p className="text-gray-600">Bijapur Healthcare City</p>
-              </div>
+            {/* Google Map Embed */}
+            <div className="bg-[#F6FAFD] rounded-2xl overflow-hidden h-64">
+              <iframe
+              title="Al Nabi Hospital Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d450.07030985858944!2d75.73039703711392!3d16.82271180678271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc65571f0f051cb%3A0x274037d5d8953ade!2sAl%20Nabi%20Hospital!5e0!3m2!1sen!2sin!4v1755198084646!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
-          </div>
+            </div>
 
-          {/* Contact Form */}
-          <div className="bg-[#F6FAFD] rounded-3xl p-8">
+            {/* Contact Form */}
+            <div className="bg-[#F6FAFD] rounded-3xl p-8">
             <div className="flex items-center space-x-3 mb-6">
               <MessageCircle className="h-6 w-6 text-[#007BBA]" />
               <h3 className="text-2xl font-semibold text-[#004F74]">Send us a Message</h3>
