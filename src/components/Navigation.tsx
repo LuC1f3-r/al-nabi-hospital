@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence, Variants, useReducedMotion } from "framer-motion";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import {
-  Menu,
-  X,
-  Heart,
-  ChevronRight,
-  DivideIcon as LucideIcon,
-  ChevronDown,
-} from "lucide-react";
+import { Menu, X, Heart, ChevronRight, ChevronDown } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
 
-// Type definitions
+// --- Type Definitions ---
 interface MenuItem {
   id: string;
   label: string;
@@ -27,7 +20,7 @@ interface SubMenuItem {
 }
 interface BrandConfig {
   name: string;
-  icon: typeof LucideIcon;
+  icon: typeof Heart;
 }
 interface CTAConfig {
   text: string;
@@ -64,7 +57,7 @@ interface NavigationConfig {
     default: StyleConfig;
   };
 }
-// Configuration
+// --- Config ---
 const NAVIGATION_CONFIG: NavigationConfig = {
   brand: {
     name: "Al Nabi Hospital",
@@ -75,12 +68,7 @@ const NAVIGATION_CONFIG: NavigationConfig = {
     { id: "about", label: "About Us", type: "scroll", section: "about" },
     { id: "services", label: "Services", type: "scroll", section: "services" },
     { id: "doctors", label: "Our Doctors", type: "scroll", section: "doctors" },
-    {
-      id: "testimonials",
-      label: "Testimonials",
-      type: "scroll",
-      section: "testimonials",
-    },
+    { id: "testimonials", label: "Testimonials", type: "scroll", section: "testimonials" },
     { id: "contact", label: "Contact", type: "scroll", section: "contact" },
   ],
   cta: {
@@ -96,24 +84,24 @@ const NAVIGATION_CONFIG: NavigationConfig = {
   },
   styles: {
     scrolled: {
-      height: "h-16",
-      iconSize: "h-7 w-7",
-      fontSize: "text-lg",
+      height: "h-12",
+      iconSize: "h-6 w-6",
+      fontSize: "text-sm",
       menuFontSize: "text-sm",
-      buttonPadding: "px-3 py-2",
-      borderRadius: "24px",
-      topOffset: "16px",
-      width: "95%",
-      leftOffset: "2.5%",
+      buttonPadding: "px-2 py-1",
+      borderRadius: "9999px",
+      topOffset: "22px",
+      width: "40%",
+      leftOffset: "30%",
     },
     default: {
-      height: "h-20",
+      height: "h-16",
       iconSize: "h-8 w-8",
       fontSize: "text-xl",
       menuFontSize: "text-base",
       buttonPadding: "px-4 py-2.5",
       borderRadius: "28px",
-      topOffset: "12px",
+      topOffset: "22px",
       width: "96%",
       leftOffset: "2%",
     },
@@ -121,11 +109,15 @@ const NAVIGATION_CONFIG: NavigationConfig = {
 };
 
 const Navigation: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [scrolled, setScrolled] = useState<boolean>(false);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [visible, setVisible] = useState<boolean>(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false); // nav bar hidden on scroll down
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState("home"); // scrollspy highlight
+  const [isMobile, setIsMobile] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
+
   const { setIsModalOpen } = useBookingStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -133,20 +125,44 @@ const Navigation: React.FC = () => {
   const { brand, menuItems, cta, animations, styles } = NAVIGATION_CONFIG;
   const currentStyles = scrolled ? styles.scrolled : styles.default;
 
+  // --- track viewport size for mobile/iPad tweaks ---
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // --- Scroll handling for shrink/hide nav + progress ---
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const scrollY = window.scrollY;
-          const isScrolled = scrollY > animations.scrollThreshold;
-          setScrolled(isScrolled);
-          setVisible(true);
-          const progress = Math.min(
-            scrollY / animations.maxScrollForProgress,
+          setScrolled(scrollY > animations.scrollThreshold);
+
+          // Real page progress (0..1)
+          const docMax = Math.max(
+            document.documentElement.scrollHeight - window.innerHeight,
             1
           );
-          setScrollProgress(progress);
+          setScrollProgress(Math.min(scrollY / docMax, 1));
+
+          // Hide nav on scroll down, show on up (mobile/iPad only)
+          if (isMobile) {
+            setHidden(scrollY > lastScrollY && scrollY > 80);
+          } else {
+            setHidden(false); // desktop always visible
+          }
+
+          // If menu is open and user scrolls page, close it (safety)
+          if (isMenuOpen && Math.abs(scrollY - lastScrollY) > 8) {
+            setIsMenuOpen(false);
+          }
+
+          lastScrollY = scrollY;
           ticking = false;
         });
         ticking = true;
@@ -154,12 +170,37 @@ const Navigation: React.FC = () => {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [animations.scrollThreshold, animations.maxScrollForProgress]);
+  }, [animations.scrollThreshold, isMobile, isMenuOpen]);
 
+  // --- Scrollspy for active section highlight ---
+  useEffect(() => {
+    const handleScrollSpy = () => {
+      const buffer = 120;
+      let bestSection = "home";
+      let bestOffset = Number.POSITIVE_INFINITY;
+      menuItems.forEach((item) => {
+        if (item.type === "scroll" && item.section) {
+          const el = document.getElementById(item.section);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top >= -buffer && rect.top < bestOffset) {
+              bestOffset = rect.top;
+              bestSection = item.section;
+            }
+          }
+        }
+      });
+      setActiveSection(bestSection);
+    };
+    window.addEventListener("scroll", handleScrollSpy, { passive: true });
+    return () => window.removeEventListener("scroll", handleScrollSpy);
+  }, [menuItems]);
+
+  // --- Click outside mobile menu to close ---
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (isMenuOpen && !target.closest(".mobile-menu-container")) {
+      if (isMenuOpen && !target.closest(".mobile-menu-container") && !target.closest(".mobile-menu-toggle")) {
         setIsMenuOpen(false);
       }
     };
@@ -175,18 +216,15 @@ const Navigation: React.FC = () => {
     };
   }, [isMenuOpen]);
 
+  // --- Scroll to section logic ---
   const scrollToSection = (sectionId: string): void => {
     const performScroll = (): void => {
       const element = document.getElementById(sectionId);
       if (element) {
         const headerOffset = 100;
         const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition =
-          elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -220,195 +258,188 @@ const Navigation: React.FC = () => {
     setIsMenuOpen(false);
   };
 
-  const navVariants: Variants = {
-    initial: {
-      y: -120,
-      opacity: 0,
-      scale: 0.95,
-      filter: "blur(10px)",
-    },
-    animate: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        ...animations.springConfig,
-        duration: 1.2,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
-  };
-  const menuItemVariants: Variants = {
-    initial: { opacity: 0, y: -15, scale: 0.95 },
-    animate: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        delay: animations.staggerDelay * index + 0.3,
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    }),
-  };
+  // --- Framer Motion Variants (respect reduced motion) ---
+  const navVariants: Variants = reduceMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 } }
+    : {
+        initial: { y: -120, opacity: 0, scale: 0.98, filter: "blur(6px)" },
+        animate: {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          filter: "blur(0px)",
+          transition: { type: "spring", ...animations.springConfig, duration: 0.9 },
+        },
+      };
+
+  const menuItemVariants: Variants = reduceMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 } }
+    : {
+        initial: { opacity: 0, y: -10 },
+        animate: (index: number) => ({
+          opacity: 1,
+          y: 0,
+          transition: { delay: animations.staggerDelay * index + 0.2, duration: 0.4 },
+        }),
+      };
+
+  // Slide-in drawer for mobile menu
   const mobileMenuVariants: Variants = {
-    initial: { opacity: 0, height: 0, scale: 0.95 },
-    animate: {
-      opacity: 1,
-      height: "auto",
-      scale: 1,
-      transition: {
-        duration: 0.4,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
-    exit: {
-      opacity: 0,
-      height: 0,
-      scale: 0.95,
-      transition: {
-        duration: 0.3,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
-  };
-  const mobileMenuItemVariants: Variants = {
-    initial: { opacity: 0, x: -20 },
-    animate: (index: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: 0.05 * index,
-        duration: 0.4,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    }),
+    initial: { opacity: 0, x: "100%" },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.35 } },
+    exit: { opacity: 0, x: "100%", transition: { duration: 0.25 } },
   };
 
-  const getNavStyles = (): React.CSSProperties => ({
-    background: `
-      linear-gradient(135deg, 
-        rgba(255, 255, 255, ${scrolled ? "0.95" : "0.85"}) 0%,
-        rgba(255, 255, 255, ${scrolled ? "0.90" : "0.75"}) 100%
-      )
-    `,
-    backdropFilter: `blur(${scrolled ? "20px" : "16px"}) saturate(180%)`,
-    borderRadius: currentStyles.borderRadius,
-    border: `1px solid rgba(255, 255, 255, ${scrolled ? "0.4" : "0.3"})`,
-    boxShadow: scrolled
-      ? `
-          0 25px 50px -12px rgba(0, 0, 0, 0.08),
-          0 8px 32px rgba(0, 0, 0, 0.04),
-          0 0 0 1px rgba(255, 255, 255, 0.05),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        `
-      : `
-          0 20px 40px -8px rgba(0, 0, 0, 0.06),
-          0 8px 24px rgba(0, 0, 0, 0.04),
-          0 0 0 1px rgba(255, 255, 255, 0.05),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        `,
-  });
+  const mobileMenuItemVariants: Variants = reduceMotion
+    ? { initial: { opacity: 0 }, animate: { opacity: 1 } }
+    : {
+        initial: { opacity: 0, x: 10 },
+        animate: (index: number) => ({
+          opacity: 1,
+          x: 0,
+          transition: { delay: 0.04 * index, duration: 0.25 },
+        }),
+      };
 
-  const BrandIcon: typeof LucideIcon = brand.icon;
+  const getNavStyles = (): React.CSSProperties => {
+    const blur = scrolled ? (isMobile ? 12 : 20) : isMobile ? 8 : 16;
+    const boxShadowMobile = scrolled
+      ? "0 16px 32px -12px rgba(0,0,0,0.10), 0 0 0 1px rgba(255,255,255,0.05)"
+      : "0 12px 24px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.05)";
+    const boxShadowDesktop = scrolled
+      ? "0 25px 50px -12px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.05)"
+      : "0 20px 40px -8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.05)";
+    return {
+      background: `
+        linear-gradient(135deg, 
+          rgba(255, 255, 255, ${scrolled ? "0.95" : "0.85"}) 0%,
+          rgba(255, 255, 255, ${scrolled ? "0.90" : "0.75"}) 100%
+        )
+      `,
+      backdropFilter: `blur(${blur}px) saturate(180%)`,
+      borderRadius: currentStyles.borderRadius,
+      border: `1px solid rgba(255, 255, 255, ${scrolled ? "0.4" : "0.3"})`,
+      boxShadow: isMobile ? boxShadowMobile : boxShadowDesktop,
+      willChange: "transform, opacity",
+    };
+  };
 
-  // CLEAN SIMPLE LINK STYLES FOR NAV MENU ITEMS
+  const BrandIcon: typeof Heart = brand.icon;
+
+  // --- Underline style for scrollspy-active link ---
   const navTextLinkBase = `
-    relative px-1 py-1 text-gray-700 hover:text-primary-700 font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none
+    relative px-1 py-1 text-gray-700 hover:text-primary-700 font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none group
   `;
   const navTextLinkUnderline = `
-    after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 hover:after:w-full after:h-[2px] after:bg-primary-300 hover:after:bg-primary-700 after:transition-all after:duration-300
+    after:content-['']
+    after:absolute
+    after:left-0
+    after:bottom-0
+    after:w-0
+    group-hover:after:w-full
+    after:h-[2px]
+    after:bg-primary-300
+    group-hover:after:bg-primary-700
+    after:transition-all
+    after:duration-300
+  `;
+  const navTextLinkActive = `
+    text-primary-800
+    font-bold
+    after:w-full
+    after:bg-primary-700
   `;
 
+  // --- Render ---
   return (
     <>
+      {/* Tiny scroll progress bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-0.5 bg-primary-600/70 z-[60] origin-left"
+        style={{ scaleX: scrollProgress }}
+        aria-hidden="true"
+      />
+
+      {/* Navigation Bar */}
       <motion.nav
-        className="fixed z-50 transition-all duration-700 ease-out"
-        variants={navVariants}
-        initial="initial"
-        animate="animate"
+        className={`fixed z-50 transition-transform duration-500 ease-out ${hidden ? "pointer-events-none" : ""}`}
         style={{
           ...getNavStyles(),
           top: currentStyles.topOffset,
           left: currentStyles.leftOffset,
           right: scrolled ? "2.5%" : "2%",
           width: currentStyles.width,
+          transform: hidden ? "translateY(-140%)" : "translateY(0)",
         }}
+        role="navigation"
+        aria-label="Main Navigation"
+        variants={navVariants}
+        initial="initial"
+        animate="animate"
       >
         <motion.div
           className="absolute inset-0 -z-10"
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{
-            opacity: scrolled ? 0.6 : 0.4,
-            scale: scrolled ? 1.02 : 1.05,
+            opacity: scrolled ? 0.55 : 0.4,
+            scale: scrolled ? 1.005 : 1.02,
           }}
-          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.5 }}
           style={{
             background: `
               radial-gradient(ellipse 80% 60% at 50% -20%, 
-                rgba(0, 123, 186, 0.15) 0%,
-                rgba(0, 123, 186, 0.08) 40%,
+                rgba(0, 123, 186, 0.12) 0%,
+                rgba(0, 123, 186, 0.06) 40%,
                 transparent 70%
               )
             `,
             borderRadius: currentStyles.borderRadius,
-            transform: "translateY(8px)",
-            filter: "blur(12px)",
+            transform: "translateY(6px)",
+            filter: "blur(10px)",
+            willChange: "opacity, transform",
           }}
         />
 
         <div className="max-w-8xl mx-auto px-10 lg:px-10 w-full">
-          <div
-            className={`flex items-center transition-all duration-700 ${currentStyles.height}`}
-          >
-            {/* Logo Section */}
-            <motion.div
-              className="flex items-center space-x-2 cursor-pointer group"
-              onClick={handleLogoClick}
-              whileHover={{ scale: animations.hoverScale }}
-              whileTap={{ scale: 0.96 }}
-            >
-              <motion.div
-                className="relative"
-                animate={{
-                  scale: scrolled ? 0.9 : 1,
-                  rotate: scrolled ? -2 : 0,
-                }}
-                transition={{
-                  type: "spring",
-                  ...animations.springConfig,
-                  duration: 0.7,
-                }}
-              >
-                <BrandIcon
-                  className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`}
-                />
+          <div className={`flex items-center transition-all duration-700 ${currentStyles.height}`}>
+            {/* Logo Section - hide on scroll */}
+            <AnimatePresence>
+              {!scrolled && (
                 <motion.div
-                  className="absolute inset-0 bg-primary-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                  initial={false}
-                />
-              </motion.div>
-              <motion.span
-                className={`font-serif font-bold text-primary-800 transition-all duration-700 ${currentStyles.fontSize} group-hover:text-primary-900`}
-                style={{
-                  fontFamily:
-                    "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
-                  letterSpacing: "-0.02em",
-                }}
-                animate={{ opacity: 1, x: 0 }}
-                initial={{ opacity: 0, x: -20 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-              >
-                {brand.name}
-              </motion.span>
-            </motion.div>
+                  initial={{ opacity: 0, x: -14 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -14 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex items-center space-x-2 cursor-pointer group"
+                  onClick={handleLogoClick}
+                  whileHover={{ scale: animations.hoverScale }}
+                  whileTap={{ scale: 0.96 }}
+                >
+                  <motion.div className="relative">
+                    <BrandIcon className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`} />
+                    <motion.div
+                      className="absolute inset-0 bg-primary-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                      initial={false}
+                    />
+                  </motion.div>
+                  <motion.span
+                    className={`font-serif font-bold text-primary-800 transition-all duration-700 ${currentStyles.fontSize} group-hover:text-primary-900`}
+                    style={{
+                      fontFamily: "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    {brand.name}
+                  </motion.span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Desktop Navigation Menu */}
             <div className="hidden lg:flex flex-1 items-center justify-center">
               <div className="flex items-center space-x-6">
                 {menuItems.map((item, index) => {
+                  const isActive = item.type === "scroll" && item.section === activeSection;
                   if (item.type === "dropdown") {
                     return (
                       <div
@@ -418,10 +449,9 @@ const Navigation: React.FC = () => {
                         onMouseLeave={() => setOpenDropdown(null)}
                       >
                         <motion.button
-                          className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize}`}
+                          className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
                           style={{
-                            fontFamily:
-                              "'Cormorant Garamond', 'DM Serif Display', serif",
+                            fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
                             fontWeight: 500,
                           }}
                           custom={index}
@@ -431,13 +461,8 @@ const Navigation: React.FC = () => {
                         >
                           <span>{item.label}</span>
                           <motion.div
-                            animate={{
-                              rotate: openDropdown === item.id ? 180 : 0,
-                            }}
-                            transition={{
-                              duration: 0.3,
-                              ease: [0.25, 0.46, 0.45, 0.94],
-                            }}
+                            animate={{ rotate: openDropdown === item.id ? 180 : 0 }}
+                            transition={{ duration: 0.25 }}
                           >
                             <ChevronDown className="h-4 w-4 ml-1" />
                           </motion.div>
@@ -446,31 +471,22 @@ const Navigation: React.FC = () => {
                           {openDropdown === item.id && (
                             <motion.div
                               className="absolute top-full left-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 overflow-hidden z-50"
-                              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                              initial={{ opacity: 0, y: 12, scale: 0.98 }}
                               animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                              transition={{
-                                duration: 0.3,
-                                ease: [0.25, 0.46, 0.45, 0.94],
-                              }}
+                              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+                              transition={{ duration: 0.2 }}
                             >
                               {item.subItems?.map((subItem, subIndex) => (
                                 <motion.div
                                   key={subItem.id}
-                                  initial={{ opacity: 0, x: -10 }}
+                                  initial={{ opacity: 0, x: -8 }}
                                   animate={{ opacity: 1, x: 0 }}
-                                  transition={{
-                                    delay: subIndex * 0.05,
-                                    duration: 0.3,
-                                  }}
+                                  transition={{ delay: subIndex * 0.04, duration: 0.2 }}
                                 >
                                   <Link
                                     to={subItem.path}
                                     className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
-                                    style={{
-                                      fontFamily: "'Cormorant Garamond', serif",
-                                      fontWeight: 400,
-                                    }}
+                                    style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
                                     onClick={() => setOpenDropdown(null)}
                                   >
                                     {subItem.label}
@@ -493,10 +509,9 @@ const Navigation: React.FC = () => {
                           ? handleLinkClick(item.path)
                           : null
                       }
-                      className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize}`}
+                      className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
                       style={{
-                        fontFamily:
-                          "'Cormorant Garamond', 'DM Serif Display', serif",
+                        fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
                         fontWeight: 500,
                       }}
                       whileHover={{ y: -1 }}
@@ -504,6 +519,7 @@ const Navigation: React.FC = () => {
                       variants={menuItemVariants}
                       initial="initial"
                       animate="animate"
+                      aria-current={isActive ? "page" : undefined}
                     >
                       <span>{item.label}</span>
                     </motion.button>
@@ -512,101 +528,89 @@ const Navigation: React.FC = () => {
               </div>
             </div>
 
-            {/* CTA Button */}
-            <motion.button
-              onClick={handleCTAClick}
-              className={`hidden lg:flex bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontWeight: 600,
-                boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
-              }}
-              whileHover={{
-                scale: animations.hoverScale,
-                y: -1,
-                boxShadow: "0 12px 35px -8px rgba(0, 123, 186, 0.5)",
-              }}
-              whileTap={{ scale: 0.96 }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                delay: 0.8,
-                duration: 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94],
-              }}
-            >
-              <span>{cta.text}</span>
-              <ChevronRight className="h-4 w-4" />
-            </motion.button>
+            {/* CTA Button - hide on scroll */}
+            <AnimatePresence>
+              {!scrolled && (
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.25 }}
+                  onClick={handleCTAClick}
+                  className={`hidden lg:flex bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontWeight: 600,
+                    boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
+                  }}
+                  whileHover={{ scale: animations.hoverScale, y: -1 }}
+                  whileTap={{ scale: 0.96 }}
+                >
+                  <span>{cta.text}</span>
+                  <ChevronRight className="h-4 w-4" />
+                </motion.button>
+              )}
+            </AnimatePresence>
 
-            {/* Mobile Menu Toggle */}
-            <div className="flex items-center ml-auto">
-              <motion.button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-3 relative z-50 rounded-2xl hover:bg-primary-50/50 transition-colors duration-200 mobile-menu-container backdrop-blur-sm"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <AnimatePresence mode="wait">
-                  {isMenuOpen ? (
-                    <motion.div
-                      key="close"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{
-                        duration: 0.3,
-                        ease: [0.25, 0.46, 0.45, 0.94],
-                      }}
-                    >
-                      <X className="h-6 w-6 text-primary-700" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="menu"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
-                      transition={{
-                        duration: 0.3,
-                        ease: [0.25, 0.46, 0.45, 0.94],
-                      }}
-                    >
-                      <Menu className="h-6 w-6 text-primary-700" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
-            </div>
+            {/* (Disabled) In-nav Mobile Toggle – replaced by floating toggle */}
+            <div className="hidden items-center ml-auto" />
           </div>
         </div>
       </motion.nav>
+
+      {/* Floating Hamburger Toggle (mobile & iPad) - always visible */}
+      <motion.button
+        onClick={() => setIsMenuOpen((v) => !v)}
+        className="mobile-menu-toggle fixed lg:hidden top-4 right-4 w-12 h-12 flex justify-center items-center rounded-2xl bg-white/90 shadow-md border border-white/50 backdrop-blur supports-[backdrop-filter]:bg-white/70 z-[70] focus:outline-none focus:ring-2 focus:ring-primary-400"
+        aria-expanded={isMenuOpen}
+        aria-controls="mobile-navigation"
+        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.96 }}
+      >
+        <AnimatePresence mode="wait">
+          {isMenuOpen ? (
+            <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+              <X className="h-6 w-6 text-primary-700" />
+            </motion.div>
+          ) : (
+            <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
+              <Menu className="h-6 w-6 text-primary-700" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.button>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden mobile-menu-container"
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-60 lg:hidden mobile-menu-container"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
+            aria-hidden="true"
           />
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu */}
+      {/* Mobile Slide-in Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed top-24 left-4 right-4 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl z-40 lg:hidden overflow-hidden mobile-menu-container border border-white/40"
+            id="mobile-navigation"
+            role="menu"
+            className="fixed top-0 right-0 bottom-0 w-[86vw] sm:w-[420px] bg-white/95 backdrop-blur-xl rounded-l-3xl shadow-2xl z-[70] lg:hidden overflow-y-auto mobile-menu-container border-l border-white/40"
             variants={mobileMenuVariants}
             initial="initial"
             animate="animate"
             exit="exit"
+            aria-modal="true"
           >
-            <div className="px-6 py-6 space-y-2 max-h-[70vh] overflow-y-auto">
+            <div className="px-6 pt-20 pb-8 space-y-2">
               {menuItems.map((item, index) => {
+                const isActive = item.type === "scroll" && item.section === activeSection;
                 if (item.type === "dropdown") {
                   return (
                     <div key={item.id} className="space-y-2">
@@ -625,10 +629,7 @@ const Navigation: React.FC = () => {
                           key={subItem.id}
                           onClick={() => handleLinkClick(subItem.path)}
                           className="block w-full px-6 py-2 text-gray-700 hover:text-primary-700 transition-all duration-200 text-left bg-transparent rounded-none font-medium"
-                          style={{
-                            fontFamily: "'Cormorant Garamond', serif",
-                            fontWeight: 500,
-                          }}
+                          style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
                           custom={index + subIndex}
                           variants={mobileMenuItemVariants}
                           initial="initial"
@@ -651,11 +652,11 @@ const Navigation: React.FC = () => {
                         ? handleLinkClick(item.path)
                         : null
                     }
-                    className="block w-full px-4 py-2 text-gray-700 hover:text-primary-700 transition-all duration-200 bg-transparent rounded-none font-medium text-left"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontWeight: 500,
-                    }}
+                    className={`block w-full px-4 py-3 text-gray-800 hover:text-primary-700 transition-all duration-200 bg-transparent rounded-xl font-medium text-left ${
+                      isActive ? "text-primary-800 font-bold underline" : ""
+                    }`}
+                    style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
+                    aria-current={isActive ? "page" : undefined}
                     custom={index}
                     variants={mobileMenuItemVariants}
                     initial="initial"
@@ -667,25 +668,15 @@ const Navigation: React.FC = () => {
                 );
               })}
 
-              {/* CTA remains styled */}
+              {/* Mobile CTA - Always visible */}
               <motion.button
                 onClick={handleCTAClick}
                 className="w-full mt-6 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-2xl font-semibold text-center hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-lg"
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontWeight: 600,
-                }}
-                initial={{ opacity: 0, y: 20 }}
+                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: 0.4,
-                  duration: 0.4,
-                  ease: [0.25, 0.46, 0.45, 0.94],
-                }}
-                whileHover={{
-                  y: -2,
-                  boxShadow: `0 12px 28px -8px rgba(0, 123, 186, 0.4)`,
-                }}
+                transition={{ duration: 0.25 }}
+                whileHover={{ y: -2 }}
                 whileTap={{ y: 0 }}
               >
                 {cta.text}
@@ -697,5 +688,4 @@ const Navigation: React.FC = () => {
     </>
   );
 };
-
 export default Navigation;
