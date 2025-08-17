@@ -1,6 +1,5 @@
-import React, { useEffect, lazy, Suspense, memo } from 'react';
+import React, { useState, useEffect, lazy, Suspense, memo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import lenis from './lib/lenis';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
 import About from './components/About';
@@ -20,7 +19,7 @@ const Terms = lazy(() => import('./components/pages/Terms'));
 const CookiePolicy = lazy(() => import('./components/pages/CookiePolicy'));
 const PrivacyPolicy = lazy(() => import('./components/pages/PrivacyPolicy'));
 
-const MemoizedHomePage = memo(() => (
+const MemoizedHomePage: React.FC = memo(() => (
   <>
     <Hero />
     <Stats />
@@ -28,11 +27,35 @@ const MemoizedHomePage = memo(() => (
     <Services />
     <Doctors />
     <Testimonials />
-    <Contact />
+    <div id="contact-section">
+      <Contact />
+    </div>
   </>
 ));
 
-function App() {
+const App: React.FC = () => {
+  const [showChatbot, setShowChatbot] = useState<boolean>(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const contactSection = document.getElementById('contact-section');
+      if (!contactSection) return;
+
+      const rect = contactSection.getBoundingClientRect();
+      const isInView =
+        rect.top < window.innerHeight && rect.bottom >= 0;
+
+      setShowChatbot(!isInView);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <Router>
       <ParallaxBackground>
@@ -50,11 +73,11 @@ function App() {
             </Routes>
           </Suspense>
           <BookingModal />
-          <Chatbot />
+          {showChatbot && <Chatbot />}
         </div>
       </ParallaxBackground>
     </Router>
   );
-}
+};
 
 export default App;
