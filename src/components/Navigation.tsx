@@ -77,7 +77,7 @@ const NAVIGATION_CONFIG: NavigationConfig = {
   },
   animations: {
     staggerDelay: 0.1,
-    springConfig: { stiffness: 400, damping: 30 },
+    springConfig: { stiffness: 250, damping: 30 },
     hoverScale: 1.02,
     scrollThreshold: 80,
     maxScrollForProgress: 120,
@@ -111,7 +111,6 @@ const NAVIGATION_CONFIG: NavigationConfig = {
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false); // nav bar hidden on scroll down
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("home"); // scrollspy highlight
   const [isMobile, setIsMobile] = useState(false);
@@ -149,13 +148,6 @@ const Navigation: React.FC = () => {
             1
           );
           setScrollProgress(Math.min(scrollY / docMax, 1));
-
-          // Hide nav on scroll down, show on up (mobile/iPad only)
-          if (isMobile) {
-            setHidden(scrollY > lastScrollY && scrollY > 80);
-          } else {
-            setHidden(false); // desktop always visible
-          }
 
           // If menu is open and user scrolls page, close it (safety)
           if (isMenuOpen && Math.abs(scrollY - lastScrollY) > 8) {
@@ -268,7 +260,7 @@ const Navigation: React.FC = () => {
           opacity: 1,
           scale: 1,
           filter: "blur(0px)",
-          transition: { type: "spring", ...animations.springConfig, duration: 0.9 },
+          transition: { type: "spring", ...animations.springConfig },
         },
       };
 
@@ -361,202 +353,203 @@ const Navigation: React.FC = () => {
       />
 
       {/* Navigation Bar */}
-      <motion.nav
-        className={`fixed z-50 transition-transform duration-500 ease-out ${hidden ? "pointer-events-none" : ""}`}
-        style={{
-          ...getNavStyles(),
-          top: currentStyles.topOffset,
-          left: currentStyles.leftOffset,
-          right: scrolled ? "2.5%" : "2%",
-          width: currentStyles.width,
-          transform: hidden ? "translateY(-140%)" : "translateY(0)",
-        }}
-        role="navigation"
-        aria-label="Main Navigation"
-        variants={navVariants}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div
-          className="absolute inset-0 -z-10"
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{
-            opacity: scrolled ? 0.55 : 0.4,
-            scale: scrolled ? 1.005 : 1.02,
-          }}
-          transition={{ duration: 0.5 }}
+      {!isMobile && (
+        <motion.nav
+          className={`fixed z-50 transition-transform duration-500 ease-out`}
           style={{
-            background: `
+            ...getNavStyles(),
+            top: currentStyles.topOffset,
+            left: currentStyles.leftOffset,
+            right: scrolled ? "2.5%" : "2%",
+            width: currentStyles.width,
+          }}
+          role="navigation"
+          aria-label="Main Navigation"
+          variants={navVariants}
+          initial="initial"
+          animate="animate"
+        >
+          <motion.div
+            className="absolute inset-0 -z-10"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{
+              opacity: scrolled ? 0.55 : 0.4,
+              scale: scrolled ? 1.005 : 1.02,
+            }}
+            transition={{ duration: 0.5 }}
+            style={{
+              background: `
               radial-gradient(ellipse 80% 60% at 50% -20%, 
                 rgba(0, 123, 186, 0.12) 0%,
                 rgba(0, 123, 186, 0.06) 40%,
                 transparent 70%
               )
             `,
-            borderRadius: currentStyles.borderRadius,
-            transform: "translateY(6px)",
-            filter: "blur(10px)",
-            willChange: "opacity, transform",
-          }}
-        />
+              borderRadius: currentStyles.borderRadius,
+              transform: "translateY(6px)",
+              filter: "blur(10px)",
+              willChange: "opacity, transform",
+            }}
+          />
 
-        <div className="max-w-8xl mx-auto px-10 lg:px-10 w-full">
-          <div className={`flex items-center transition-all duration-700 ${currentStyles.height}`}>
-            {/* Logo Section - hide on scroll */}
-            <AnimatePresence>
-              {!scrolled && (
-                <motion.div
-                  initial={{ opacity: 0, x: -14 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -14 }}
-                  transition={{ duration: 0.25 }}
-                  className="flex items-center space-x-2 cursor-pointer group"
-                  onClick={handleLogoClick}
-                  whileHover={{ scale: animations.hoverScale }}
-                  whileTap={{ scale: 0.96 }}
-                >
-                  <motion.div className="relative">
-                    <BrandIcon className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`} />
-                    <motion.div
-                      className="absolute inset-0 bg-primary-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                      initial={false}
-                    />
-                  </motion.div>
-                  <motion.span
-                    className={`font-serif font-bold text-primary-800 transition-all duration-700 ${currentStyles.fontSize} group-hover:text-primary-900`}
-                    style={{
-                      fontFamily: "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
-                      letterSpacing: "-0.02em",
-                    }}
+          <div className="max-w-8xl mx-auto px-10 lg:px-10 w-full">
+            <div className={`flex items-center transition-all duration-700 ${currentStyles.height}`}>
+              {/* Logo Section - hide on scroll */}
+              <AnimatePresence>
+                {!scrolled && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -14 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -14 }}
+                    transition={{ duration: 0.25 }}
+                    className="flex items-center space-x-2 cursor-pointer group"
+                    onClick={handleLogoClick}
+                    whileHover={{ scale: animations.hoverScale }}
+                    whileTap={{ scale: 0.96 }}
                   >
-                    {brand.name}
-                  </motion.span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Desktop Navigation Menu */}
-            <div className="hidden lg:flex flex-1 items-center justify-center">
-              <div className="flex items-center space-x-6">
-                {menuItems.map((item, index) => {
-                  const isActive = item.type === "scroll" && item.section === activeSection;
-                  if (item.type === "dropdown") {
-                    return (
-                      <div
-                        key={item.id}
-                        className="relative group"
-                        onMouseEnter={() => setOpenDropdown(item.id)}
-                        onMouseLeave={() => setOpenDropdown(null)}
-                      >
-                        <motion.button
-                          className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
-                          style={{
-                            fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
-                            fontWeight: 500,
-                          }}
-                          custom={index}
-                          variants={menuItemVariants}
-                          initial="initial"
-                          animate="animate"
-                        >
-                          <span>{item.label}</span>
-                          <motion.div
-                            animate={{ rotate: openDropdown === item.id ? 180 : 0 }}
-                            transition={{ duration: 0.25 }}
-                          >
-                            <ChevronDown className="h-4 w-4 ml-1" />
-                          </motion.div>
-                        </motion.button>
-                        <AnimatePresence>
-                          {openDropdown === item.id && (
-                            <motion.div
-                              className="absolute top-full left-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 overflow-hidden z-50"
-                              initial={{ opacity: 0, y: 12, scale: 0.98 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{ opacity: 0, y: 12, scale: 0.98 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              {item.subItems?.map((subItem, subIndex) => (
-                                <motion.div
-                                  key={subItem.id}
-                                  initial={{ opacity: 0, x: -8 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: subIndex * 0.04, duration: 0.2 }}
-                                >
-                                  <Link
-                                    to={subItem.path}
-                                    className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
-                                    style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
-                                    onClick={() => setOpenDropdown(null)}
-                                  >
-                                    {subItem.label}
-                                  </Link>
-                                </motion.div>
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
-                  return (
-                    <motion.button
-                      key={item.id}
-                      onClick={() =>
-                        item.type === "scroll" && item.section
-                          ? scrollToSection(item.section)
-                          : item.path
-                          ? handleLinkClick(item.path)
-                          : null
-                      }
-                      className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
+                    <motion.div className="relative">
+                      <BrandIcon className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`} />
+                      <motion.div
+                        className="absolute inset-0 bg-primary-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                        initial={false}
+                      />
+                    </motion.div>
+                    <motion.span
+                      className={`font-serif font-bold text-primary-800 transition-all duration-700 ${currentStyles.fontSize} group-hover:text-primary-900`}
                       style={{
-                        fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
-                        fontWeight: 500,
+                        fontFamily: "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
+                        letterSpacing: "-0.02em",
                       }}
-                      whileHover={{ y: -1 }}
-                      custom={index}
-                      variants={menuItemVariants}
-                      initial="initial"
-                      animate="animate"
-                      aria-current={isActive ? "page" : undefined}
                     >
-                      <span>{item.label}</span>
-                    </motion.button>
-                  );
-                })}
+                      {brand.name}
+                    </motion.span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Desktop Navigation Menu */}
+              <div className="hidden lg:flex flex-1 items-center justify-center">
+                <div className="flex items-center space-x-6">
+                  {menuItems.map((item, index) => {
+                    const isActive = item.type === "scroll" && item.section === activeSection;
+                    if (item.type === "dropdown") {
+                      return (
+                        <div
+                          key={item.id}
+                          className="relative group"
+                          onMouseEnter={() => setOpenDropdown(item.id)}
+                          onMouseLeave={() => setOpenDropdown(null)}
+                        >
+                          <motion.button
+                            className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
+                            style={{
+                              fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
+                              fontWeight: 500,
+                            }}
+                            custom={index}
+                            variants={menuItemVariants}
+                            initial="initial"
+                            animate="animate"
+                          >
+                            <span>{item.label}</span>
+                            <motion.div
+                              animate={{ rotate: openDropdown === item.id ? 180 : 0 }}
+                              transition={{ duration: 0.25 }}
+                            >
+                              <ChevronDown className="h-4 w-4 ml-1" />
+                            </motion.div>
+                          </motion.button>
+                          <AnimatePresence>
+                            {openDropdown === item.id && (
+                              <motion.div
+                                className="absolute top-full left-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 overflow-hidden z-50"
+                                initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 12, scale: 0.98 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                {item.subItems?.map((subItem, subIndex) => (
+                                  <motion.div
+                                    key={subItem.id}
+                                    initial={{ opacity: 0, x: -8 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: subIndex * 0.04, duration: 0.2 }}
+                                  >
+                                    <Link
+                                      to={subItem.path}
+                                      className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
+                                      style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
+                                      onClick={() => setOpenDropdown(null)}
+                                    >
+                                      {subItem.label}
+                                    </Link>
+                                  </motion.div>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    }
+                    return (
+                      <motion.button
+                        key={item.id}
+                        onClick={() =>
+                          item.type === "scroll" && item.section
+                            ? scrollToSection(item.section)
+                            : item.path
+                            ? handleLinkClick(item.path)
+                            : null
+                        }
+                        className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
+                        style={{
+                          fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
+                          fontWeight: 500,
+                        }}
+                        whileHover={{ y: -1 }}
+                        custom={index}
+                        variants={menuItemVariants}
+                        initial="initial"
+                        animate="animate"
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        <span>{item.label}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* CTA Button - hide on scroll */}
+              <AnimatePresence>
+                {!scrolled && (
+                  <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.25 }}
+                    onClick={handleCTAClick}
+                    className={`hidden lg:flex bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontWeight: 600,
+                      boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
+                    }}
+                    whileHover={{ scale: animations.hoverScale, y: -1 }}
+                    whileTap={{ scale: 0.96 }}
+                  >
+                    <span>{cta.text}</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+
+              {/* (Disabled) In-nav Mobile Toggle – replaced by floating toggle */}
+              <div className="hidden items-center ml-auto" />
             </div>
-
-            {/* CTA Button - hide on scroll */}
-            <AnimatePresence>
-              {!scrolled && (
-                <motion.button
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.25 }}
-                  onClick={handleCTAClick}
-                  className={`hidden lg:flex bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
-                  style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontWeight: 600,
-                    boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
-                  }}
-                  whileHover={{ scale: animations.hoverScale, y: -1 }}
-                  whileTap={{ scale: 0.96 }}
-                >
-                  <span>{cta.text}</span>
-                  <ChevronRight className="h-4 w-4" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-
-            {/* (Disabled) In-nav Mobile Toggle – replaced by floating toggle */}
-            <div className="hidden items-center ml-auto" />
           </div>
-        </div>
-      </motion.nav>
+        </motion.nav>
+      )}
 
       {/* Floating Hamburger Toggle (mobile & iPad) - always visible */}
       <motion.button
