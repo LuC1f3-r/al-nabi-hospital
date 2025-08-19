@@ -36,27 +36,43 @@ const BookingModal: React.FC = () => {
   });
 
   const departments: Department[] = [
-    { id: "cardiology", name: "Cardiology" },
-    { id: "neurology", name: "Neurology" },
-    { id: "pediatrics", name: "Pediatrics" },
-    { id: "ophthalmology", name: "Ophthalmology" },
-    { id: "orthopedics", name: "Orthopedics" },
     { id: "general", name: "General Medicine" },
+    { id: "anaesthesia", name: "Anaesthesia" },
+    { id: "general_surgery", name: "General Surgery" },
+    { id: "pediatrics", name: "Pediatrics" },
+    { id: "neurology", name: "Neurology" },
+    { id: "psychiatry", name: "Psychiatry" },
+    { id: "orthopedics", name: "Orthopedics" },
   ];
 
   const doctorsByDepartment: DoctorsByDepartment = {
-    cardiology: ["Dr. Ahmed Hassan", "Dr. Sarah Al-Rashid"],
-    neurology: ["Dr. Sarah Ahmed", "Dr. Mohamed El-Sayed"],
-    pediatrics: ["Dr. Mohamed Ali", "Dr. Fatima Al-Zahra"],
-    ophthalmology: ["Dr. Fatima Omar", "Dr. Ahmad Khalil"],
-    orthopedics: ["Dr. John Smith", "Dr. Omar Abdallah"],
-    general: ["Dr. Layla Hassan", "Dr. Youssef Ali"],
+    general: [
+      "Dr. Bilal Abdullah, MD General Medicine",
+      "Dr. Osama Awati, MBBS",
+    ],
+    anaesthesia: [
+      "Dr. Asma Jahagirdar, DA",
+      "Dr. Tahir, DA",
+      "Dr. Meenal Aggarwal, MD Anaesthesia",
+    ],
+    general_surgery: [
+      "Dr. Nishikant Gujar, MS General Surgery",
+      "Dr. Jilani Awati, MS General Surgery and Laparoscopic Surgeon",
+    ],
+    pediatrics: [
+      "Dr. Surendra Aggarwal, MCh Pediatric Surgeon",
+      "Dr. Rizwan, MD Pediatrics",
+    ],
+    neurology: ["Dr. Yitendra Nayak, MCh Neurosurgery"],
+    psychiatry: ["Dr. Soumya, MD Psychiatrist"],
+    orthopedics: ["Dr. Ravindra Kulkarni, MS Ortho and Spine Surgeon"],
   };
 
   // Fix body scroll when modal is open
   useEffect(() => {
     const originalOverflow = window.getComputedStyle(document.body).overflow;
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
 
     if (isModalOpen) {
       document.body.style.overflow = "hidden";
@@ -85,10 +101,28 @@ const BookingModal: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    console.log("Appointment booked:", formData);
-    alert(
-      "Appointment successfully booked! We will contact you shortly to confirm."
-    );
+
+    // Construct the WhatsApp message string
+    const message = `
+New Appointment Booking:
+Name: ${formData.fullName}
+Phone: ${formData.phone}
+Email: ${formData.email}
+Department: ${formData.department}
+Doctor: ${formData.doctor}
+Date & Time: ${formData.selectedDate.toLocaleString()}
+Notes: ${formData.notes || "N/A"}
+    `;
+    const encodedMessage = encodeURIComponent(message);
+
+    // Replace with your WhatsApp number in international format without "+" or spaces
+    const whatsappNumber = "919738878894";
+
+    // WhatsApp URL to send the message
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+    // Open WhatsApp chat in new tab
+    window.open(whatsappUrl, "_blank");
     setIsModalOpen(false);
     setFormData({
       fullName: "",
@@ -260,7 +294,7 @@ const BookingModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Date Selection - Improved Responsive Calendar */}
+          {/* Date Selection */}
           <div className="space-y-6">
             <h3 className="text-lg sm:text-xl font-semibold text-[#004F74] flex items-center space-x-2 border-b border-gray-200 pb-2">
               <Calendar className="h-5 w-5" />
@@ -273,7 +307,6 @@ const BookingModal: React.FC = () => {
                   Select Date and Time *
                 </label>
 
-                {/* Custom DatePicker Container */}
                 <div className="w-full max-w-md mx-auto">
                   <DatePicker
                     selected={formData.selectedDate}
@@ -317,7 +350,6 @@ const BookingModal: React.FC = () => {
                   />
                 </div>
 
-                {/* Selected Date Display */}
                 <div className="bg-white rounded-lg p-3 border border-[#007BBA]/20 w-full max-w-md mx-auto">
                   <div className="text-center">
                     <p className="text-sm text-gray-600">
@@ -403,7 +435,6 @@ const BookingModal: React.FC = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };
