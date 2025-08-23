@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Calendar, Clock, User, Phone, Mail, Star, MessageCircle, AlertCircle } from 'lucide-react';
+import { X, Send, Calendar, Clock, User, Phone, Mail, Star, MessageCircle, CheckCircle, AlertCircle } from 'lucide-react';
 import { useBookingStore } from '../../store/bookingStore';
-import { sendWhatsAppAppointment, sendEmailAppointment, validateAppointmentData } from '../../utils/whatsappService';
-import './ChatbotResponsive.css';
 
 interface Message {
   id: string;
@@ -31,7 +29,7 @@ interface AppointmentData {
   doctor?: string;
 }
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
+const ChatWindowEnhanced: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -138,7 +136,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   };
 
   const validatePhone = (phone: string): boolean => {
-    return /^[+]?[1-9][\d]{0,15}$/.test(phone.replace(/\s/g, ''));
+    return /^[\+]?[1-9][\d]{0,15}$/.test(phone.replace(/\s/g, ''));
   };
 
   const validateEmail = (email: string): boolean => {
@@ -152,7 +150,32 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     return selectedDate >= today;
   };
 
+  const sendWhatsAppMessage = (appointmentData: AppointmentData) => {
+    const message = `🏥 *Al Nabi Hospital - Appointment Confirmation*
 
+👤 *Patient Name:* ${appointmentData.name}
+📞 *Phone:* ${appointmentData.phone}
+📧 *Email:* ${appointmentData.email}
+🏥 *Department:* ${appointmentData.department}
+👨‍⚕️ *Doctor:* ${appointmentData.doctor || 'To be assigned'}
+📅 *Date:* ${appointmentData.date}
+⏰ *Time:* ${appointmentData.time}
+📝 *Notes:* ${appointmentData.notes || 'None'}
+
+✅ *Appointment Status:* Confirmed
+📋 *Please bring:* ID proof, previous medical records (if any)
+
+📍 *Location:* Al Nabi Hospital, 123 Medical Center Drive, Bijapur
+📞 *Contact:* +91 4 123 4567
+
+*Thank you for choosing Al Nabi Hospital!* 🏥`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappNumber = '+919876543210'; // Replace with actual hospital WhatsApp number
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+  };
 
   const handleOptionClick = (option: string) => {
     addMessage(option, false);
@@ -221,12 +244,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           addMessage('Which department would you like to visit?', true, departments);
           break;
         case 4: // Department
-          {
-            setAppointmentData(prev => ({ ...prev, department: value }));
-            setAppointmentStep(5);
-            const deptDoctors = doctors[value as keyof typeof doctors] || [];
-            addMessage(`Excellent choice! Here are our available ${value} doctors:\n\n${deptDoctors.map(doctor => `• ${doctor}`).join('\n')}\n\nWhich doctor would you prefer? (Or type "any" for any available doctor)`, true, [...deptDoctors, 'Any Available Doctor']);
-          }
+          setAppointmentData(prev => ({ ...prev, department: value }));
+          setAppointmentStep(5);
+          const deptDoctors = doctors[value as keyof typeof doctors] || [];
+          addMessage(`Excellent choice! Here are our available ${value} doctors:\n\n${deptDoctors.map(doctor => `• ${doctor}`).join('\n')}\n\nWhich doctor would you prefer? (Or type "any" for any available doctor)`, true, [...deptDoctors, 'Any Available Doctor']);
           break;
         case 5: // Doctor
           setAppointmentData(prev => ({ ...prev, doctor: value }));
@@ -257,22 +278,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
 
   const confirmAppointment = () => {
     const finalData = { ...appointmentData };
-    
-    // Validate appointment data
-    const validation = validateAppointmentData(finalData);
-    if (!validation.isValid) {
-      setErrors(validation.errors);
-      return;
-    }
-    
     simulateTyping(() => {
       addMessage(`✅ *Appointment Confirmed!*\n\n👤 **Name:** ${finalData.name}\n📞 **Phone:** ${finalData.phone}\n📧 **Email:** ${finalData.email}\n🏥 **Department:** ${finalData.department}\n👨‍⚕️ **Doctor:** ${finalData.doctor || 'To be assigned'}\n📅 **Date:** ${finalData.date}\n⏰ **Time:** ${finalData.time}\n📝 **Notes:** ${finalData.notes || 'None'}\n\n📱 *WhatsApp confirmation sent!*\n📧 *Email confirmation sent!*\n\nYour appointment has been successfully booked! You'll receive a confirmation email shortly.\n\nIs there anything else I can help you with?`, true, ['Book Another Appointment', 'Our Services', 'Contact Information', 'Rate Experience'], 'confirmation');
       
       // Send WhatsApp message
-      sendWhatsAppAppointment(finalData);
-      
-      // Send email confirmation
-      sendEmailAppointment(finalData);
+      sendWhatsAppMessage(finalData);
       
       setIsBookingMode(false);
       setAppointmentStep(0);
@@ -346,7 +356,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           stiffness: 400,
           damping: 30
         }}
-        className={`fixed ${isMobile ? 'inset-0' : 'bottom-6 right-6'} ${isMobile ? 'w-full h-full' : 'w-96 h-[600px]'} bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200 chatbot-window`}
+        className={`fixed ${isMobile ? 'inset-0' : 'bottom-6 right-6'} ${isMobile ? 'w-full h-full' : 'w-96 h-[600px]'} bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200`}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 flex items-center justify-between text-white">
@@ -368,7 +378,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 chatbot-messages">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -448,7 +458,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Input */}
-        <div className="p-4 bg-white border-t border-gray-200 chatbot-input">
+        <div className="p-4 bg-white border-t border-gray-200">
           <div className="flex space-x-2">
             <input
               ref={inputRef}
@@ -473,7 +483,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           </div>
           
           {/* Quick Actions */}
-          <div className="flex flex-wrap gap-2 mt-2 chatbot-quick-actions">
+          <div className="flex flex-wrap gap-2 mt-2">
             <button
               onClick={() => handleOptionClick('Book Appointment')}
               className="text-xs px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors border border-blue-200"
@@ -499,4 +509,4 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default ChatWindow;
+export default ChatWindowEnhanced;
