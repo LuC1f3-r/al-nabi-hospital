@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ChatbotIcon from './ChatbotIcon';
 import ChatWindow from './ChatWindow';
 
+// Enhanced chatbot with better error handling and responsiveness
+
 const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
