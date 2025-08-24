@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants, useReducedMotion } from "framer-motion";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Menu, X, Heart, ChevronRight, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronRight, ChevronDown } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
+import logo from "../assets/logo.png";
 
 // --- Type Definitions ---
 interface MenuItem {
@@ -20,7 +21,7 @@ interface SubMenuItem {
 }
 interface BrandConfig {
   name: string;
-  icon: typeof Heart;
+  logo: string;
 }
 interface CTAConfig {
   text: string;
@@ -61,7 +62,7 @@ interface NavigationConfig {
 const NAVIGATION_CONFIG: NavigationConfig = {
   brand: {
     name: "Al Nabi Hospital",
-    icon: Heart,
+    logo: logo,
   },
   menuItems: [
     { id: "home", label: "Home", type: "scroll", section: "hero" },
@@ -142,12 +143,27 @@ const Navigation: React.FC = () => {
           const scrollY = window.scrollY;
           setScrolled(scrollY > animations.scrollThreshold);
 
-          // Real page progress (0..1)
+          // Real page progress (0..1) with smooth easing
           const docMax = Math.max(
             document.documentElement.scrollHeight - window.innerHeight,
             1
           );
-          setScrollProgress(Math.min(scrollY / docMax, 1));
+          const progress = Math.min(scrollY / docMax, 1);
+          const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+          setScrollProgress(easedProgress);
+
+          // Smooth height transition based on scroll
+          const maxScroll = animations.maxScrollForProgress;
+          const scrollRatio = Math.min(scrollY / maxScroll, 1);
+          
+          // Use CSS transform for smoother animations
+          const navElement = document.querySelector('.nav-container') as HTMLElement;
+          if (navElement) {
+            const scale = 1 - (scrollRatio * 0.05); // Subtle scale effect
+            const translateY = scrollRatio * -1; // Subtle upward movement
+            navElement.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+            navElement.style.transition = 'transform 0.15s ease-out';
+          }
 
           // If menu is open and user scrolls page, close it (safety)
           if (isMenuOpen && Math.abs(scrollY - lastScrollY) > 8) {
@@ -316,11 +332,11 @@ const Navigation: React.FC = () => {
     };
   };
 
-  const BrandIcon: typeof Heart = brand.icon;
+  const brandLogo = brand.logo;
 
   // --- Underline style for scrollspy-active link ---
   const navTextLinkBase = `
-    relative px-1 py-1 text-gray-700 hover:text-primary-700 font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none group
+    relative px-1 py-1 text-gray-700 hover:text-[#007BBA] font-medium transition-all duration-200 bg-transparent rounded-none shadow-none outline-none border-none group
   `;
   const navTextLinkUnderline = `
     after:content-['']
@@ -330,16 +346,16 @@ const Navigation: React.FC = () => {
     after:w-0
     group-hover:after:w-full
     after:h-[2px]
-    after:bg-primary-300
-    group-hover:after:bg-primary-700
+    after:bg-[#007BBA]
+    group-hover:after:bg-[#004F74]
     after:transition-all
     after:duration-300
   `;
   const navTextLinkActive = `
-    text-primary-800
+    text-[#004F74]
     font-bold
     after:w-full
-    after:bg-primary-700
+    after:bg-[#004F74]
   `;
 
   // --- Render ---
@@ -347,7 +363,7 @@ const Navigation: React.FC = () => {
     <>
       {/* Tiny scroll progress bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-0.5 bg-primary-600/70 z-[60] origin-left"
+        className="fixed top-0 left-0 right-0 h-0.5 bg-[#007BBA]/70 z-[60] origin-left"
         style={{ scaleX: scrollProgress }}
         aria-hidden="true"
       />
@@ -355,7 +371,7 @@ const Navigation: React.FC = () => {
       {/* Navigation Bar */}
       {!isMobile && (
         <motion.nav
-          className={`fixed z-50 transition-transform duration-500 ease-out`}
+          className={`fixed z-50 transition-transform duration-500 ease-out nav-container`}
           style={{
             ...getNavStyles(),
             top: currentStyles.topOffset,
@@ -407,15 +423,19 @@ const Navigation: React.FC = () => {
                     whileHover={{ scale: animations.hoverScale }}
                     whileTap={{ scale: 0.96 }}
                   >
-                    <motion.div className="relative">
-                      <BrandIcon className={`transition-all duration-700 ${currentStyles.iconSize} text-primary-600 group-hover:text-primary-700`} />
+                                        <motion.div className="relative">
+                      <img 
+                        src={brandLogo} 
+                        alt="Al Nabi Hospital Logo"
+                        className={`transition-all duration-700 ${currentStyles.iconSize} object-contain`}
+                      />
                       <motion.div
-                        className="absolute inset-0 bg-primary-500 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                        className="absolute inset-0 bg-[#007BBA] rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
                         initial={false}
                       />
                     </motion.div>
-                    <motion.span
-                      className={`font-serif font-bold text-primary-800 transition-all duration-700 ${currentStyles.fontSize} group-hover:text-primary-900`}
+                                          <motion.span
+                        className={`font-serif font-bold text-[#004F74] transition-all duration-700 ${currentStyles.fontSize} group-hover:text-[#007BBA]`}
                       style={{
                         fontFamily: "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
                         letterSpacing: "-0.02em",
@@ -477,7 +497,7 @@ const Navigation: React.FC = () => {
                                   >
                                     <Link
                                       to={subItem.path}
-                                      className="block px-6 py-4 text-sm text-gray-700 hover:text-primary-700 transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
+                                      className="block px-6 py-4 text-sm text-gray-700 hover:text-[#007BBA] transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
                                       style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
                                       onClick={() => setOpenDropdown(null)}
                                     >
@@ -529,7 +549,7 @@ const Navigation: React.FC = () => {
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.25 }}
                     onClick={handleCTAClick}
-                    className={`hidden lg:flex bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-primary-700 hover:to-primary-800 backdrop-blur-sm`}
+                    className={`hidden lg:flex bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-[#004F74] hover:to-[#007BBA] backdrop-blur-sm`}
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
                       fontWeight: 600,
@@ -554,7 +574,7 @@ const Navigation: React.FC = () => {
       {/* Floating Hamburger Toggle (mobile & iPad) - always visible */}
       <motion.button
         onClick={() => setIsMenuOpen((v) => !v)}
-        className="mobile-menu-toggle fixed lg:hidden top-4 right-4 w-12 h-12 flex justify-center items-center rounded-2xl bg-white/90 shadow-md border border-white/50 backdrop-blur supports-[backdrop-filter]:bg-white/70 z-[70] focus:outline-none focus:ring-2 focus:ring-primary-400"
+        className="mobile-menu-toggle fixed lg:hidden top-4 right-4 w-12 h-12 flex justify-center items-center rounded-2xl bg-white/90 shadow-md border border-white/50 backdrop-blur supports-[backdrop-filter]:bg-white/70 z-[70] focus:outline-none focus:ring-2 focus:ring-[#007BBA]"
         aria-expanded={isMenuOpen}
         aria-controls="mobile-navigation"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -564,11 +584,11 @@ const Navigation: React.FC = () => {
         <AnimatePresence mode="wait">
           {isMenuOpen ? (
             <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-              <X className="h-6 w-6 text-primary-700" />
+              <X className="h-6 w-6 text-[#007BBA]" />
             </motion.div>
           ) : (
             <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
-              <Menu className="h-6 w-6 text-primary-700" />
+              <Menu className="h-6 w-6 text-[#007BBA]" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -621,7 +641,7 @@ const Navigation: React.FC = () => {
                         <motion.button
                           key={subItem.id}
                           onClick={() => handleLinkClick(subItem.path)}
-                          className="block w-full px-6 py-2 text-gray-700 hover:text-primary-700 transition-all duration-200 text-left bg-transparent rounded-none font-medium"
+                          className="block w-full px-6 py-2 text-gray-700 hover:text-[#007BBA] transition-all duration-200 text-left bg-transparent rounded-none font-medium"
                           style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
                           custom={index + subIndex}
                           variants={mobileMenuItemVariants}
@@ -645,8 +665,8 @@ const Navigation: React.FC = () => {
                         ? handleLinkClick(item.path)
                         : null
                     }
-                    className={`block w-full px-4 py-3 text-gray-800 hover:text-primary-700 transition-all duration-200 bg-transparent rounded-xl font-medium text-left ${
-                      isActive ? "text-primary-800 font-bold underline" : ""
+                    className={`block w-full px-4 py-3 text-gray-800 hover:text-[#007BBA] transition-all duration-200 bg-transparent rounded-xl font-medium text-left ${
+                      isActive ? "text-[#004F74] font-bold underline" : ""
                     }`}
                     style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
                     aria-current={isActive ? "page" : undefined}
@@ -664,7 +684,7 @@ const Navigation: React.FC = () => {
               {/* Mobile CTA - Always visible */}
               <motion.button
                 onClick={handleCTAClick}
-                className="w-full mt-6 bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-2xl font-semibold text-center hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-lg"
+                className="w-full mt-6 bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white px-6 py-4 rounded-2xl font-semibold text-center hover:from-[#004F74] hover:to-[#007BBA] transition-all duration-300 shadow-lg"
                 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}

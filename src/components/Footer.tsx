@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-primary-700 text-white">
+    <footer className="bg-[#004F74] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Logo and Description */}
@@ -29,25 +29,25 @@ const Footer = () => {
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center hover:bg-white hover:text-primary-500 transition-colors"
+                className="w-10 h-10 bg-[#007BBA] rounded-full flex items-center justify-center hover:bg-white hover:text-[#007BBA] transition-colors"
               >
                 <Facebook className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center hover:bg-white hover:text-primary-500 transition-colors"
+                className="w-10 h-10 bg-[#007BBA] rounded-full flex items-center justify-center hover:bg-white hover:text-[#007BBA] transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center hover:bg-white hover:text-primary-500 transition-colors"
+                className="w-10 h-10 bg-[#007BBA] rounded-full flex items-center justify-center hover:bg-white hover:text-[#007BBA] transition-colors"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center hover:bg-white hover:text-primary-500 transition-colors"
+                className="w-10 h-10 bg-[#007BBA] rounded-full flex items-center justify-center hover:bg-white hover:text-[#007BBA] transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
@@ -137,7 +137,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6">Contact Info</h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-primary-500 mt-1" />
+                <MapPin className="h-5 w-5 text-[#007BBA] mt-1" />
                 <div className="text-blue-100">
                   <p>Near Zanda Katta, Jamiya Masjid</p>
                   <p>Road, Vijayapura, KA, IN</p>
@@ -146,7 +146,7 @@ const Footer = () => {
               </div>
 
               <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-primary-500" />
+                <Phone className="h-5 w-5 text-[#007BBA]" />
                 <div className="text-blue-100">
                   <p>+91 70909 00087</p>
                   <p className="text-sm">Emergency: +91 70909 00087</p>

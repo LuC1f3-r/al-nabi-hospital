@@ -1,5 +1,6 @@
 .button {
-  --primary: #4f46e5;
+  --primary: #667eea;
+  --primary-end: #764ba2;
   --neutral-1: #ffffff;
   --neutral-2: #f3f4f6;
   --radius: 16px;
@@ -10,8 +11,8 @@
   border: none;
   box-shadow:
     0 1px 1px rgba(255, 255, 255, 0.4),
-    0 12px 24px rgba(0, 0, 0, 0.15),
-    0 4px 8px rgba(0, 0, 0, 0.1);
+    0 12px 24px rgba(102, 126, 234, 0.25),
+    0 4px 8px rgba(118, 75, 162, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,12 +28,33 @@
   letter-spacing: -0.2px;
 }
 
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .button {
+    min-width: 160px;
+    padding: 16px;
+    height: 56px;
+    font-size: 13px;
+    --radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    min-width: 140px;
+    padding: 14px;
+    height: 52px;
+    font-size: 12px;
+    --radius: 10px;
+  }
+}
+
 .button:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow:
     0 2px 2px rgba(255, 255, 255, 0.4),
-    0 18px 32px rgba(0, 0, 0, 0.15),
-    0 8px 12px rgba(0, 0, 0, 0.1);
+    0 18px 32px rgba(102, 126, 234, 0.3),
+    0 8px 12px rgba(118, 75, 162, 0.2);
 }
 
 .button:active {
@@ -105,7 +127,8 @@
   background: conic-gradient(
     from 180deg,
     transparent 60%,
-    var(--primary) 85%,
+    var(--primary) 70%,
+    var(--primary-end) 85%,
     transparent 100%
   );
   animation: spin 2.5s linear infinite;

@@ -16,7 +16,7 @@ const Hero = () => {
       id="hero"
       className="pt-16 min-h-screen relative overflow-hidden"
       style={{
-        background: `linear-gradient(to right top, #e20070, #c52891, #9b41a8, #6651b1, #1859ad)`,
+        background: `linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%)`,
       }}
     >
       {/* Background 4K Medical GIF */}
