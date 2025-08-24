@@ -163,7 +163,7 @@ Notes: ${formData.notes || "N/A"}
     >
       <div className="bg-white rounded-3xl max-w-4xl w-full my-8 shadow-2xl">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white p-6 sm:p-8 rounded-t-3xl">
+        <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 text-white p-6 sm:p-8 rounded-t-3xl shadow-lg">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <Calendar className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -301,7 +301,7 @@ Notes: ${formData.notes || "N/A"}
               <span>Preferred Date & Time</span>
             </h3>
 
-            <div className="bg-gradient-to-br from-[#F6FAFD] to-[#E8F4F8] border-2 border-gray-200 rounded-xl p-4 sm:p-6">
+            <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm">
               <div className="flex flex-col items-center space-y-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Date and Time *
@@ -415,7 +415,7 @@ Notes: ${formData.notes || "N/A"}
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-[#0086CC] hover:to-[#005A85]"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-blue-600 hover:to-purple-700 shadow-lg"
             >
               Confirm Appointment
             </button>
