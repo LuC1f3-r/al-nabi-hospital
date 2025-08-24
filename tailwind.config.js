@@ -29,17 +29,17 @@ export default {
       colors: {
         primary: {
           // Enhanced primary color palette with better contrast ratios
-          50: "#f0f9ff",
-          100: "#e0f2fe",
-          200: "#bae6fd",
-          300: "#7dd3fc",
-          400: "#38bdf8",
-          500: "#007BBA", // Main brand color
-          600: "#0369a1",
-          700: "#004F74", // Secondary brand color
-          800: "#075985",
-          900: "#0c4a6e",
-          950: "#082f49",
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6", // Main brand color
+          600: "#2563eb",
+          700: "#1d4ed8", // Secondary brand color
+          800: "#1e40af",
+          900: "#1e3a8a",
+          950: "#172554",
         },
         gray: {
           // Enhanced gray palette for better readability
