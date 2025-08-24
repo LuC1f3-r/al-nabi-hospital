@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Calendar, Clock, User, Phone, Mail, Star, MessageCircle, AlertCircle } from 'lucide-react';
+import { X, Send, Star, MessageCircle, AlertCircle } from 'lucide-react';
 import { useBookingStore } from '../../store/bookingStore';
 import { sendWhatsAppAppointment, sendEmailAppointment, validateAppointmentData } from '../../utils/whatsappService';
 import './ChatbotResponsive.css';
 
 interface Message {
-  id: string;
+  id: string
   text: string;
   isBot: boolean;
   timestamp: Date;
@@ -63,24 +63,166 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   const { setIsModalOpen } = useBookingStore();
 
   const departments = [
-    'Cardiology', 'Neurology', 'Pediatrics', 'Ophthalmology', 
-    'Orthopedics', 'General Medicine', 'Emergency Medicine', 'Dermatology',
-    'Gynecology', 'Urology', 'ENT', 'Psychiatry'
+    'General Medicine', 'Anaesthesia', 'General Surgery', 'Pediatrics', 
+    'Neurology', 'Psychiatry', 'Orthopedics', 'Cardiology', 'Ophthalmology',
+    'Emergency Medicine', 'Obstetrics & Gynecology', 'Dermatology', 'ENT',
+    'Urology', 'Radiology', 'Pathology', 'Physiotherapy'
   ];
 
   const doctors = {
-    'Cardiology': ['Dr. Ahmed Khan', 'Dr. Sarah Johnson', 'Dr. Michael Chen'],
-    'Neurology': ['Dr. Emily Davis', 'Dr. Robert Wilson', 'Dr. Lisa Brown'],
-    'Pediatrics': ['Dr. James Miller', 'Dr. Maria Garcia', 'Dr. David Lee'],
-    'Ophthalmology': ['Dr. Anna White', 'Dr. Thomas Anderson', 'Dr. Jennifer Taylor'],
-    'Orthopedics': ['Dr. Christopher Martinez', 'Dr. Amanda Rodriguez', 'Dr. Kevin Thompson'],
-    'General Medicine': ['Dr. Rachel Green', 'Dr. Daniel Clark', 'Dr. Michelle Lewis'],
-    'Emergency Medicine': ['Dr. Steven Hall', 'Dr. Nicole Young', 'Dr. Brian Allen'],
-    'Dermatology': ['Dr. Jessica King', 'Dr. Matthew Wright', 'Dr. Ashley Scott'],
-    'Gynecology': ['Dr. Samantha Baker', 'Dr. Joshua Nelson', 'Dr. Victoria Carter'],
-    'Urology': ['Dr. Andrew Mitchell', 'Dr. Rebecca Perez', 'Dr. Gregory Roberts'],
-    'ENT': ['Dr. Stephanie Turner', 'Dr. Patrick Phillips', 'Dr. Danielle Campbell'],
-    'Psychiatry': ['Dr. Nathan Parker', 'Dr. Olivia Evans', 'Dr. Ryan Edwards']
+    'General Medicine': [
+      'Dr. Bilal Abdullah, MD General Medicine',
+      'Dr. Osama Awati, MBBS'
+    ],
+    'Anaesthesia': [
+      'Dr. Asma Jahagirdar, DA',
+      'Dr. Tahir, DA',
+      'Dr. Meenal Aggarwal, MD Anaesthesia'
+    ],
+    'General Surgery': [
+      'Dr. Nishikant Gujar, MS General Surgery',
+      'Dr. Jilani Awati, MS General Surgery and Laparoscopic Surgeon'
+    ],
+    'Pediatrics': [
+      'Dr. Surendra Aggarwal, MCh Pediatric Surgeon',
+      'Dr. Rizwan, MD Pediatrics'
+    ],
+    'Neurology': [
+      'Dr. Yitendra Nayak, MCh Neurosurgery'
+    ],
+    'Psychiatry': [
+      'Dr. Soumya, MD Psychiatrist'
+    ],
+    'Orthopedics': [
+      'Dr. Ravindra Kulkarni, MS Ortho and Spine Surgeon'
+    ],
+    'Cardiology': [
+      'Dr. Ahmed Hassan, Interventional Cardiologist',
+      'Dr. Sarah Al-Rashid, Cardiac Surgeon'
+    ],
+    'Ophthalmology': [
+      'Dr. Fatima Omar, Ophthalmologist',
+      'Dr. Ahmad Khalil, Retinal Specialist'
+    ],
+    'Emergency Medicine': [
+      'Dr. Khalid Salem, Emergency Physician',
+      'Dr. Aisha Noor, Trauma Specialist'
+    ],
+    'Obstetrics & Gynecology': [
+      'Dr. Layla Hassan, Obstetrician',
+      'Dr. Noor Ibrahim, Gynecologist'
+    ],
+    'Dermatology': [
+      'Dr. Sarah Ahmed, Dermatologist',
+      'Dr. Mohamed El-Sayed, Dermatologist'
+    ],
+    'ENT': [
+      'Dr. Omar Abdallah, ENT Specialist',
+      'Dr. Fatima Al-Zahra, ENT Surgeon'
+    ],
+    'Urology': [
+      'Dr. Hassan Mahmoud, Urologist',
+      'Dr. Youssef Ali, Urological Surgeon'
+    ],
+    'Radiology': [
+      'Dr. Khalid Salem, Radiologist',
+      'Dr. Aisha Noor, Interventional Radiologist'
+    ],
+    'Pathology': [
+      'Dr. Mohamed Ali, Pathologist',
+      'Dr. Fatima Omar, Clinical Pathologist'
+    ],
+    'Physiotherapy': [
+      'Dr. John Smith, Physiotherapist',
+      'Dr. Maria Garcia, Rehabilitation Specialist'
+    ]
+  };
+
+  const services = {
+    'General Medicine': [
+      'Routine Health Checkups', 'Chronic Disease Management', 'Preventive Care',
+      'Health Screenings', 'Vaccination Services', 'Minor Procedures',
+      'Health Counseling', 'Referral Services'
+    ],
+    'Anaesthesia': [
+      'General Anaesthesia', 'Regional Anaesthesia', 'Local Anaesthesia',
+      'Pain Management', 'Critical Care Anaesthesia', 'Obstetric Anaesthesia',
+      'Pediatric Anaesthesia', 'Cardiac Anaesthesia'
+    ],
+    'General Surgery': [
+      'Appendectomy', 'Hernia Repair', 'Gallbladder Surgery', 'Thyroidectomy',
+      'Laparoscopic Surgery', 'Robotic Surgery', 'Colorectal Surgery', 'Wound Care'
+    ],
+    'Pediatrics': [
+      'Well-Child Checkups', 'Immunizations', 'Growth Monitoring',
+      'Developmental Assessments', 'Pediatric Emergency Care', 'Newborn Care',
+      'Adolescent Medicine', 'Pediatric Surgery'
+    ],
+    'Neurology': [
+      'EEG (Electroencephalography)', 'EMG (Electromyography)', 'MRI Brain Imaging',
+      'Stroke Treatment', 'Epilepsy Management', 'Movement Disorders',
+      'Memory Disorders', 'Headache Treatment'
+    ],
+    'Psychiatry': [
+      'Mental Health Assessment', 'Depression Treatment', 'Anxiety Disorders',
+      'Bipolar Disorder', 'Schizophrenia', 'Addiction Treatment',
+      'Child Psychiatry', 'Geriatric Psychiatry'
+    ],
+    'Orthopedics': [
+      'Joint Replacement Surgery', 'Sports Medicine', 'Fracture Treatment',
+      'Spine Surgery', 'Arthroscopic Surgery', 'Physical Therapy',
+      'Pain Management', 'Orthopedic Trauma'
+    ],
+    'Cardiology': [
+      'Cardiac Catheterization', 'Echocardiography', 'Stress Testing',
+      'Holter Monitoring', 'Pacemaker Implantation', 'Cardiac Surgery',
+      'Preventive Cardiology', 'Heart Failure Management'
+    ],
+    'Ophthalmology': [
+      'Comprehensive Eye Exams', 'Cataract Surgery', 'Glaucoma Treatment',
+      'Retinal Disorders', 'LASIK Surgery', 'Diabetic Eye Care',
+      'Pediatric Ophthalmology', 'Emergency Eye Care'
+    ],
+    'Emergency Medicine': [
+      'Trauma Care', 'Cardiac Emergencies', 'Stroke Management',
+      'Critical Care', 'Pediatric Emergencies', 'Resuscitation Services',
+      'Triage and Stabilization', 'Emergency Diagnostics'
+    ],
+    'Obstetrics & Gynecology': [
+      'Prenatal Care', 'Labor and Delivery', 'Gynecological Surgery',
+      'Fertility Treatments', 'Menopause Management', 'Pap Smears',
+      'Mammography', 'High-Risk Pregnancy Care'
+    ],
+    'Dermatology': [
+      'Skin Cancer Screening', 'Acne Treatment', 'Eczema Management',
+      'Psoriasis Treatment', 'Cosmetic Dermatology', 'Surgical Dermatology',
+      'Allergy Testing', 'Hair Loss Treatment'
+    ],
+    'ENT': [
+      'Hearing Tests', 'Sinus Treatment', 'Tonsillectomy',
+      'Voice Disorders', 'Balance Disorders', 'Sleep Apnea',
+      'Head and Neck Surgery', 'Allergy Treatment'
+    ],
+    'Urology': [
+      'Prostate Treatment', 'Kidney Stones', 'Bladder Disorders',
+      'Male Infertility', 'Urinary Incontinence', 'Urological Cancer',
+      'Minimally Invasive Surgery', 'Robotic Surgery'
+    ],
+    'Radiology': [
+      'X-Ray Imaging', 'CT Scans', 'MRI Scans', 'Ultrasound',
+      'Nuclear Medicine', 'Interventional Radiology', 'Mammography',
+      'Bone Density Scans'
+    ],
+    'Pathology': [
+      'Blood Tests', 'Tissue Analysis', 'Cancer Diagnosis',
+      'Microbiology', 'Cytology', 'Molecular Pathology',
+      'Forensic Pathology', 'Clinical Chemistry'
+    ],
+    'Physiotherapy': [
+      'Physical Rehabilitation', 'Sports Injury Treatment', 'Post-Surgery Recovery',
+      'Neurological Rehabilitation', 'Cardiac Rehabilitation', 'Pain Management',
+      'Orthopedic Rehabilitation', 'Geriatric Physiotherapy'
+    ]
   };
 
   const timeSlots = [
@@ -166,7 +308,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           addMessage('Great! I\'ll help you book an appointment. Let\'s start with your full name.', true);
           break;
         case 'Our Services':
-          addMessage('🏥 *Al Nabi Hospital Services:*\n\n💓 **Cardiology** - Heart care & cardiovascular health\n🧠 **Neurology** - Brain & nervous system disorders\n👶 **Pediatrics** - Child healthcare & development\n👁️ **Ophthalmology** - Eye care & vision correction\n🦴 **Orthopedics** - Bone, joint & muscle care\n🩺 **General Medicine** - Primary healthcare\n🚨 **Emergency Medicine** - 24/7 urgent care\n🩸 **Dermatology** - Skin & hair conditions\n👩‍⚕️ **Gynecology** - Women\'s health\n🚹 **Urology** - Urinary system care\n👂 **ENT** - Ear, nose & throat\n🧠 **Psychiatry** - Mental health support\n\nWhich department interests you?', true, departments);
+          addMessage('🏥 *Al Nabi Hospital - Complete Services Directory:*\n\n🩺 **General Medicine** - Primary healthcare & preventive care\n💉 **Anaesthesia** - Pain management & surgical support\n🔪 **General Surgery** - Surgical procedures & laparoscopic surgery\n👶 **Pediatrics** - Child healthcare & development\n🧠 **Neurology** - Brain & nervous system disorders\n🧠 **Psychiatry** - Mental health & behavioral therapy\n🦴 **Orthopedics** - Bone, joint & spine care\n💓 **Cardiology** - Heart care & cardiovascular health\n👁️ **Ophthalmology** - Eye care & vision correction\n🚨 **Emergency Medicine** - 24/7 urgent care\n👩‍⚕️ **Obstetrics & Gynecology** - Women\'s health & maternity\n🩸 **Dermatology** - Skin, hair & nail conditions\n👂 **ENT** - Ear, nose & throat care\n🚹 **Urology** - Urinary system & male health\n📷 **Radiology** - Diagnostic imaging & scans\n🔬 **Pathology** - Laboratory testing & diagnosis\n💪 **Physiotherapy** - Rehabilitation & physical therapy\n\nWhich department would you like to know more about?', true, departments);
           break;
         case 'Contact Information':
           addMessage('📍 *Al Nabi Hospital Contact Details:*\n\n📞 **Main Phone:** +91 4 123 4567\n🚨 **Emergency:** +91 4 123 4568\n📧 **Email:** info@alnabihospital.com\n📍 **Address:** 123 Medical Center Drive, Bijapur, Karnataka, India\n\n⏰ *Operating Hours:*\nMonday - Friday: 8:00 AM - 8:00 PM\nSaturday - Sunday: 9:00 AM - 6:00 PM\n🚨 Emergency Services: 24/7\n\n🅿️ **Parking:** Free parking available\n♿ **Accessibility:** Wheelchair accessible', true, ['Book Appointment', 'Our Services', 'Emergency Info', 'Find Doctor']);
@@ -180,7 +322,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         default:
           if (departments.includes(option)) {
             const deptDoctors = doctors[option as keyof typeof doctors] || [];
-            addMessage(`🏥 *${option} Department*\n\n*Available Doctors:*\n${deptDoctors.map(doctor => `• ${doctor}`).join('\n')}\n\nWould you like to book an appointment with our ${option} team?`, true, ['Book Appointment', 'More Information', 'Other Services']);
+            const deptServices = services[option as keyof typeof services] || [];
+            addMessage(`🏥 *${option} Department*\n\n*Available Doctors:*\n${deptDoctors.map(doctor => `• ${doctor}`).join('\n')}\n\n*Services Offered:*\n${deptServices.slice(0, 6).map(service => `• ${service}`).join('\n')}${deptServices.length > 6 ? '\n... and more' : ''}\n\nWould you like to book an appointment with our ${option} team?`, true, ['Book Appointment', 'More Information', 'Other Services']);
           }
           break;
       }
@@ -309,9 +452,29 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         } else if (lowerInput.includes('thank') || lowerInput.includes('thanks')) {
           addMessage('You\'re welcome! Is there anything else I can help you with?', true, ['Book Appointment', 'Our Services', 'Contact Information']);
         } else if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('fee')) {
-          addMessage('💰 *Pricing Information:*\n\nConsultation fees vary by department:\n• General Medicine: ₹500 - ₹800\n• Specialists: ₹800 - ₹1500\n• Emergency: ₹1000 - ₹2000\n\n💳 *Payment Methods:*\n• Cash\n• Credit/Debit Cards\n• UPI\n• Insurance accepted\n\nFor exact pricing, please contact our billing department or book an appointment.', true, ['Book Appointment', 'Contact Information']);
+          addMessage('💰 *Pricing Information:*\n\nConsultation fees vary by department:\n• General Medicine: ₹500 - ₹800\n• Specialists: ₹800 - ₹1500\n• Emergency: ₹1000 - ₹2000\n• Surgery: ₹5000 - ₹50000 (depending on procedure)\n\n💳 *Payment Methods:*\n• Cash\n• Credit/Debit Cards\n• UPI\n• Insurance accepted\n• EMI options available\n\nFor exact pricing, please contact our billing department or book an appointment.', true, ['Book Appointment', 'Contact Information']);
         } else if (lowerInput.includes('insurance') || lowerInput.includes('claim')) {
-          addMessage('🏥 *Insurance Information:*\n\nWe accept most major insurance providers:\n• Government schemes\n• Private insurance\n• Corporate insurance\n\n📋 *Required Documents:*\n• Insurance card\n• ID proof\n• Referral letter (if required)\n\nFor specific insurance queries, please contact our billing department.', true, ['Book Appointment', 'Contact Information']);
+          addMessage('🏥 *Insurance Information:*\n\nWe accept most major insurance providers:\n• Government schemes (Ayushman Bharat, CGHS)\n• Private insurance (ICICI, HDFC, Bajaj, etc.)\n• Corporate insurance\n• TPA networks\n\n📋 *Required Documents:*\n• Insurance card\n• ID proof (Aadhar/PAN)\n• Referral letter (if required)\n• Pre-authorization (for planned procedures)\n\nFor specific insurance queries, please contact our billing department.', true, ['Book Appointment', 'Contact Information']);
+        } else if (lowerInput.includes('location') || lowerInput.includes('where') || lowerInput.includes('address')) {
+          addMessage('📍 *Hospital Location:*\n\n🏥 **Al Nabi Hospital**\n123 Medical Center Drive\nBijapur, Karnataka, India\n\n🗺️ **How to reach us:**\n• By Road: 5 minutes from Bijapur Bus Stand\n• By Train: 10 minutes from Bijapur Railway Station\n• By Air: 45 minutes from Belgaum Airport\n\n🅿️ **Parking:** Free parking available\n♿ **Accessibility:** Wheelchair accessible\n\nNeed directions? I can help you with the route!', true, ['Book Appointment', 'Contact Information']);
+        } else if (lowerInput.includes('timing') || lowerInput.includes('hours') || lowerInput.includes('schedule')) {
+          addMessage('⏰ *Hospital Timings:*\n\n🩺 **Outpatient Department:**\nMonday - Friday: 8:00 AM - 8:00 PM\nSaturday - Sunday: 9:00 AM - 6:00 PM\n\n🚨 **Emergency Services:**\n24/7 Available\n\n🏥 **Inpatient Services:**\n24/7 Available\n\n💊 **Pharmacy:**\nMonday - Sunday: 7:00 AM - 10:00 PM\n\n🔬 **Laboratory:**\nMonday - Sunday: 7:00 AM - 8:00 PM\n\n📞 **Appointment Booking:**\nAvailable 24/7 online', true, ['Book Appointment', 'Contact Information']);
+        } else if (lowerInput.includes('facility') || lowerInput.includes('equipment') || lowerInput.includes('technology')) {
+          addMessage('🏥 *Hospital Facilities & Technology:*\n\n🔬 **Advanced Diagnostics:**\n• MRI, CT Scan, X-Ray\n• Ultrasound, ECG, EEG\n• Blood Bank & Laboratory\n• Pathology Services\n\n🏥 **Medical Equipment:**\n• Modern Operation Theaters\n• ICU & NICU\n• Ventilators & Monitors\n• Laparoscopic Equipment\n• Robotic Surgery Systems\n\n🏨 **Patient Facilities:**\n• Private & General Wards\n• AC Rooms Available\n• Cafeteria & Canteen\n• Prayer Room\n• Wi-Fi Access\n\nWould you like to know about specific facilities?', true, ['Book Appointment', 'Our Services']);
+        } else if (lowerInput.includes('ambulance') || lowerInput.includes('emergency') || lowerInput.includes('urgent')) {
+          addMessage('🚑 *Emergency & Ambulance Services:*\n\n📞 **Emergency Hotline:** +91 4 123 4568\n🚑 **Ambulance Service:** 24/7 Available\n\n⚡ **Response Time:**\n• City: 10-15 minutes\n• Nearby areas: 20-30 minutes\n\n🏥 **Emergency Department:**\n• Level I Trauma Center\n• Cardiac Emergency Unit\n• Pediatric Emergency\n• Stroke Unit\n\n💳 **Emergency Payment:**\n• Cash/Card accepted\n• Insurance processing\n• EMI options available\n\nFor immediate emergency, call the hotline directly!', true, ['Contact Information', 'Emergency Info']);
+        } else if (lowerInput.includes('test') || lowerInput.includes('lab') || lowerInput.includes('diagnostic')) {
+          addMessage('🔬 *Laboratory & Diagnostic Services:*\n\n🩸 **Blood Tests:**\n• Complete Blood Count (CBC)\n• Blood Sugar, Cholesterol\n• Liver & Kidney Function\n• Thyroid Tests\n• Cancer Markers\n\n📷 **Imaging Services:**\n• X-Ray (Digital)\n• Ultrasound\n• CT Scan\n• MRI\n• ECG, EEG, EMG\n\n🔍 **Specialized Tests:**\n• Cardiac Tests\n• Neurological Tests\n• Pregnancy Tests\n• Allergy Tests\n• Genetic Testing\n\n⏰ **Report Timing:**\n• Routine: 24-48 hours\n• Emergency: 2-4 hours\n• Specialized: 3-7 days\n\nBook your tests online or visit our lab!', true, ['Book Appointment', 'Contact Information']);
+        } else if (lowerInput.includes('surgery') || lowerInput.includes('operation') || lowerInput.includes('procedure')) {
+          addMessage('🔪 *Surgical Services:*\n\n🏥 **Available Surgeries:**\n• General Surgery\n• Laparoscopic Surgery\n• Orthopedic Surgery\n• Cardiac Surgery\n• Neurosurgery\n• Pediatric Surgery\n• Gynecological Surgery\n• ENT Surgery\n\n⚡ **Special Features:**\n• Minimally Invasive Procedures\n• Robotic Surgery\n• Day Care Surgery\n• Advanced Anesthesia\n• Post-operative Care\n\n👨‍⚕️ **Surgical Team:**\n• Experienced Surgeons\n• Anesthesiologists\n• Surgical Nurses\n• Support Staff\n\n📋 **Pre-surgery Requirements:**\n• Medical Evaluation\n• Pre-operative Tests\n• Insurance Approval\n• Fasting Instructions\n\nWould you like to book a consultation with our surgeons?', true, ['Book Appointment', 'Our Services']);
+        } else if (lowerInput.includes('covid') || lowerInput.includes('corona') || lowerInput.includes('vaccine')) {
+          addMessage('🦠 *COVID-19 Services:*\n\n🔬 **Testing:**\n• RT-PCR Test\n• Rapid Antigen Test\n• Antibody Test\n\n💉 **Vaccination:**\n• COVID-19 Vaccines Available\n• Booster Doses\n• Vaccination Certificates\n\n🏥 **Treatment:**\n• COVID-19 Treatment\n• Post-COVID Care\n• Rehabilitation Services\n\n🛡️ **Safety Measures:**\n• Regular Sanitization\n• Social Distancing\n• Mask Mandatory\n• Temperature Screening\n\n📞 **COVID Helpline:** +91 4 123 4569\n\nStay safe and get vaccinated!', true, ['Book Appointment', 'Contact Information']);
+        } else if (lowerInput.includes('cardiology') || lowerInput.includes('heart') || lowerInput.includes('cardiac')) {
+          addMessage('💓 *Cardiology Department:*\n\n👨‍⚕️ **Our Cardiologists:**\n• Dr. Ahmed Hassan, Interventional Cardiologist\n• Dr. Sarah Al-Rashid, Cardiac Surgeon\n\n🔬 **Services:**\n• Cardiac Catheterization\n• Echocardiography\n• Stress Testing\n• Holter Monitoring\n• Pacemaker Implantation\n• Cardiac Surgery\n• Preventive Cardiology\n• Heart Failure Management\n\n⚡ **Emergency Cardiac Care:**\n• 24/7 Cardiac Emergency\n• Primary Angioplasty\n• Cardiac ICU\n\nWould you like to book an appointment with our cardiology team?', true, ['Book Appointment', 'Our Services']);
+        } else if (lowerInput.includes('neurology') || lowerInput.includes('brain') || lowerInput.includes('nerve')) {
+          addMessage('🧠 *Neurology Department:*\n\n👨‍⚕️ **Our Neurologists:**\n• Dr. Yitendra Nayak, MCh Neurosurgery\n\n🔬 **Services:**\n• EEG (Electroencephalography)\n• EMG (Electromyography)\n• MRI Brain Imaging\n• Stroke Treatment\n• Epilepsy Management\n• Movement Disorders\n• Memory Disorders\n• Headache Treatment\n\n⚡ **Emergency Neurology:**\n• Stroke Unit\n• 24/7 Neurological Emergency\n• Neurosurgical ICU\n\nWould you like to book an appointment with our neurology team?', true, ['Book Appointment', 'Our Services']);
+        } else if (lowerInput.includes('pediatrics') || lowerInput.includes('child') || lowerInput.includes('baby')) {
+          addMessage('👶 *Pediatrics Department:*\n\n👨‍⚕️ **Our Pediatricians:**\n• Dr. Surendra Aggarwal, MCh Pediatric Surgeon\n• Dr. Rizwan, MD Pediatrics\n\n🔬 **Services:**\n• Well-Child Checkups\n• Immunizations\n• Growth Monitoring\n• Developmental Assessments\n• Pediatric Emergency Care\n• Newborn Care\n• Adolescent Medicine\n• Pediatric Surgery\n\n🏥 **Child-Friendly Environment:**\n• Play Area\n• Child-Safe Equipment\n• Pediatric ICU\n• Neonatal Care\n\nWould you like to book an appointment for your child?', true, ['Book Appointment', 'Our Services']);
         } else {
           addMessage('I understand you\'re looking for information. Here are some ways I can help you:', true, ['Book Appointment', 'Our Services', 'Contact Information', 'Emergency Info']);
         }
@@ -346,10 +509,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           stiffness: 400,
           damping: 30
         }}
-        className={`fixed ${isMobile ? 'inset-0' : 'bottom-6 right-6'} ${isMobile ? 'w-full h-full' : 'w-96 h-[600px]'} bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200 chatbot-window`}
+        className={`fixed ${isMobile ? 'inset-0' : 'bottom-6 right-6'} ${isMobile ? 'w-full h-full' : 'w-96 h-[600px]'} bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200 chatbot-window chatbot-container`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 flex items-center justify-between text-white">
+        <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 p-4 flex items-center justify-between text-white shadow-lg">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
               <MessageCircle className="h-5 w-5" />
@@ -377,9 +540,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
               <div
                 className={`max-w-[85%] p-3 rounded-2xl ${
                   message.isBot
-                    ? 'bg-white text-gray-800 shadow-sm'
-                    : 'bg-blue-600 text-white'
-                } ${message.type === 'confirmation' ? 'border-2 border-green-200 bg-green-50' : ''}`}
+                    ? 'bg-gradient-to-br from-white via-gray-50 to-gray-100 text-gray-800 shadow-sm'
+                    : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
+                } ${message.type === 'confirmation' ? 'border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100' : ''}`}
               >
                 <p className="text-sm whitespace-pre-line leading-relaxed">{message.text}</p>
                 
@@ -390,7 +553,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
                       <button
                         key={index}
                         onClick={() => handleOptionClick(option)}
-                        className="block w-full text-left p-2 text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-colors border border-blue-200"
+                        className="block w-full text-left p-2 text-xs bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 text-blue-700 rounded-lg transition-all duration-200 border border-blue-200 shadow-sm"
                       >
                         {option}
                       </button>
@@ -466,7 +629,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim()}
-              className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
             >
               <Send className="h-4 w-4" />
             </button>
@@ -476,19 +639,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           <div className="flex flex-wrap gap-2 mt-2 chatbot-quick-actions">
             <button
               onClick={() => handleOptionClick('Book Appointment')}
-              className="text-xs px-3 py-1 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors border border-blue-200"
+              className="text-xs px-3 py-1 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 rounded-full hover:from-blue-100 hover:to-purple-100 transition-all duration-200 border border-blue-200 shadow-sm"
             >
               📅 Book Appointment
             </button>
             <button
               onClick={() => handleOptionClick('Our Services')}
-              className="text-xs px-3 py-1 bg-green-50 text-green-600 rounded-full hover:bg-green-100 transition-colors border border-green-200"
+              className="text-xs px-3 py-1 bg-gradient-to-r from-green-50 to-emerald-50 text-green-600 rounded-full hover:from-green-100 hover:to-emerald-100 transition-all duration-200 border border-green-200 shadow-sm"
             >
               🏥 Services
             </button>
             <button
               onClick={() => setShowFeedback(true)}
-              className="text-xs px-3 py-1 bg-yellow-50 text-yellow-600 rounded-full hover:bg-yellow-100 transition-colors border border-yellow-200"
+              className="text-xs px-3 py-1 bg-gradient-to-r from-yellow-50 to-orange-50 text-yellow-600 rounded-full hover:from-yellow-100 hover:to-orange-100 transition-all duration-200 border border-yellow-200 shadow-sm"
             >
               ⭐ Rate Experience
             </button>

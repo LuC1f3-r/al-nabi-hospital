@@ -12,30 +12,22 @@ export interface AppointmentData {
 }
 
 export const sendWhatsAppAppointment = (appointmentData: AppointmentData) => {
-  const message = `🏥 *Al Nabi Hospital - Appointment Confirmation*
-
-👤 *Patient Name:* ${appointmentData.name}
-📞 *Phone:* ${appointmentData.phone}
-📧 *Email:* ${appointmentData.email}
-🏥 *Department:* ${appointmentData.department}
-👨‍⚕️ *Doctor:* ${appointmentData.doctor || 'To be assigned'}
-📅 *Date:* ${appointmentData.date}
-⏰ *Time:* ${appointmentData.time}
-📝 *Notes:* ${appointmentData.notes || 'None'}
-
-✅ *Appointment Status:* Confirmed
-📋 *Please bring:* ID proof, previous medical records (if any)
-
-📍 *Location:* Al Nabi Hospital, 123 Medical Center Drive, Bijapur
-📞 *Contact:* +91 4 123 4567
-
-*Thank you for choosing Al Nabi Hospital!* 🏥`;
+  const message = `New Appointment Booking:
+Name: ${appointmentData.name}
+Phone: ${appointmentData.phone}
+Email: ${appointmentData.email}
+Department: ${appointmentData.department}
+Doctor: ${appointmentData.doctor || 'To be assigned'}
+Date & Time: ${appointmentData.date} at ${appointmentData.time}
+Notes: ${appointmentData.notes || 'N/A'}`;
 
   const encodedMessage = encodeURIComponent(message);
-  const whatsappNumber = '+919876543210'; // Replace with actual hospital WhatsApp number
+  const whatsappNumber = '919738878894'; // Al Nabi Hospital WhatsApp number
+
+  // WhatsApp URL to send the message
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
   
-  // Open WhatsApp in new tab
+  // Open WhatsApp chat in new tab
   window.open(whatsappUrl, '_blank');
   
   return whatsappUrl;
