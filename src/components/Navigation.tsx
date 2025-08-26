@@ -711,7 +711,7 @@ const Navigation: React.FC = () => {
                             fontWeight: 500,
                           }}
                           custom={index + subIndex}
-            sdsad asd ad              variants={mobileMenuItemVariants}
+            sdsad asd              variants={mobileMenuItemVariants}
                           initial="initial"
                           animate="animate"
                           whileHover={{ x: 4 }}
