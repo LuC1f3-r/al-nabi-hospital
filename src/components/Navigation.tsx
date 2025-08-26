@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, Variants, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  Variants,
+  useReducedMotion,
+} from "framer-motion";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Menu, X, ChevronRight, ChevronDown } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
@@ -69,7 +74,12 @@ const NAVIGATION_CONFIG: NavigationConfig = {
     { id: "about", label: "About Us", type: "scroll", section: "about" },
     { id: "services", label: "Services", type: "scroll", section: "services" },
     { id: "doctors", label: "Our Doctors", type: "scroll", section: "doctors" },
-    { id: "testimonials", label: "Testimonials", type: "scroll", section: "testimonials" },
+    {
+      id: "testimonials",
+      label: "Testimonials",
+      type: "scroll",
+      section: "testimonials",
+    },
     { id: "contact", label: "Contact", type: "scroll", section: "contact" },
   ],
   cta: {
@@ -155,14 +165,16 @@ const Navigation: React.FC = () => {
           // Smooth height transition based on scroll
           const maxScroll = animations.maxScrollForProgress;
           const scrollRatio = Math.min(scrollY / maxScroll, 1);
-          
+
           // Use CSS transform for smoother animations
-          const navElement = document.querySelector('.nav-container') as HTMLElement;
+          const navElement = document.querySelector(
+            ".nav-container"
+          ) as HTMLElement;
           if (navElement) {
-            const scale = 1 - (scrollRatio * 0.05); // Subtle scale effect
+            const scale = 1 - scrollRatio * 0.05; // Subtle scale effect
             const translateY = scrollRatio * -1; // Subtle upward movement
             navElement.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-            navElement.style.transition = 'transform 0.15s ease-out';
+            navElement.style.transition = "transform 0.15s ease-out";
           }
 
           // If menu is open and user scrolls page, close it (safety)
@@ -208,7 +220,11 @@ const Navigation: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (isMenuOpen && !target.closest(".mobile-menu-container") && !target.closest(".mobile-menu-toggle")) {
+      if (
+        isMenuOpen &&
+        !target.closest(".mobile-menu-container") &&
+        !target.closest(".mobile-menu-toggle")
+      ) {
         setIsMenuOpen(false);
       }
     };
@@ -231,7 +247,8 @@ const Navigation: React.FC = () => {
       if (element) {
         const headerOffset = 100;
         const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -287,7 +304,10 @@ const Navigation: React.FC = () => {
         animate: (index: number) => ({
           opacity: 1,
           y: 0,
-          transition: { delay: animations.staggerDelay * index + 0.2, duration: 0.4 },
+          transition: {
+            delay: animations.staggerDelay * index + 0.2,
+            duration: 0.4,
+          },
         }),
       };
 
@@ -409,7 +429,9 @@ const Navigation: React.FC = () => {
           />
 
           <div className="max-w-8xl mx-auto px-10 lg:px-10 w-full">
-            <div className={`flex items-center transition-all duration-700 ${currentStyles.height}`}>
+            <div
+              className={`flex items-center transition-all duration-700 ${currentStyles.height}`}
+            >
               {/* Logo Section - hide on scroll */}
               <AnimatePresence>
                 {!scrolled && (
@@ -418,31 +440,27 @@ const Navigation: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -14 }}
                     transition={{ duration: 0.25 }}
-                    className="flex items-center space-x-2 cursor-pointer group"
+                    className="flex items-center cursor-pointer group pl-6"
                     onClick={handleLogoClick}
                     whileHover={{ scale: animations.hoverScale }}
                     whileTap={{ scale: 0.96 }}
                   >
-                                        <motion.div className="relative">
-                      <img 
-                        src={brandLogo} 
+                    <motion.div className="relative">
+                      <img
+                        src={brandLogo}
                         alt="Al Nabi Hospital Logo"
                         className={`transition-all duration-700 ${currentStyles.iconSize} object-contain`}
+                        style={{
+                          // Increase logo size so it fills the text space too
+                          height: "4rem", // adjust as needed
+                          width: "auto",
+                        }}
                       />
                       <motion.div
                         className="absolute inset-0 bg-[#007BBA] rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
                         initial={false}
                       />
                     </motion.div>
-                                          <motion.span
-                        className={`font-serif font-bold text-[#004F74] transition-all duration-700 ${currentStyles.fontSize} group-hover:text-[#007BBA]`}
-                      style={{
-                        fontFamily: "'Cormorant Garamond', 'DM Serif Display', 'Playfair Display', serif",
-                        letterSpacing: "-0.02em",
-                      }}
-                    >
-                      {brand.name}
-                    </motion.span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -451,7 +469,8 @@ const Navigation: React.FC = () => {
               <div className="hidden lg:flex flex-1 items-center justify-center">
                 <div className="flex items-center space-x-6">
                   {menuItems.map((item, index) => {
-                    const isActive = item.type === "scroll" && item.section === activeSection;
+                    const isActive =
+                      item.type === "scroll" && item.section === activeSection;
                     if (item.type === "dropdown") {
                       return (
                         <div
@@ -461,9 +480,12 @@ const Navigation: React.FC = () => {
                           onMouseLeave={() => setOpenDropdown(null)}
                         >
                           <motion.button
-                            className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
+                            className={`${navTextLinkBase} ${navTextLinkUnderline} flex items-center ${
+                              currentStyles.menuFontSize
+                            } ${isActive ? navTextLinkActive : ""}`}
                             style={{
-                              fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
+                              fontFamily:
+                                "'Cormorant Garamond', 'DM Serif Display', serif",
                               fontWeight: 500,
                             }}
                             custom={index}
@@ -473,7 +495,9 @@ const Navigation: React.FC = () => {
                           >
                             <span>{item.label}</span>
                             <motion.div
-                              animate={{ rotate: openDropdown === item.id ? 180 : 0 }}
+                              animate={{
+                                rotate: openDropdown === item.id ? 180 : 0,
+                              }}
                               transition={{ duration: 0.25 }}
                             >
                               <ChevronDown className="h-4 w-4 ml-1" />
@@ -493,12 +517,19 @@ const Navigation: React.FC = () => {
                                     key={subItem.id}
                                     initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: subIndex * 0.04, duration: 0.2 }}
+                                    transition={{
+                                      delay: subIndex * 0.04,
+                                      duration: 0.2,
+                                    }}
                                   >
                                     <Link
                                       to={subItem.path}
                                       className="block px-6 py-4 text-sm text-gray-700 hover:text-[#007BBA] transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
-                                      style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
+                                      style={{
+                                        fontFamily:
+                                          "'Cormorant Garamond', serif",
+                                        fontWeight: 400,
+                                      }}
                                       onClick={() => setOpenDropdown(null)}
                                     >
                                       {subItem.label}
@@ -521,9 +552,12 @@ const Navigation: React.FC = () => {
                             ? handleLinkClick(item.path)
                             : null
                         }
-                        className={`${navTextLinkBase} ${navTextLinkUnderline} ${currentStyles.menuFontSize} ${isActive ? navTextLinkActive : ""}`}
+                        className={`${navTextLinkBase} ${navTextLinkUnderline} ${
+                          currentStyles.menuFontSize
+                        } ${isActive ? navTextLinkActive : ""}`}
                         style={{
-                          fontFamily: "'Cormorant Garamond', 'DM Serif Display', serif",
+                          fontFamily:
+                            "'Cormorant Garamond', 'DM Serif Display', serif",
                           fontWeight: 500,
                         }}
                         whileHover={{ y: -1 }}
@@ -583,11 +617,21 @@ const Navigation: React.FC = () => {
       >
         <AnimatePresence mode="wait">
           {isMenuOpen ? (
-            <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+            <motion.div
+              key="close"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+            >
               <X className="h-6 w-6 text-[#007BBA]" />
             </motion.div>
           ) : (
-            <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
+            <motion.div
+              key="menu"
+              initial={{ rotate: 90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: -90, opacity: 0 }}
+            >
               <Menu className="h-6 w-6 text-[#007BBA]" />
             </motion.div>
           )}
@@ -621,9 +665,29 @@ const Navigation: React.FC = () => {
             exit="exit"
             aria-modal="true"
           >
-            <div className="px-6 pt-20 pb-8 space-y-2">
+            {/* Mobile Logo and Close Button */}
+            <div className="mobile-logo relative w-full flex items-center justify-between px-4 pt-4 pb-2">
+              <img
+                src={brandLogo}
+                alt="Al Nabi Hospital Logo"
+                className="h-10 w-auto object-contain"
+                style={{ maxWidth: '44px', borderRadius: '12px' }}
+                aria-hidden="false"
+              />
+              <button
+                className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#007BBA]"
+                aria-label="Close menu"
+                onClick={() => setIsMenuOpen(false)}
+                tabIndex={0}
+                type="button"
+              >
+                <X className="h-6 w-6 text-[#007BBA]" />
+              </button>
+            </div>
+            <div className="px-6 pt-2 pb-8 space-y-2">
               {menuItems.map((item, index) => {
-                const isActive = item.type === "scroll" && item.section === activeSection;
+                const isActive =
+                  item.type === "scroll" && item.section === activeSection;
                 if (item.type === "dropdown") {
                   return (
                     <div key={item.id} className="space-y-2">
@@ -642,9 +706,12 @@ const Navigation: React.FC = () => {
                           key={subItem.id}
                           onClick={() => handleLinkClick(subItem.path)}
                           className="block w-full px-6 py-2 text-gray-700 hover:text-[#007BBA] transition-all duration-200 text-left bg-transparent rounded-none font-medium"
-                          style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
+                          style={{
+                            fontFamily: "'Cormorant Garamond', serif",
+                            fontWeight: 500,
+                          }}
                           custom={index + subIndex}
-                          variants={mobileMenuItemVariants}
+            sdsad asd ad asd asdas               variants={mobileMenuItemVariants}
                           initial="initial"
                           animate="animate"
                           whileHover={{ x: 4 }}
@@ -668,7 +735,10 @@ const Navigation: React.FC = () => {
                     className={`block w-full px-4 py-3 text-gray-800 hover:text-[#007BBA] transition-all duration-200 bg-transparent rounded-xl font-medium text-left ${
                       isActive ? "text-[#004F74] font-bold underline" : ""
                     }`}
-                    style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontWeight: 500,
+                    }}
                     aria-current={isActive ? "page" : undefined}
                     custom={index}
                     variants={mobileMenuItemVariants}
@@ -685,7 +755,10 @@ const Navigation: React.FC = () => {
               <motion.button
                 onClick={handleCTAClick}
                 className="w-full mt-6 bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white px-6 py-4 rounded-2xl font-semibold text-center hover:from-[#004F74] hover:to-[#007BBA] transition-all duration-300 shadow-lg"
-                style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontWeight: 600,
+                }}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25 }}
