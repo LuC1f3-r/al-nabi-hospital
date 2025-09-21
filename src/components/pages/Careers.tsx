@@ -13,7 +13,8 @@ import {
   Building,
   Calendar,
   Mail,
-  Phone
+  Phone,
+  X
 } from 'lucide-react';
 
 interface JobOpening {
@@ -36,161 +37,152 @@ interface CompanyValue {
   description: string;
 }
 
+const HR_WHATSAPP_NUMBER = '918884801005'; 
+
 const Careers: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('All');
   const [selectedJobType, setSelectedJobType] = useState('All');
 
+  // Modal and form state
+  const [showModal, setShowModal] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<JobOpening | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    experience: '',
+    resumeUrl: '',
+    coverLetter: ''
+  });
+  const [errors, setErrors] = useState<{[k:string]: string}>({});
+
   const jobOpenings: JobOpening[] = [
     {
       id: '1',
-      title: 'Registered Nurse (RN) - ICU',
-      department: 'Nursing',
+      title: 'Lab Technician',
+      department: 'Laboratory',
       location: 'Bijapur, IN',
       type: 'Full-time',
-      experience: '2-5 years',
-      salary: '₹4,00,000 - ₹6,00,000',
-      description: 'Provide comprehensive nursing care to critically ill patients in our state-of-the-art ICU. Work alongside a multidisciplinary team to deliver exceptional patient outcomes.',
+      experience: '1-3 years',
+      salary: '₹2,00,000 - ₹3,00,000',
+      description: 'Perform laboratory tests and procedures to assist in the diagnosis and treatment of patients. Maintain lab equipment and ensure quality control.',
       requirements: [
-        'Bachelor\'s degree in Nursing (BSN) preferred',
-        'Valid RN license in India',
-        'ICU experience preferred',
-        'BLS and ACLS certification required',
-        'Strong communication and critical thinking skills'
+        'Diploma or Bachelor\'s degree in Medical Laboratory Technology',
+        'Experience in clinical laboratory preferred',
+        'Attention to detail and accuracy',
+        'Knowledge of laboratory safety protocols',
+        'Basic computer skills'
       ],
       benefits: [
-        'Competitive salary with performance bonuses',
-        'Comprehensive health insurance',
-        'Professional development opportunities',
-        'Flexible scheduling options',
-        'Retirement savings plan'
+        'Health insurance',
+        'Paid time off',
+        'Training and development',
+        'Supportive work environment',
+        'Employee wellness programs'
       ],
       posted: '2 days ago'
     },
     {
       id: '2',
-      title: 'Medical Technologist - Laboratory',
-      department: 'Laboratory',
+      title: 'OT Technician',
+      department: 'Nursing',
       location: 'Bijapur, IN',
       type: 'Full-time',
-      experience: '1-3 years',
-      salary: '₹3,50,000 - ₹5,00,000',
-      description: 'Perform complex medical laboratory tests for diagnosis, treatment, and prevention of disease. Operate sophisticated laboratory equipment and ensure quality control.',
+      experience: '1-2 years',
+      salary: '₹1,80,000 - ₹2,50,000',
+      description: 'Assist in operating theatre procedures, prepare and maintain OT equipment, and support surgical teams for smooth operations.',
       requirements: [
-        'Bachelor\'s degree in Medical Technology or related science',
-        'Certification from recognized professional association',
-        'Knowledge of laboratory safety protocols',
-        'Attention to detail and accuracy',
-        'Computer proficiency'
+        'Diploma in Operation Theatre Technology',
+        'Experience in hospital OT preferred',
+        'Knowledge of sterilization techniques',
+        'Ability to work in a team',
+        'Good communication skills'
       ],
       benefits: [
-        'Health and dental insurance',
-        'Continuing education support',
-        'Career advancement opportunities',
-        'Paid time off',
-        'Employee wellness programs'
-      ],
-      posted: '1 week ago'
-    },
-    {
-      id: '3',
-      title: 'Physical Therapist',
-      department: 'Rehabilitation',
-      location: 'Bijapur, IN',
-      type: 'Full-time',
-      experience: '3-7 years',
-      salary: '₹5,00,000 - ₹7,50,000',
-      description: 'Help patients recover from injuries and improve their movement and manage pain. Develop personalized treatment plans and work with patients of all ages.',
-      requirements: [
-        'Master\'s or Doctoral degree in Physical Therapy',
-        'Valid PT license in India',
-        'Experience with diverse patient populations',
-        'Strong interpersonal skills',
-        'Knowledge of current PT techniques and equipment'
-      ],
-      benefits: [
-        'Competitive compensation package',
-        'Professional liability insurance',
-        'Continuing education allowance',
-        'Flexible work arrangements',
-        'Health and wellness benefits'
+        'Health insurance',
+        'On-the-job training',
+        'Paid leave',
+        'Employee assistance program',
+        'Career growth opportunities'
       ],
       posted: '3 days ago'
     },
     {
-      id: '4',
-      title: 'Radiologic Technologist',
-      department: 'Radiology',
+      id: '3',
+      title: 'Nurse',
+      department: 'Nursing',
       location: 'Bijapur, IN',
       type: 'Full-time',
-      experience: '2-4 years',
-      salary: '₹3,75,000 - ₹5,50,000',
-      description: 'Perform diagnostic imaging examinations including X-rays, CT scans, and MRIs. Ensure patient safety and comfort while producing high-quality images.',
+      experience: '0-5 years',
+      salary: '₹1,50,000 - ₹3,00,000',
+      description: 'Provide patient care, administer medications, and assist doctors in various departments. Ensure patient comfort and safety.',
       requirements: [
-        'Associate or Bachelor\'s degree in Radiography',
-        'ARRT certification or equivalent',
-        'Knowledge of radiation safety protocols',
-        'Patient care experience',
-        'Technical proficiency with imaging equipment'
+        'Diploma or Bachelor\'s degree in Nursing',
+        'Valid nursing registration',
+        'Compassionate and patient-focused',
+        'Ability to work in shifts',
+        'Good communication skills'
       ],
       benefits: [
-        'Comprehensive benefits package',
-        'Shift differentials',
-        'Professional development support',
-        'Employee recognition programs',
-        'Work-life balance initiatives'
-      ],
-      posted: '5 days ago'
-    },
-    {
-      id: '5',
-      title: 'Medical Assistant - Cardiology',
-      department: 'Cardiology',
-      location: 'Bijapur, IN',
-      type: 'Full-time',
-      experience: '1-2 years',
-      salary: '₹2,50,000 - ₹3,50,000',
-      description: 'Support cardiologists and healthcare team by performing administrative and clinical tasks. Assist with patient care and maintain medical records.',
-      requirements: [
-        'Medical Assistant certification or diploma',
-        'Knowledge of cardiology procedures preferred',
-        'Strong organizational skills',
-        'Excellent communication abilities',
-        'Computer literacy'
-      ],
-      benefits: [
-        'Health insurance coverage',
-        'Paid vacation and sick leave',
-        'Training and certification support',
-        'Employee assistance program',
-        'Career growth opportunities'
+        'Competitive salary',
+        'Health insurance',
+        'Paid leave',
+        'Training and development',
+        'Supportive team environment'
       ],
       posted: '1 day ago'
     },
     {
-      id: '6',
-      title: 'Pharmacist - Clinical',
+      id: '4',
+      title: 'Brother',
+      department: 'Nursing',
+      location: 'Bijapur, IN',
+      type: 'Full-time',
+      experience: '0-3 years',
+      salary: '₹1,50,000 - ₹2,50,000',
+      description: 'Assist nurses and doctors in patient care, help with daily activities, and maintain hygiene and safety standards.',
+      requirements: [
+        'Relevant certification or experience',
+        'Caring and responsible attitude',
+        'Ability to work in a team',
+        'Willingness to work flexible hours',
+        'Basic patient care knowledge'
+      ],
+      benefits: [
+        'Health insurance',
+        'Paid time off',
+        'Training provided',
+        'Friendly work environment',
+        'Employee support programs'
+      ],
+      posted: '4 days ago'
+    },
+    {
+      id: '5',
+      title: 'Medical Store Staff',
       department: 'Pharmacy',
       location: 'Bijapur, IN',
       type: 'Full-time',
-      experience: '3-6 years',
-      salary: '₹6,00,000 - ₹8,50,000',
-      description: 'Provide clinical pharmacy services including medication therapy management, drug information, and patient counseling. Collaborate with healthcare teams.',
+      experience: '0-2 years',
+      salary: '₹1,20,000 - ₹2,00,000',
+      description: 'Manage medical store inventory, assist pharmacists, and provide medicines to patients as per prescriptions.',
       requirements: [
-        'Doctor of Pharmacy (PharmD) degree',
-        'Valid pharmacy license in India',
-        'Clinical pharmacy experience preferred',
-        'Strong analytical and communication skills',
-        'Knowledge of pharmacy informatics'
+        '12th pass or relevant qualification',
+        'Experience in medical store preferred',
+        'Basic knowledge of medicines',
+        'Good organizational skills',
+        'Customer service skills'
       ],
       benefits: [
-        'Excellent compensation and benefits',
-        'Professional development opportunities',
-        'Research and publication support',
-        'Flexible scheduling',
-        'Comprehensive insurance coverage'
+        'Health insurance',
+        'Paid leave',
+        'On-the-job training',
+        'Supportive management',
+        'Growth opportunities'
       ],
-      posted: '4 days ago'
+      posted: '5 days ago'
     }
   ];
 
@@ -229,10 +221,102 @@ const Careers: React.FC = () => {
     return matchesSearch && matchesDepartment && matchesJobType;
   });
 
+  function openApplyModal(job: JobOpening) {
+    setSelectedJob(job);
+    setShowModal(true);
+    setForm({
+      name: '',
+      email: '',
+      phone: '',
+      experience: job.experience || '',
+      resumeUrl: '',
+      coverLetter: ''
+    });
+    setErrors({});
+  }
+
+  function closeModal() {
+    setShowModal(false);
+    setSelectedJob(null);
+    setSubmitting(false);
+    setErrors({});
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  function validate() {
+    const err: {[k:string]: string} = {};
+    if (!form.name.trim()) err.name = 'Name is required';
+    if (!form.phone.trim()) err.phone = 'Phone is required';
+    // simple email check
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) err.email = 'Invalid email';
+    return err;
+  }
+
+  async function submitToWhatsApp() {
+    setErrors({});
+    const val = validate();
+    if (Object.keys(val).length > 0) {
+      setErrors(val);
+      return;
+    }
+    if (!selectedJob) return;
+
+    setSubmitting(true);
+
+    // Build plain message
+    const messageLines = [
+      `*New Job Application*`,
+      ``,
+      `*Job:* ${selectedJob.title} (ID: ${selectedJob.id})`,
+      `*Department:* ${selectedJob.department}`,
+      `*Location:* ${selectedJob.location}`,
+      ``,
+      `*Applicant Name:* ${form.name}`,
+      `*Phone:* ${form.phone}`,
+      form.email ? `*Email:* ${form.email}` : '',
+      form.experience ? `*Experience:* ${form.experience}` : '',
+      form.resumeUrl ? `*Resume:* ${form.resumeUrl}` : '',
+      form.coverLetter ? `` : '',
+      ...(form.coverLetter ? ['*Cover Letter:*', form.coverLetter] : []),
+      ``,
+      `-- Sent from Al Nabi Careers site`
+    ].filter(Boolean).join('\n');
+
+    const encoded = encodeURIComponent(messageLines);
+
+    const number = HR_WHATSAPP_NUMBER.replace(/\D/g, '');
+    const waUrl = `https://wa.me/${number}?text=${encoded}`;
+
+    try {
+      window.open(waUrl, '_blank');
+
+      try {
+        await navigator.clipboard.writeText(messageLines);
+      } catch {
+
+      }
+
+      closeModal();
+    } catch (err) {
+      // fallback: copy message to clipboard and inform user
+      try {
+        await navigator.clipboard.writeText(messageLines);
+        alert('Could not open WhatsApp automatically. The application text is copied to your clipboard — paste it into WhatsApp to send.');
+      } catch {
+        alert('Failed to open WhatsApp and copy the message. Please copy this message manually:\n\n' + messageLines);
+      }
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-20">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-primary-600 to-primary-800 overflow-hidden">
+      <section className="relative pt-40 py-20 bg-gradient-to-br from-[#004F74] to-[#007BBA] overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
@@ -293,7 +377,7 @@ const Careers: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center p-6 rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-gray-100 hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#004F74] to-[#007BBA] rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <value.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
@@ -443,7 +527,8 @@ const Careers: React.FC = () => {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="w-full lg:w-auto bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-primary-600 hover:to-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                        onClick={() => openApplyModal(job)}
+                        className="w-full lg:w-auto bg-gradient-to-r from-[#156e97] to-[#007BBA] text-white px-8 py-3 rounded-xl font-semibold hover:from-[#004F74] hover:to-[#014060] transition-all duration-300 shadow-lg hover:shadow-xl"
                       >
                         Apply Now
                       </motion.button>
@@ -514,7 +599,7 @@ const Careers: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#004F74] to-[#007BBA] rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-xl">
                   {step.step}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">{step.title}</h3>
@@ -548,6 +633,116 @@ const Careers: React.FC = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* APPLICATION FORM MODAL */}
+      {showModal && selectedJob && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal}></div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.18 }}
+            className="relative z-10 max-w-2xl w-full bg-white rounded-2xl shadow-xl p-6 md:p-8"
+          >
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 rounded-full p-2 hover:bg-gray-100"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <h3 className="text-2xl font-bold mb-2">Apply for: {selectedJob.title}</h3>
+            <p className="text-sm text-gray-600 mb-6">{selectedJob.department} • {selectedJob.location}</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium">Full name<span className="text-red-500">*</span></label>
+                <input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  placeholder="Your full name"
+                />
+                {errors.name && <div className="text-xs text-red-500 mt-1">{errors.name}</div>}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Phone<span className="text-red-500">*</span></label>
+                <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  placeholder="+91 98XXXXXXXX"
+                />
+                {errors.phone && <div className="text-xs text-red-500 mt-1">{errors.phone}</div>}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Email</label>
+                <input
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  placeholder="you@example.com"
+                />
+                {errors.email && <div className="text-xs text-red-500 mt-1">{errors.email}</div>}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Experience</label>
+                <input
+                  name="experience"
+                  value={form.experience}
+                  onChange={handleChange}
+                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  placeholder="Years / summary"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-sm font-medium">Resume URL (or Google Drive / Dropbox link)</label>
+                <input
+                  name="resumeUrl"
+                  value={form.resumeUrl}
+                  onChange={handleChange}
+                  className="mt-1 w-full border rounded-lg px-3 py-2"
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-sm font-medium">Cover letter / message</label>
+                <textarea
+                  name="coverLetter"
+                  value={form.coverLetter}
+                  onChange={handleChange}
+                  className="mt-1 w-full border rounded-lg px-3 py-2 h-28"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-end space-x-3">
+              <button onClick={closeModal} className="px-4 py-2 rounded-lg border">Cancel</button>
+              <button
+                onClick={submitToWhatsApp}
+                disabled={submitting}
+                className="px-6 py-2 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold disabled:opacity-60"
+              >
+                {submitting ? 'Sending...' : 'Send to WhatsApp'}
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-500 mt-3">
+              Note: By clicking Send to WhatsApp the application text will open in WhatsApp Web / Mobile.
+              Make sure the HR WhatsApp number is correctly configured in the code (see <code>HR_WHATSAPP_NUMBER</code>).
+            </p>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
