@@ -42,6 +42,14 @@ const Doctors = () => {
         department: "general-medicine",
       },
       {
+        name: "Dr. Azmat",
+        specialization: "Plastic Surgeon",
+        image:
+          "https://images.pexels.com/photos/6749768/pexels-photo-6749768.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "plastic-surgery",
+      },
+      {
         name: "Dr. Asma Jahagirdar",
         specialization: "DA Anaesthesia",
         image:
