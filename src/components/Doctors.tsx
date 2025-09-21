@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MapPin } from "lucide-react";
+import drJinali from "../assets/dr-jilani.jpg";
 
 type DoctorCategory = "main" | "visiting" | "management";
 
@@ -7,19 +8,21 @@ const Doctors = () => {
   const [activeCategory, setActiveCategory] = useState<DoctorCategory>("main");
   const [visibleCount, setVisibleCount] = useState(4);
 
-  const doctors: Record<DoctorCategory, {
-    name: string;
-    specialization: string;
-    image: string;
-    availability: string;
-    department: string;
-  }[]> = {
+  const doctors: Record<
+    DoctorCategory,
+    {
+      name: string;
+      specialization: string;
+      image: string;
+      availability: string;
+      department: string;
+    }[]
+  > = {
     main: [
       {
         name: "Dr. Jilani Awati",
         specialization: "MS General Surgery & Laparoscopic Surgeon",
-        image:
-          "https://images.pexels.com/photos/6749776/pexels-photo-6749776.jpeg?auto=compress&cs=tinysrgb&w=400",
+        image: drJinali,
         availability: "Available",
         department: "surgery",
       },
