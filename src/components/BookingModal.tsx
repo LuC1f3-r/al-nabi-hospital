@@ -163,7 +163,7 @@ Notes: ${formData.notes || "N/A"}
     >
       <div className="bg-white rounded-3xl max-w-4xl w-full my-8 shadow-2xl">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 text-white p-6 sm:p-8 rounded-t-3xl shadow-lg">
+        <div className="bg-gradient-to-r from-[#004F74] to-[#007BBA] text-white p-6 sm:p-8 rounded-t-3xl shadow-lg">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <Calendar className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -415,7 +415,7 @@ Notes: ${formData.notes || "N/A"}
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-blue-600 hover:to-purple-700 shadow-lg"
+              className="w-full bg-gradient-to-r from-[#004F74] to-[#007BBA] text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-blue-600 hover:to-purple-700 shadow-lg"
             >
               Confirm Appointment
             </button>
