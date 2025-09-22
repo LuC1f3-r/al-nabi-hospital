@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from "react";
 import {
   motion,
@@ -5,10 +7,11 @@ import {
   Variants,
   useReducedMotion,
 } from "framer-motion";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { Menu, X, ChevronRight, ChevronDown } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
-import logo from "../assets/logo.png";
+const logo = "/assets/logo.png";
 
 // --- Type Definitions ---
 interface MenuItem {
@@ -129,8 +132,8 @@ const Navigation: React.FC = () => {
   const reduceMotion = useReducedMotion();
 
   const { setIsModalOpen } = useBookingStore();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { brand, menuItems, cta, animations, styles } = NAVIGATION_CONFIG;
   const currentStyles = scrolled ? styles.scrolled : styles.default;
@@ -254,8 +257,8 @@ const Navigation: React.FC = () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
     };
-    if (location.pathname !== "/") {
-      navigate("/");
+    if (pathname !== "/") {
+      router.push("/");
       setTimeout(performScroll, 300);
     } else {
       performScroll();
@@ -265,13 +268,13 @@ const Navigation: React.FC = () => {
   };
 
   const handleLinkClick = (path: string) => {
-    navigate(path);
+    router.push(path);
     setIsMenuOpen(false);
     setOpenDropdown(null);
   };
 
   const handleLogoClick = (): void => {
-    navigate("/");
+    router.push("/");
     window.scrollTo({ top: 0, behavior: "smooth" });
     setIsMenuOpen(false);
   };
@@ -523,7 +526,7 @@ const Navigation: React.FC = () => {
                                     }}
                                   >
                                     <Link
-                                      to={subItem.path}
+                                      href={subItem.path}
                                       className="block px-6 py-4 text-sm text-gray-700 hover:text-[#007BBA] transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
                                       style={{
                                         fontFamily:

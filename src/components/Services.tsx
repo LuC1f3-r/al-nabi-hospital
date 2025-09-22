@@ -1,5 +1,7 @@
+'use client'
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { Heart, Brain, Baby, Eye, Bone, Activity, Stethoscope, Ambulance, Scissors, Droplet, Scan, Shield, User, Microscope, Syringe, Ear, LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,7 +13,7 @@ interface Service {
 }
 
 const Services: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isNavigating, setIsNavigating] = useState<string | null>(null);
   const [showAll, setShowAll] = useState<boolean>(false);
 
@@ -175,10 +177,7 @@ const Services: React.FC = () => {
     
     try {
       // Navigate to the service detail page
-      navigate(`/services/${serviceId}`, { 
-        replace: false,
-        state: { fromServices: true },
-      });
+      router.push(`/services/${serviceId}`);
       
       // Use a timeout to reset the navigating state
       const timer = setTimeout(() => {

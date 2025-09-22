@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Cookie, Settings, Shield, Eye, BarChart3, Target, Clock, Mail, Phone, ToggleLeft, ToggleRight } from 'lucide-react';

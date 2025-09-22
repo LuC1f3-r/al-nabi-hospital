@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from "react";
 import { X, Calendar, User, MessageSquare, Building } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";

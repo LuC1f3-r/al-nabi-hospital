@@ -1,14 +1,19 @@
+'use client'
+
 import React from 'react';
-import { Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
 import Footer from './Footer';
 
-const Layout: React.FC = () => {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <Navigation />
       <main>
-        <Outlet />
+        {children}
       </main>
       <Footer />
     </>

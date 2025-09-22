@@ -1,4 +1,6 @@
 // ChatbotButton.tsx
+'use client'
+
 import React from "react";
 import "./ChatbotButton.css"; // this contains the Uiverse CSS you provided
 

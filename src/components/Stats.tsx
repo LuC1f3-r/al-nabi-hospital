@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
@@ -5,7 +7,7 @@ import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 import { Users, Award, Activity, Heart } from 'lucide-react';
 
-const Stats = React.memo(() => {
+const Stats = React.memo(function Stats() {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,

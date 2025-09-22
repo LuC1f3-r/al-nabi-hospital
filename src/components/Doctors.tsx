@@ -1,6 +1,8 @@
+'use client'
+
 import { useState } from "react";
 import { MapPin } from "lucide-react";
-import drJinali from "../assets/dr-jilani.jpg";
+const drJinali = "/assets/dr-jilani.jpg";
 
 type DoctorCategory = "main" | "visiting" | "management";
 

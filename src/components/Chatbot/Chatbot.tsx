@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import ChatbotIcon from './ChatbotIcon';
 import ChatWindow from './ChatWindow';

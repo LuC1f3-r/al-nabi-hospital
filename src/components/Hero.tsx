@@ -1,7 +1,9 @@
+'use client'
+
 import { motion } from "framer-motion";
 import { Calendar, Shield, Clock, Users } from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
-import heroVideo from "../assets/hero.mp4";
+const heroVideo = "/assets/hero.mp4";
 import BlurText from "./BlurText";
 
 const Hero = () => {

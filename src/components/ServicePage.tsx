@@ -1,5 +1,7 @@
+'use client'
+
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, Users, Award, CheckCircle, Phone, Mail, Heart, Brain, Baby, Eye, Bone, Activity, Stethoscope, Ambulance, Scissors, Droplet, Scan, Shield, User as UserIcon, Microscope, Syringe, Ear, LucideIcon } from 'lucide-react';
 import { useBookingStore } from '../store/bookingStore';
@@ -28,9 +30,12 @@ interface Service {
   icon: LucideIcon;
 }
 
-const ServiceDetail: React.FC = () => {
-  const { serviceId } = useParams<{ serviceId: string }>();
-  const navigate = useNavigate();
+interface ServicePageProps {
+  serviceId: string;
+}
+
+const ServiceDetail: React.FC<ServicePageProps> = ({ serviceId }) => {
+  const router = useRouter();
   const { setIsModalOpen } = useBookingStore();
 
   // Scroll to top when component mounts or serviceId changes
@@ -49,7 +54,7 @@ const ServiceDetail: React.FC = () => {
   // Handle back button navigation properly
   const handleBackClick = () => {
     // Navigate to home page
-    navigate('/');
+    router.push('/');
     
     // Use a timeout to ensure the page has loaded before scrolling to services section
     setTimeout(() => {

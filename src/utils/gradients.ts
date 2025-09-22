@@ -111,7 +111,7 @@ export const gradientAnimations = {
 // Utility function to get gradient style
 export const getGradientStyle = (gradientKey: string): string => {
   const keys = gradientKey.split('.');
-  let current: any = gradients;
+  let current: Record<string, any> = gradients;
   
   for (const key of keys) {
     if (current[key]) {

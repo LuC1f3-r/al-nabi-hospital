@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Heart,
   Phone,
@@ -8,9 +10,9 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import kingpin from "../assets/kingpin-logo.png";
-import logo from "../assets/logo.png";
+import Link from "next/link";
+const kingpin = "/assets/kingpin-logo.png";
+const logo = "/assets/logo.png";
 
 const Footer = () => {
   return (
@@ -70,7 +72,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  to="/about"
+                  href="/"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   About Us
@@ -78,7 +80,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/services"
+                  href="/"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Our Services
@@ -86,7 +88,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/doctors"
+                  href="/"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Our Doctors
@@ -94,7 +96,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/testimonials"
+                  href="/"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Testimonials
@@ -102,7 +104,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/careers"
+                  href="/careers"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Careers
@@ -117,7 +119,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  to="/terms"
+                  href="/terms"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Terms & Conditions
@@ -125,7 +127,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/privacy-policy"
+                  href="/privacy-policy"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Privacy Policy
@@ -133,7 +135,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/cookie-policy"
+                  href="/cookie-policy"
                   className="text-blue-50 hover:text-white transition-colors duration-200"
                 >
                   Cookie Policy
@@ -197,21 +199,21 @@ const Footer = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-6 mt-4 md:mt-0">
               <Link
-                to="/terms"
+                href="/terms"
                 className="text-blue-50 hover:text-amber-400 text-sm transition-colors duration-200"
                 aria-label="Terms of Service"
               >
                 Terms of Service
               </Link>
               <Link
-                to="/privacy-policy"
+                href="/privacy-policy"
                 className="text-blue-50 hover:text-amber-400 text-sm transition-colors duration-200"
                 aria-label="Privacy Policy"
               >
                 Privacy Policy
               </Link>
               <Link
-                to="/cookie-policy"
+                href="/cookie-policy"
                 className="text-blue-50 hover:text-amber-400 text-sm transition-colors duration-200"
                 aria-label="Cookie Policy"
               >
