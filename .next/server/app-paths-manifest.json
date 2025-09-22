@@ -1,4 +1,9 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/careers/page": "app/careers/page.js",
   "/page": "app/page.js",
-  "/careers/page": "app/careers/page.js"
+  "/cookie-policy/page": "app/cookie-policy/page.js",
+  "/services/[serviceId]/page": "app/services/[serviceId]/page.js",
+  "/terms/page": "app/terms/page.js",
+  "/privacy-policy/page": "app/privacy-policy/page.js"
 }

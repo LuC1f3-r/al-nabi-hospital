@@ -98,26 +98,26 @@ const NAVIGATION_CONFIG: NavigationConfig = {
   },
   styles: {
     scrolled: {
-      height: "h-12",
+      height: "h-14",
       iconSize: "h-6 w-6",
       fontSize: "text-sm",
       menuFontSize: "text-sm",
-      buttonPadding: "px-2 py-1",
+      buttonPadding: "px-3 py-2",
       borderRadius: "9999px",
-      topOffset: "22px",
-      width: "40%",
-      leftOffset: "30%",
+      topOffset: "0px",
+      width: "100%",
+      leftOffset: "0%",
     },
     default: {
-      height: "h-16",
+      height: "h-20",
       iconSize: "h-8 w-8",
       fontSize: "text-xl",
       menuFontSize: "text-base",
-      buttonPadding: "px-4 py-2.5",
-      borderRadius: "28px",
-      topOffset: "22px",
-      width: "96%",
-      leftOffset: "2%",
+      buttonPadding: "px-6 py-3",
+      borderRadius: "0px",
+      topOffset: "0px",
+      width: "100%",
+      leftOffset: "0%",
     },
   },
 };
@@ -146,9 +146,8 @@ const Navigation: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // --- Scroll handling for shrink/hide nav + progress ---
+  // --- Scroll handling for sticky nav with shrinking animation ---
   useEffect(() => {
-    let lastScrollY = window.scrollY;
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
@@ -165,27 +164,11 @@ const Navigation: React.FC = () => {
           const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
           setScrollProgress(easedProgress);
 
-          // Smooth height transition based on scroll
-          const maxScroll = animations.maxScrollForProgress;
-          const scrollRatio = Math.min(scrollY / maxScroll, 1);
-
-          // Use CSS transform for smoother animations
-          const navElement = document.querySelector(
-            ".nav-container"
-          ) as HTMLElement;
-          if (navElement) {
-            const scale = 1 - scrollRatio * 0.05; // Subtle scale effect
-            const translateY = scrollRatio * -1; // Subtle upward movement
-            navElement.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-            navElement.style.transition = "transform 0.15s ease-out";
-          }
-
-          // If menu is open and user scrolls page, close it (safety)
-          if (isMenuOpen && Math.abs(scrollY - lastScrollY) > 8) {
+          // Close mobile menu if user scrolls significantly
+          if (isMenuOpen && scrollY > animations.scrollThreshold) {
             setIsMenuOpen(false);
           }
 
-          lastScrollY = scrollY;
           ticking = false;
         });
         ticking = true;
@@ -193,7 +176,7 @@ const Navigation: React.FC = () => {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [animations.scrollThreshold, isMobile, isMenuOpen]);
+  }, [animations.scrollThreshold, isMenuOpen]);
 
   // --- Scrollspy for active section highlight ---
   useEffect(() => {
@@ -333,25 +316,21 @@ const Navigation: React.FC = () => {
       };
 
   const getNavStyles = (): React.CSSProperties => {
-    const blur = scrolled ? (isMobile ? 12 : 20) : isMobile ? 8 : 16;
-    const boxShadowMobile = scrolled
-      ? "0 16px 32px -12px rgba(0,0,0,0.10), 0 0 0 1px rgba(255,255,255,0.05)"
-      : "0 12px 24px -10px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.05)";
-    const boxShadowDesktop = scrolled
-      ? "0 25px 50px -12px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.05)"
-      : "0 20px 40px -8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04), 0 0 0 1px rgba(255,255,255,0.05)";
+    const blur = scrolled ? 20 : 16;
+    const backgroundOpacity = scrolled ? 0.98 : 0.92;
+    const borderOpacity = scrolled ? 0.3 : 0.2;
+    
     return {
-      background: `
-        linear-gradient(135deg, 
-          rgba(255, 255, 255, ${scrolled ? "0.95" : "0.85"}) 0%,
-          rgba(255, 255, 255, ${scrolled ? "0.90" : "0.75"}) 100%
-        )
-      `,
+      background: `rgba(255, 255, 255, ${backgroundOpacity})`,
       backdropFilter: `blur(${blur}px) saturate(180%)`,
-      borderRadius: currentStyles.borderRadius,
-      border: `1px solid rgba(255, 255, 255, ${scrolled ? "0.4" : "0.3"})`,
-      boxShadow: isMobile ? boxShadowMobile : boxShadowDesktop,
-      willChange: "transform, opacity",
+      borderBottom: scrolled 
+        ? `1px solid rgba(0, 123, 186, ${borderOpacity})` 
+        : 'none',
+      boxShadow: scrolled 
+        ? '0 4px 32px rgba(0, 0, 0, 0.1), 0 2px 16px rgba(0, 123, 186, 0.1)'
+        : '0 8px 40px rgba(0, 0, 0, 0.08)',
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+      willChange: 'backdrop-filter, background-color, box-shadow, border',
     };
   };
 
@@ -394,82 +373,51 @@ const Navigation: React.FC = () => {
       {/* Navigation Bar */}
       {!isMobile && (
         <motion.nav
-          className={`fixed z-50 transition-transform duration-500 ease-out nav-container`}
-          style={{
-            ...getNavStyles(),
-            top: currentStyles.topOffset,
-            left: currentStyles.leftOffset,
-            right: scrolled ? "2.5%" : "2%",
-            width: currentStyles.width,
-          }}
+          className={`fixed top-0 left-0 right-0 z-50 nav-container`}
+          style={getNavStyles()}
           role="navigation"
           aria-label="Main Navigation"
           variants={navVariants}
           initial="initial"
           animate="animate"
         >
-          <motion.div
-            className="absolute inset-0 -z-10"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{
-              opacity: scrolled ? 0.55 : 0.4,
-              scale: scrolled ? 1.005 : 1.02,
-            }}
-            transition={{ duration: 0.5 }}
-            style={{
-              background: `
-              radial-gradient(ellipse 80% 60% at 50% -20%, 
-                rgba(0, 123, 186, 0.12) 0%,
-                rgba(0, 123, 186, 0.06) 40%,
-                transparent 70%
-              )
-            `,
-              borderRadius: currentStyles.borderRadius,
-              transform: "translateY(6px)",
-              filter: "blur(10px)",
-              willChange: "opacity, transform",
-            }}
-          />
-
-          <div className="max-w-8xl mx-auto px-10 lg:px-10 w-full">
-            <div
-              className={`flex items-center transition-all duration-700 ${currentStyles.height}`}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <motion.div
+              className={`flex items-center justify-between transition-all duration-500 ${currentStyles.height}`}
+              animate={{
+                paddingLeft: scrolled ? '1rem' : '2rem',
+                paddingRight: scrolled ? '1rem' : '2rem',
+              }}
+              transition={{ duration: 0.4, ease: 'easeInOut' }}
             >
-              {/* Logo Section - hide on scroll */}
-              <AnimatePresence>
-                {!scrolled && (
+              {/* Logo Section - fade out on scroll */}
+              <motion.div
+                className="flex items-center cursor-pointer group"
+                onClick={handleLogoClick}
+                animate={{
+                  opacity: scrolled ? 0 : 1,
+                  scale: scrolled ? 0.8 : 1,
+                  x: scrolled ? -50 : 0,
+                }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                whileHover={{ scale: scrolled ? 0.8 : animations.hoverScale }}
+                whileTap={{ scale: 0.96 }}
+              >
+                <motion.div className="relative">
+                  <img
+                    src={brandLogo}
+                    alt="Al Nabi Hospital Logo"
+                    className="h-12 w-auto object-contain"
+                  />
                   <motion.div
-                    initial={{ opacity: 0, x: -14 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -14 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex items-center cursor-pointer group pl-6"
-                    onClick={handleLogoClick}
-                    whileHover={{ scale: animations.hoverScale }}
-                    whileTap={{ scale: 0.96 }}
-                  >
-                    <motion.div className="relative">
-                      <img
-                        src={brandLogo}
-                        alt="Al Nabi Hospital Logo"
-                        className={`transition-all duration-700 ${currentStyles.iconSize} object-contain`}
-                        style={{
-                          // Increase logo size so it fills the text space too
-                          height: "4rem", // adjust as needed
-                          width: "auto",
-                        }}
-                      />
-                      <motion.div
-                        className="absolute inset-0 bg-[#007BBA] rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                        initial={false}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    className="absolute inset-0 bg-[#007BBA] rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                    initial={false}
+                  />
+                </motion.div>
+              </motion.div>
 
-              {/* Desktop Navigation Menu */}
-              <div className="hidden lg:flex flex-1 items-center justify-center">
+              {/* Desktop Navigation Menu - always centered */}
+              <div className={`hidden lg:flex items-center space-x-8 ${scrolled ? 'flex-1 justify-center' : ''}`}>
                 <div className="flex items-center space-x-6">
                   {menuItems.map((item, index) => {
                     const isActive =
@@ -577,33 +525,28 @@ const Navigation: React.FC = () => {
                 </div>
               </div>
 
-              {/* CTA Button - hide on scroll */}
-              <AnimatePresence>
-                {!scrolled && (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.25 }}
-                    onClick={handleCTAClick}
-                    className={`hidden lg:flex bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-[#004F74] hover:to-[#007BBA] backdrop-blur-sm`}
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontWeight: 600,
-                      boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
-                    }}
-                    whileHover={{ scale: animations.hoverScale, y: -1 }}
-                    whileTap={{ scale: 0.96 }}
-                  >
-                    <span>{cta.text}</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
-
-              {/* (Disabled) In-nav Mobile Toggle – replaced by floating toggle */}
-              <div className="hidden items-center ml-auto" />
-            </div>
+              {/* CTA Button - fade out on scroll */}
+              <motion.button
+                onClick={handleCTAClick}
+                className={`hidden lg:flex bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-[#004F74] hover:to-[#007BBA] backdrop-blur-sm`}
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontWeight: 600,
+                  boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
+                }}
+                animate={{
+                  opacity: scrolled ? 0 : 1,
+                  scale: scrolled ? 0.8 : 1,
+                  x: scrolled ? 50 : 0,
+                }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                whileHover={{ scale: scrolled ? 0.8 : animations.hoverScale, y: -1 }}
+                whileTap={{ scale: 0.96 }}
+              >
+                <span>{cta.text}</span>
+                <ChevronRight className="h-4 w-4" />
+              </motion.button>
+            </motion.div>
           </div>
         </motion.nav>
       )}
