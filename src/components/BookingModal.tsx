@@ -415,7 +415,7 @@ Notes: ${formData.notes || "N/A"}
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#004F74] to-[#007BBA] text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-blue-600 hover:to-purple-700 shadow-lg"
+              className="w-full bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white py-4 sm:py-5 rounded-xl font-semibold text-base sm:text-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300 hover:from-[#0086CC] hover:to-[#005A85]"
             >
               Confirm Appointment
             </button>
