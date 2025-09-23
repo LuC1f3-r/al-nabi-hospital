@@ -1,2 +1,61 @@
+# Node
 node_modules/
+
+# Next.js
+.next/
+.next/cache/
+out/
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# OS files
 .DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Editors/IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.iml
+
+# Caches
+.cache/
+.parcel-cache/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.turbo/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Deployment/platform
+.vercel/
+.vercel/output
+.serverless/
+.firebase/
+
+# Misc
+*.tgz
+*.zip
+*.gz

@@ -1,3 +1,5 @@
+import typography from '@tailwindcss/typography';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -211,7 +213,8 @@ export default {
     },
   },
   plugins: [
-    // Add typography plugin for better text styling
+    typography,
+    // Custom utility extensions
     function ({ addUtilities, theme }) {
       const newUtilities = {
         ".text-balance": {
