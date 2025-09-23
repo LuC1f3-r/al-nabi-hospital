@@ -1,157 +1,162 @@
 import { useState } from "react";
 import { MapPin } from "lucide-react";
+import drJinali from "../assets/dr-jilani.jpg";
+
+type DoctorCategory = "main" | "visiting" | "management";
 
 const Doctors = () => {
-  const [activeCategory, setActiveCategory] = useState("main");
-  const [visibleCount, setVisibleCount ] = useState(4);
+  const [activeCategory, setActiveCategory] = useState<DoctorCategory>("main");
+  const [visibleCount, setVisibleCount] = useState(4);
 
-  const doctors = {
+  const doctors: Record<
+    DoctorCategory,
+    {
+      name: string;
+      specialization: string;
+      image: string;
+      availability: string;
+      department: string;
+    }[]
+  > = {
     main: [
       {
-        name: "Dr. Ahmed Hassan",
-        specialization: "Cardiologist",
-        image:
-          "https://images.pexels.com/photos/6749764/pexels-photo-6749764.jpeg?auto=compress&cs=tinysrgb&w=400",
+        name: "Dr. Jilani Awati",
+        specialization: "MS General Surgery & Laparoscopic Surgeon",
+        image: drJinali,
         availability: "Available",
-        department: "cardiology",
+        department: "surgery",
       },
       {
-        name: "Dr. Sarah Ahmed",
-        specialization: "Neurologist",
+        name: "Dr. Osama Awati",
+        specialization: "MBBS",
         image:
-          "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=400",
+          "https://images.pexels.com/photos/6749761/pexels-photo-6749761.jpeg?auto=compress&cs=tinysrgb&w=400",
         availability: "Available",
-        department: "neurology",
-      },
-      {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
-        image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Available",
-        department: "pediatrics",
-      },
-      {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
-        image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
-      },
-      {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
-        image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Available",
-        department: "pediatrics",
-      },
-      {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
-        image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
-      },
-      {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
-        image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Available",
-        department: "pediatrics",
-      },
-      {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
-        image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
-      },
-      {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
-        image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Available",
-        department: "pediatrics",
-      },
-      {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
-        image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
+        department: "general",
       },
     ],
     visiting: [
       {
-        name: "Dr. John Smith",
-        specialization: "Orthopedic Surgeon",
+        name: "Dr. Bilal Abdullah",
+        specialization: "MD General Medicine",
         image:
           "https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Weekends Only",
-        department: "orthopedics",
+        availability: "Available",
+        department: "general-medicine",
       },
       {
-        name: "Dr. Emily Brown",
-        specialization: "Dermatologist",
+        name: "Dr. Azmat",
+        specialization: "Plastic Surgeon",
+        image:
+          "https://images.pexels.com/photos/6749768/pexels-photo-6749768.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "plastic-surgery",
+      },
+      {
+        name: "Dr. Asma Jahagirdar",
+        specialization: "DA Anaesthesia",
+        image:
+          "https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "anaesthesia",
+      },
+      {
+        name: "Dr. Tahir",
+        specialization: "DA Anaesthesia",
+        image:
+          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "anaesthesia",
+      },
+      {
+        name: "Dr. Nishikant Gujar",
+        specialization: "MS General Surgery",
+        image:
+          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "surgery",
+      },
+      {
+        name: "Dr. Meenal Aggarwal",
+        specialization: "MD Anaesthesia",
         image:
           "https://images.pexels.com/photos/5327656/pexels-photo-5327656.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Tuesdays",
-        department: "dermatology",
+        availability: "Available",
+        department: "anaesthesia",
       },
       {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
+        name: "Dr. Swaleha",
+        specialization: "MS Gynaecologist",
         image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+          "https://images.pexels.com/photos/6749762/pexels-photo-6749762.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "gynaecology",
+      },
+      {
+        name: "Dr. Surendra Aggarwal",
+        specialization: "MCh Pediatric Surgeon",
+        image:
+          "https://images.pexels.com/photos/6749765/pexels-photo-6749765.jpeg?auto=compress&cs=tinysrgb&w=400",
         availability: "Available",
         department: "pediatrics",
       },
       {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
+        name: "Dr. Rizwan",
+        specialization: "MD Pediatrics",
         image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
-      },
-      {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
-        image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+          "https://images.pexels.com/photos/6749764/pexels-photo-6749764.jpeg?auto=compress&cs=tinysrgb&w=400",
         availability: "Available",
         department: "pediatrics",
       },
       {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
+        name: "Dr. Yitendra Nayak",
+        specialization: "MCh Neurosurgery",
         image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
-      },
-      {
-        name: "Dr. Mohamed Ali",
-        specialization: "Pediatrician",
-        image:
-          "https://images.pexels.com/photos/6749763/pexels-photo-6749763.jpeg?auto=compress&cs=tinysrgb&w=400",
+          "https://images.pexels.com/photos/6749766/pexels-photo-6749766.jpeg?auto=compress&cs=tinysrgb&w=400",
         availability: "Available",
-        department: "pediatrics",
+        department: "neurosurgery",
       },
       {
-        name: "Dr. Fatima Omar",
-        specialization: "Ophthalmologist",
+        name: "Dr. Soumya",
+        specialization: "MD Psychiatrist",
         image:
-          "https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=400",
-        availability: "Busy",
-        department: "ophthalmology",
+          "https://images.pexels.com/photos/6749767/pexels-photo-6749767.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "psychiatry",
+      },
+      {
+        name: "Dr. Ravindra Kulkarni",
+        specialization: "MS Ortho & Spine Surgeon",
+        image:
+          "https://images.pexels.com/photos/6749768/pexels-photo-6749768.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Available",
+        department: "orthopedics",
+      },
+    ],
+    management: [
+      {
+        name: "Umarfarook Gundagi",
+        specialization: "Manager",
+        image:
+          "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Office Hours",
+        department: "management",
+      },
+      {
+        name: "Abdul Razak Aliyabadi",
+        specialization: "Administrator",
+        image:
+          "https://images.pexels.com/photos/3779705/pexels-photo-3779705.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Office Hours",
+        department: "management",
+      },
+      {
+        name: "Azlan Awati",
+        specialization: "Administrator",
+        image:
+          "https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=400",
+        availability: "Office Hours",
+        department: "management",
       },
     ],
   };
@@ -159,20 +164,20 @@ const Doctors = () => {
   const categories = [
     { id: "main", label: "Main Doctors" },
     { id: "visiting", label: "Visiting Doctors" },
+    { id: "management", label: "Management" },
   ];
 
   const currentDoctors = doctors[activeCategory] || [];
   const visibleDoctors = currentDoctors.slice(0, visibleCount);
 
   const handleSeeMore = () => {
-    setVisibleCount(prev => prev + 4); // load 4 more each time
+    setVisibleCount((prev) => prev + 3);
   };
 
-   // Reset visibleCount whenever category changes
-  const changeCategory = (id: string) => {
+  const changeCategory = (id: DoctorCategory) => {
     setActiveCategory(id);
-    setVisibleCount(4);
-  }
+    setVisibleCount(3);
+  };
 
   return (
     <section id="doctors" className="py-20 bg-white">
@@ -183,7 +188,8 @@ const Doctors = () => {
             Our Medical Team
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Meet our dedicated team of healthcare professionals committed to providing exceptional care.
+            Meet our dedicated team of healthcare professionals committed to
+            providing exceptional care.
           </p>
         </div>
 
@@ -193,7 +199,7 @@ const Doctors = () => {
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => changeCategory(category.id)}
+                onClick={() => changeCategory(category.id as DoctorCategory)}
                 className={`px-6 py-3 rounded-full transition-all duration-300 ${
                   activeCategory === category.id
                     ? "bg-[#007BBA] text-white"
@@ -207,14 +213,18 @@ const Doctors = () => {
         </div>
 
         {/* Doctors Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {visibleDoctors.map((doctor: any, index: number) => (
             <div
               key={index}
-              className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
+              className="w-72 bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
             >
               <div className="relative">
-                <img src={doctor.image} alt={doctor.name} className="w-full h-64 object-cover" />
+                <img
+                  src={doctor.image}
+                  alt={doctor.name}
+                  className="w-full h-64 object-cover"
+                />
                 <div
                   className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${
                     doctor.availability === "Available"

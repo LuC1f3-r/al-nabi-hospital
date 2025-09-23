@@ -14,28 +14,28 @@ const Stats = React.memo(() => {
   const stats = useMemo(() => [
     {
       icon: Users,
-      number: 50000,
+      number: 150561,
       suffix: '+',
       label: 'Patients Treated',
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Award,
-      number: 30,
+      number: 25,
       suffix: '+',
       label: 'Years of Experience',
       color: 'from-emerald-500 to-teal-500'
     },
     {
       icon: Heart,
-      number: 60,
+      number: 15,
       suffix: '+',
       label: 'Doctors Onboard',
       color: 'from-rose-500 to-pink-500'
     },
     {
       icon: Activity,
-      number: 25000,
+      number: 128311,
       suffix: '+',
       label: 'Surgeries Performed',
       color: 'from-violet-500 to-purple-500'
@@ -59,10 +59,10 @@ const Stats = React.memo(() => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-serif" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-serif" style={{ fontFamily: "serif" }}>
             Trusted by Thousands
           </h2>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto font-serif" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}>
+          <p className="text-xl text-blue-100 max-w-2xl mx-auto font-serif" style={{ fontFamily: "serif", fontWeight: 400 }}>
             Our commitment to excellence is reflected in the numbers that matter most
           </p>
         </motion.div>
@@ -89,7 +89,7 @@ const Stats = React.memo(() => {
                   </div>
                   
                   {/* Animated Counter - Responsive Text Sizes */}
-                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 font-serif" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 font-serif" style={{ fontFamily: "serif" }}>
                     {inView && (
                       <CountUp
                         end={stat.number}
@@ -102,7 +102,7 @@ const Stats = React.memo(() => {
                   </div>
                   
                   {/* Label - Responsive Text Sizes */}
-                  <p className="text-blue-100 font-medium text-sm sm:text-base lg:text-lg font-serif" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>
+                  <p className="text-blue-100 font-medium text-sm sm:text-base lg:text-lg font-serif" style={{ fontFamily: "serif", fontWeight: 500 }}>
                     {stat.label}
                   </p>
                 </div>
@@ -115,7 +115,7 @@ const Stats = React.memo(() => {
         <div className="mt-8 sm:mt-12 lg:mt-16 text-center">
           <motion.p 
             className="text-blue-200 text-sm sm:text-base font-serif"
-            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
+            style={{ fontFamily: "serif", fontWeight: 400 }}
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 1 }}

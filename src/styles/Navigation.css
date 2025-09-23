@@ -34,3 +34,79 @@
 .nav-desktop-btn:active {
   box-shadow: none;
 }
+
+/* Navbar smooth transition for scaling, shadow, and background */
+.nav-container {
+  transition: 
+    box-shadow 0.3s cubic-bezier(0.4,0,0.2,1),
+    background 0.3s cubic-bezier(0.4,0,0.2,1),
+    border-radius 0.3s cubic-bezier(0.4,0,0.2,1),
+    transform 0.3s cubic-bezier(0.4,0,0.2,1),
+    height 0.3s cubic-bezier(0.4,0,0.2,1),
+    width 0.3s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform, box-shadow, background, border-radius, height, width;
+}
+
+/* Mobile menu logo at the top */
+.mobile-menu-container .mobile-logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  padding-bottom: 0.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.mobile-menu-container .mobile-logo img {
+  height: 2.5rem;
+  width: auto;
+  margin-bottom: 0;
+  object-fit: contain;
+  border-radius: 12px;
+  max-width: 44px;
+}
+.mobile-menu-container .mobile-logo button {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+.mobile-menu-container .mobile-logo button:focus {
+  outline: 2px solid #007BBA;
+}
+
+/* Overlay for closing menu on outside tap */
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  z-index: 60;
+}
+
+@media (max-width: 1024px) {
+  .nav-container {
+    left: 0 !important;
+    width: 100vw !important;
+    border-radius: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    margin: 0 !important;
+    padding: 0 0.5rem;
+  }
+  .mobile-menu-container {
+    border-radius: 0 !important;
+    width: 100vw !important;
+    min-width: 0;
+    max-width: 100vw;
+  }
+}
+
+/* Prevent scroll jump on mobile menu open/close */
+body[style*="overflow: hidden"] {
+  overscroll-behavior: contain;
+}

@@ -1,5 +1,5 @@
 // ChatbotIcon.tsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ChatbotButton from "./ChatbotButton";
 
@@ -10,6 +10,17 @@ interface ChatbotIconProps {
 }
 
 const ChatbotIcon: React.FC<ChatbotIconProps> = ({ isOpen, onClick, isVisible }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   if (!isVisible) return null;
 
   return (
@@ -22,7 +33,7 @@ const ChatbotIcon: React.FC<ChatbotIconProps> = ({ isOpen, onClick, isVisible })
         damping: 30,
         duration: 0.6,
       }}
-      className="fixed bottom-6 right-6 z-50"
+      className={`fixed ${isMobile ? 'bottom-4 right-4' : 'bottom-6 right-6'} z-50`}
     >
       <ChatbotButton isOpen={isOpen} onClick={onClick} />
     </motion.div>
