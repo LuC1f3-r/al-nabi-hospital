@@ -28,6 +28,8 @@ const Hero = () => {
           loop
           muted
           playsInline
+          preload="metadata"
+          disableRemotePlayback
           style={{
             filter: "brightness(0.7) contrast(1.1)",
           }}

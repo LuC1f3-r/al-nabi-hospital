@@ -79,9 +79,11 @@ const Contact = () => {
                   <div>
                     <h4 className="font-semibold text-[#004F74] mb-1">Phone</h4>
                     <p className="text-gray-600">
-                      General: +91 70909 00087
+                      Ambulance: +91 98447 86108
                       <br />
-                      Emergency: +91 70909 00087
+                      Emergency: +91 70909 00086 / +91 73382 92246
+                      <br />
+                      Reception: +91 70909 00086
                     </p>
                   </div>
                 </div>

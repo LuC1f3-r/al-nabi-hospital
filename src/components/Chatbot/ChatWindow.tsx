@@ -4,9 +4,9 @@ import { X, Send, Star, MessageCircle, AlertCircle } from "lucide-react";
 import { useBookingStore } from "../../store/bookingStore";
 import {
   sendWhatsAppAppointment,
-  sendEmailAppointment,
   validateAppointmentData,
 } from "../../utils/whatsappService";
+import type { AppointmentData as WhatsAppAppointmentData } from "../../utils/whatsappService";
 import "./ChatbotResponsive.css";
 
 interface Message {
@@ -24,16 +24,7 @@ interface ChatWindowProps {
   onClose: () => void;
 }
 
-interface AppointmentData {
-  name: string;
-  phone: string;
-  email: string;
-  department: string;
-  date: string;
-  time: string;
-  notes: string;
-  doctor?: string;
-}
+type AppointmentData = WhatsAppAppointmentData;
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([
@@ -57,7 +48,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   const [appointmentData, setAppointmentData] = useState<AppointmentData>({
     name: "",
     phone: "",
-    email: "",
     department: "",
     date: "",
     time: "",
@@ -339,6 +329,25 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     "05:00 PM",
   ];
 
+  const getUpcomingDateOptions = () => {
+    const options: string[] = [];
+    for (let i = 1; i <= 5; i += 1) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      const iso = date.toISOString().split("T")[0];
+      const weekday = date.toLocaleDateString("en-IN", { weekday: "short" });
+      options.push(`${iso} (${weekday})`);
+    }
+    return options;
+  };
+
+  const quickNoteTemplates: string[] = [
+    "Follow-up visit for an existing treatment.",
+    "Need a comprehensive health check-up.",
+    "Requesting a second opinion on recent reports.",
+    "Experiencing recurring discomfort, please evaluate.",
+  ];
+
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -397,10 +406,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     return /^[+]?[1-9][\d]{0,15}$/.test(phone.replace(/\s/g, ""));
   };
 
-  const validateEmail = (email: string): boolean => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   const validateDate = (date: string): boolean => {
     const selectedDate = new Date(date);
     const today = new Date();
@@ -422,11 +427,35 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             true
           );
           break;
+        case "Book Another Appointment":
+          setIsBookingMode(true);
+          setAppointmentData({
+            name: "",
+            phone: "",
+            department: "",
+            date: "",
+            time: "",
+            notes: "",
+          });
+          setAppointmentStep(1);
+          setErrors([]);
+          addMessage(
+            "Happy to help again! What's the patient's full name?",
+            true
+          );
+          break;
         case "Our Services":
           addMessage(
             "🏥 *Al Nabi Hospital - Complete Services Directory:*\n\n🩺 **General Medicine** - Primary healthcare & preventive care\n💉 **Anaesthesia** - Pain management & surgical support\n🔪 **General Surgery** - Surgical procedures & laparoscopic surgery\n👶 **Pediatrics** - Child healthcare & development\n🧠 **Neurology** - Brain & nervous system disorders\n🧠 **Psychiatry** - Mental health & behavioral therapy\n🦴 **Orthopedics** - Bone, joint & spine care\n💓 **Cardiology** - Heart care & cardiovascular health\n👁️ **Ophthalmology** - Eye care & vision correction\n🚨 **Emergency Medicine** - 24/7 urgent care\n👩‍⚕️ **Obstetrics & Gynecology** - Women's health & maternity\n🩸 **Dermatology** - Skin, hair & nail conditions\n👂 **ENT** - Ear, nose & throat care\n🚹 **Urology** - Urinary system & male health\n📷 **Radiology** - Diagnostic imaging & scans\n🔬 **Pathology** - Laboratory testing & diagnosis\n💪 **Physiotherapy** - Rehabilitation & physical therapy\n\nWhich department would you like to know more about?",
             true,
             departments
+          );
+          break;
+        case "Rate Experience":
+          setShowFeedback(true);
+          addMessage(
+            "I'd love to know how I did! Tap a star rating below.",
+            true
           );
           break;
         case "Contact Information":
@@ -505,25 +534,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           }
           setAppointmentData((prev) => ({ ...prev, phone: value }));
           setAppointmentStep(3);
-          addMessage("Great! What's your email address?", true);
-          break;
-        case 3: // Email
-          if (!validateEmail(value)) {
-            setErrors(["Please enter a valid email address"]);
-            return;
-          }
-          setAppointmentData((prev) => ({ ...prev, email: value }));
-          setAppointmentStep(4);
           addMessage(
             "Which department would you like to visit?",
             true,
             departments
           );
           break;
-        case 4: // Department
+        case 3: // Department
           {
             setAppointmentData((prev) => ({ ...prev, department: value }));
-            setAppointmentStep(5);
+            setAppointmentStep(4);
             const deptDoctors = doctors[value as keyof typeof doctors] || [];
             addMessage(
               `Excellent choice! Here are our available ${value} doctors:\n\n${deptDoctors
@@ -536,33 +556,46 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             );
           }
           break;
-        case 5: // Doctor
-          setAppointmentData((prev) => ({ ...prev, doctor: value }));
-          setAppointmentStep(6);
+        case 4: // Doctor
+          {
+            const normalizedDoctor = value.toLowerCase().includes("any")
+              ? "Any available doctor"
+              : value;
+            setAppointmentData((prev) => ({ ...prev, doctor: normalizedDoctor }));
+          }
+          setAppointmentStep(5);
           addMessage(
             "When would you prefer your appointment? Please provide a date (YYYY-MM-DD format, e.g., 2024-02-15).",
-            true
+            true,
+            getUpcomingDateOptions()
           );
           break;
-        case 6: // Date
-          if (!validateDate(value)) {
-            setErrors(["Please select a future date"]);
-            return;
+        case 5: // Date
+          {
+            const rawDate = value.split(" ")[0];
+            if (!validateDate(rawDate)) {
+              setErrors(["Please select a future date"]);
+              return;
+            }
+            setAppointmentData((prev) => ({ ...prev, date: rawDate }));
+            setAppointmentStep(6);
+            addMessage("What time works best for you?", true, timeSlots);
           }
-          setAppointmentData((prev) => ({ ...prev, date: value }));
-          setAppointmentStep(7);
-          addMessage("What time works best for you?", true, timeSlots);
           break;
-        case 7: // Time
+        case 6: // Time
           setAppointmentData((prev) => ({ ...prev, time: value }));
-          setAppointmentStep(8);
+          setAppointmentStep(7);
           addMessage(
             'Any additional notes or specific concerns? (Optional - you can type "none" if no additional notes)',
-            true
+            true,
+            quickNoteTemplates
           );
           break;
-        case 8: // Notes
-          setAppointmentData((prev) => ({ ...prev, notes: value }));
+        case 7: // Notes
+          setAppointmentData((prev) => ({
+            ...prev,
+            notes: value.toLowerCase() === "none" ? "" : value,
+          }));
           confirmAppointment();
           break;
       }
@@ -580,18 +613,33 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     }
 
     simulateTyping(() => {
+      const displayDate = finalData.date
+        ? (() => {
+            const parsed = new Date(finalData.date);
+            return Number.isNaN(parsed.getTime())
+              ? finalData.date
+              : parsed.toLocaleDateString("en-IN", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                });
+          })()
+        : "To be decided";
+      const displayTime = finalData.time || "To be decided";
+      const doctorLabel = finalData.doctor || "To be assigned";
+
+      // Send WhatsApp message before confirmation message
+      sendWhatsAppAppointment(finalData);
+
       addMessage(
-        `✅ *Appointment Confirmed!*\n\n👤 **Name:** ${
+        `✅ *Appointment Request Sent!*\n\n👤 **Name:** ${
           finalData.name
-        }\n📞 **Phone:** ${finalData.phone}\n📧 **Email:** ${
-          finalData.email
-        }\n🏥 **Department:** ${finalData.department}\n👨‍⚕️ **Doctor:** ${
-          finalData.doctor || "To be assigned"
-        }\n📅 **Date:** ${finalData.date}\n⏰ **Time:** ${
-          finalData.time
-        }\n📝 **Notes:** ${
+        }\n📞 **Phone:** ${finalData.phone}\n🏥 **Department:** ${
+          finalData.department
+        }\n👨‍⚕️ **Doctor:** ${doctorLabel}\n📅 **Date:** ${displayDate}\n⏰ **Time:** ${displayTime}\n📝 **Notes:** ${
           finalData.notes || "None"
-        }\n\n📱 *WhatsApp confirmation sent!*\n📧 *Email confirmation sent!*\n\nYour appointment has been successfully booked! You'll receive a confirmation email shortly.\n\nIs there anything else I can help you with?`,
+        }\n\n📱 *We’ve redirected your request to our care team on WhatsApp.* They’ll confirm your slot shortly!\n\nIs there anything else I can help you with?`,
         true,
         [
           "Book Another Appointment",
@@ -602,24 +650,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         "confirmation"
       );
 
-      // Send WhatsApp message
-      sendWhatsAppAppointment(finalData);
-
-      // Send email confirmation
-      sendEmailAppointment(finalData);
-
       setIsBookingMode(false);
       setAppointmentStep(0);
       setAppointmentData({
         name: "",
         phone: "",
-        email: "",
         department: "",
         date: "",
         time: "",
         notes: "",
       });
-    }, 1500);
+    }, 1200);
   };
 
   const handleSendMessage = () => {

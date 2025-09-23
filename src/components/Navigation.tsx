@@ -4,6 +4,9 @@ import {
   AnimatePresence,
   Variants,
   useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
 } from "framer-motion";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Menu, X, ChevronRight, ChevronDown } from "lucide-react";
@@ -122,7 +125,6 @@ const NAVIGATION_CONFIG: NavigationConfig = {
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("home"); // scrollspy highlight
   const [isMobile, setIsMobile] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -135,6 +137,27 @@ const Navigation: React.FC = () => {
   const { brand, menuItems, cta, animations, styles } = NAVIGATION_CONFIG;
   const currentStyles = scrolled ? styles.scrolled : styles.default;
 
+  const { scrollY, scrollYProgress } = useScroll();
+  const progressSpring = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 30,
+    mass: 0.4,
+  });
+
+  const navScale = useSpring(
+    useTransform(scrollY, [0, animations.maxScrollForProgress], [1, 0.96], {
+      clamp: true,
+    }),
+    { stiffness: 220, damping: 30, mass: 0.35 }
+  );
+
+  const navTranslateY = useSpring(
+    useTransform(scrollY, [0, animations.maxScrollForProgress], [0, -10], {
+      clamp: true,
+    }),
+    { stiffness: 220, damping: 30, mass: 0.35 }
+  );
+
   // --- track viewport size for mobile/iPad tweaks ---
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1024);
@@ -145,52 +168,19 @@ const Navigation: React.FC = () => {
 
   // --- Scroll handling for shrink/hide nav + progress ---
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          setScrolled(scrollY > animations.scrollThreshold);
-
-          // Real page progress (0..1) with smooth easing
-          const docMax = Math.max(
-            document.documentElement.scrollHeight - window.innerHeight,
-            1
-          );
-          const progress = Math.min(scrollY / docMax, 1);
-          const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
-          setScrollProgress(easedProgress);
-
-          // Smooth height transition based on scroll
-          const maxScroll = animations.maxScrollForProgress;
-          const scrollRatio = Math.min(scrollY / maxScroll, 1);
-
-          // Use CSS transform for smoother animations
-          const navElement = document.querySelector(
-            ".nav-container"
-          ) as HTMLElement;
-          if (navElement) {
-            const scale = 1 - scrollRatio * 0.05; // Subtle scale effect
-            const translateY = scrollRatio * -1; // Subtle upward movement
-            navElement.style.transform = `scale(${scale}) translateY(${translateY}px)`;
-            navElement.style.transition = "transform 0.15s ease-out";
-          }
-
-          // If menu is open and user scrolls page, close it (safety)
-          if (isMenuOpen && Math.abs(scrollY - lastScrollY) > 8) {
-            setIsMenuOpen(false);
-          }
-
-          lastScrollY = scrollY;
-          ticking = false;
-        });
-        ticking = true;
+    let lastValue = scrollY.get();
+    const unsubscribe = scrollY.on("change", (latest) => {
+      setScrolled((prev) => {
+        const next = latest > animations.scrollThreshold;
+        return prev === next ? prev : next;
+      });
+      if (isMenuOpen && Math.abs(latest - lastValue) > 12) {
+        setIsMenuOpen(false);
       }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [animations.scrollThreshold, isMobile, isMenuOpen]);
+      lastValue = latest;
+    });
+    return () => unsubscribe();
+  }, [scrollY, animations.scrollThreshold, isMenuOpen]);
 
   // --- Scrollspy for active section highlight ---
   useEffect(() => {
@@ -384,7 +374,7 @@ const Navigation: React.FC = () => {
       {/* Tiny scroll progress bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-0.5 bg-[#007BBA]/70 z-[60] origin-left"
-        style={{ scaleX: scrollProgress }}
+        style={{ scaleX: progressSpring }}
         aria-hidden="true"
       />
 
@@ -398,6 +388,8 @@ const Navigation: React.FC = () => {
             left: currentStyles.leftOffset,
             right: scrolled ? "2.5%" : "2%",
             width: currentStyles.width,
+            scale: navScale,
+            y: navTranslateY,
           }}
           role="navigation"
           aria-label="Main Navigation"
@@ -484,8 +476,7 @@ const Navigation: React.FC = () => {
                               currentStyles.menuFontSize
                             } ${isActive ? navTextLinkActive : ""}`}
                             style={{
-                              fontFamily:
-                                "'Cormorant Garamond', 'DM Serif Display', serif",
+                              fontFamily: 'serif',
                               fontWeight: 500,
                             }}
                             custom={index}
@@ -526,8 +517,7 @@ const Navigation: React.FC = () => {
                                       to={subItem.path}
                                       className="block px-6 py-4 text-sm text-gray-700 hover:text-[#007BBA] transition-all duration-200 border-b border-gray-100/50 last:border-b-0 bg-transparent rounded-none"
                                       style={{
-                                        fontFamily:
-                                          "'Cormorant Garamond', serif",
+                                        fontFamily: 'serif',
                                         fontWeight: 400,
                                       }}
                                       onClick={() => setOpenDropdown(null)}
@@ -556,8 +546,7 @@ const Navigation: React.FC = () => {
                           currentStyles.menuFontSize
                         } ${isActive ? navTextLinkActive : ""}`}
                         style={{
-                          fontFamily:
-                            "'Cormorant Garamond', 'DM Serif Display', serif",
+                          fontFamily: 'serif',
                           fontWeight: 500,
                         }}
                         whileHover={{ y: -1 }}
@@ -585,7 +574,7 @@ const Navigation: React.FC = () => {
                     onClick={handleCTAClick}
                     className={`hidden lg:flex bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white rounded-full hover:shadow-xl transition-all duration-300 items-center justify-center space-x-2 font-semibold ${currentStyles.buttonPadding} ${currentStyles.menuFontSize} hover:from-[#004F74] hover:to-[#007BBA] backdrop-blur-sm`}
                     style={{
-                      fontFamily: "'Cormorant Garamond', serif",
+                      fontFamily: 'serif',
                       fontWeight: 600,
                       boxShadow: "0 8px 25px -8px rgba(0, 123, 186, 0.4)",
                     }}
@@ -693,7 +682,7 @@ const Navigation: React.FC = () => {
                     <div key={item.id} className="space-y-2">
                       <motion.div
                         className="px-4 pt-3 pb-1 text-base font-semibold text-gray-600 uppercase tracking-wider border-b border-gray-100 bg-transparent rounded-none"
-                        style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                        style={{ fontFamily: 'serif' }}
                         custom={index}
                         variants={mobileMenuItemVariants}
                         initial="initial"
@@ -707,7 +696,7 @@ const Navigation: React.FC = () => {
                           onClick={() => handleLinkClick(subItem.path)}
                           className="block w-full px-6 py-2 text-gray-700 hover:text-[#007BBA] transition-all duration-200 text-left bg-transparent rounded-none font-medium"
                           style={{
-                            fontFamily: "'Cormorant Garamond', serif",
+                            fontFamily: 'serif',
                             fontWeight: 500,
                           }}
                           custom={index + subIndex}
@@ -736,7 +725,7 @@ const Navigation: React.FC = () => {
                       isActive ? "text-[#004F74] font-bold underline" : ""
                     }`}
                     style={{
-                      fontFamily: "'Cormorant Garamond', serif",
+                      fontFamily: 'serif',
                       fontWeight: 500,
                     }}
                     aria-current={isActive ? "page" : undefined}
@@ -756,7 +745,7 @@ const Navigation: React.FC = () => {
                 onClick={handleCTAClick}
                 className="w-full mt-6 bg-gradient-to-r from-[#007BBA] to-[#004F74] text-white px-6 py-4 rounded-2xl font-semibold text-center hover:from-[#004F74] hover:to-[#007BBA] transition-all duration-300 shadow-lg"
                 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: 'serif',
                   fontWeight: 600,
                 }}
                 initial={{ opacity: 0, y: 16 }}

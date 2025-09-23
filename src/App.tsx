@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense, memo } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense, memo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
@@ -34,25 +34,28 @@ const MemoizedHomePage: React.FC = memo(() => (
 ));
 
 const App: React.FC = () => {
+  const contactObserverRef = useRef<IntersectionObserver | null>(null);
   const [showChatbot, setShowChatbot] = useState<boolean>(true);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const contactSection = document.getElementById('contact-section');
-      if (!contactSection) return;
+    const contactSection = document.getElementById('contact-section');
+    if (!contactSection) return;
 
-      const rect = contactSection.getBoundingClientRect();
-      const isInView =
-        rect.top < window.innerHeight && rect.bottom >= 0;
+    contactObserverRef.current?.disconnect();
 
-      setShowChatbot(!isInView);
-    };
+    contactObserverRef.current = new IntersectionObserver(
+      ([entry]) => {
+        setShowChatbot(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.2,
+      }
+    );
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    contactObserverRef.current.observe(contactSection);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      contactObserverRef.current?.disconnect();
     };
   }, []);
 

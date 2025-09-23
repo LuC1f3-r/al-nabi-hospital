@@ -6,27 +6,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        primary: ["serif"],
         notable: ["Notable", "sans-serif"],
         amoresa: ["Amoresa", "cursive"],
-        sans: [
-          "Inter",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "Oxygen",
-          "Ubuntu",
-          "Cantarell",
-          "sans-serif",
-        ],
-        serif: [
-          "Cormorant Garamond",
-          "DM Serif Display",
-          "Playfair Display",
-          "Georgia",
-          "Times New Roman",
-          "serif",
-        ],
+        sans: ["serif"],
+        serif: ["serif"],
       },
       colors: {
         primary: {
