@@ -59,3 +59,5 @@ coverage/
 *.tgz
 *.zip
 *.gz
+
+.DS_Store

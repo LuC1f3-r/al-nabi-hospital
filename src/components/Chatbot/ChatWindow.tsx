@@ -52,11 +52,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     date: "",
     time: "",
     notes: "",
+    doctor: "",
   });
   const [appointmentStep, setAppointmentStep] = useState(0);
   const [isBookingMode, setIsBookingMode] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [pendingWhatsAppUrl, setPendingWhatsAppUrl] = useState<string | null>(
+    null
+  );
+  const [lastSelectedDepartment, setLastSelectedDepartment] =
+    useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -348,6 +354,37 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     "Experiencing recurring discomfort, please evaluate.",
   ];
 
+  // Determine if a clicked option matches the expected booking step input
+  const isOptionForCurrentAppointmentStep = (value: string): boolean => {
+    if (!isBookingMode) return false;
+
+    switch (appointmentStep) {
+      case 3:
+        return departments.includes(value);
+      case 4: {
+        const selectedDepartment = appointmentData.department;
+        const deptDoctors = selectedDepartment
+          ? doctors[selectedDepartment as keyof typeof doctors] || []
+          : [];
+        return (
+          deptDoctors.includes(value) ||
+          value.toLowerCase() === "any available doctor" ||
+          value.toLowerCase() === "any"
+        );
+      }
+      case 5:
+        return getUpcomingDateOptions().includes(value);
+      case 6:
+        return timeSlots.includes(value);
+      case 7:
+        return (
+          quickNoteTemplates.includes(value) || value.toLowerCase() === "none"
+        );
+      default:
+        return false;
+    }
+  };
+
   // Check if mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -414,7 +451,44 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   };
 
   const handleOptionClick = (option: string) => {
+    if (isOptionForCurrentAppointmentStep(option)) {
+      handleAppointmentInput(option);
+      return;
+    }
+
     addMessage(option, false);
+
+    if (option === "Open WhatsApp") {
+      const url = pendingWhatsAppUrl;
+
+      if (url && typeof window !== "undefined") {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+
+      simulateTyping(() => {
+        if (url) {
+          addMessage(
+            `I've opened WhatsApp in a new tab. If it didn't launch, you can use this link:\n${url}`,
+            true,
+            [
+              "Open WhatsApp",
+              "Book Another Appointment",
+              "Our Services",
+              "Contact Information",
+              "Rate Experience",
+            ]
+          );
+        } else {
+          addMessage(
+            "I couldn't find a recent appointment link. Let's create a new booking.",
+            true,
+            ["Book Appointment", "Our Services", "Contact Information"]
+          );
+        }
+      }, 400);
+
+      return;
+    }
 
     simulateTyping(() => {
       switch (option) {
@@ -422,6 +496,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           setIsBookingMode(true);
           setAppointmentStep(1);
           setErrors([]);
+          setLastSelectedDepartment(null);
+          setPendingWhatsAppUrl(null);
           addMessage(
             "Great! I'll help you book an appointment. Let's start with your full name.",
             true
@@ -436,9 +512,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             date: "",
             time: "",
             notes: "",
+            doctor: "",
           });
           setAppointmentStep(1);
           setErrors([]);
+          setLastSelectedDepartment(null);
+          setPendingWhatsAppUrl(null);
           addMessage(
             "Happy to help again! What's the patient's full name?",
             true
@@ -460,7 +539,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           break;
         case "Contact Information":
           addMessage(
-            "📍 *Al Nabi Hospital Contact Details:*\n\n📞 **Main Phone:** +91 4 123 4567\n🚨 **Emergency:** +91 4 123 4568\n📧 **Email:** info@alnabihospital.com\n📍 **Address:** 123 Medical Center Drive, Bijapur, Karnataka, India\n\n⏰ *Operating Hours:*\nMonday - Friday: 8:00 AM - 8:00 PM\nSaturday - Sunday: 9:00 AM - 6:00 PM\n🚨 Emergency Services: 24/7\n\n🅿️ **Parking:** Free parking available\n♿ **Accessibility:** Wheelchair accessible",
+            "📍 *Al Nabi Hospital Contact Details:*\n\n📞 **Main Phone:** +91 888 480 1005\n🚨 **Emergency:** +91 709 090 0086\n📧 **Email:** alnabihospital@gmail.com\n📍 **Address:** Near Zanda Katta, Jamiya Masjid Road, Bijapur, Karnataka, India\n\n⏰ *Operating Hours:*\nMonday - Friday: 8:00 AM - 8:00 PM\nSaturday - Sunday: 9:00 AM - 6:00 PM\n🚨 Emergency Services: 24/7\n\n🅿️ **Parking:** Free parking available\n♿ **Accessibility:** Wheelchair accessible",
             true,
             [
               "Book Appointment",
@@ -484,8 +563,61 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             departments
           );
           break;
+        case "More Information":
+          if (lastSelectedDepartment) {
+            const deptServices =
+              services[lastSelectedDepartment as keyof typeof services] || [];
+            const deptDoctors =
+              doctors[lastSelectedDepartment as keyof typeof doctors] || [];
+            const doctorLines = deptDoctors
+              .map((doctor) => `• ${doctor}`)
+              .join("\n");
+            const serviceLines = deptServices
+              .map((service) => `• ${service}`)
+              .join("\n");
+
+            addMessage(
+              `ℹ️ *More about ${lastSelectedDepartment}:*\n\n` +
+                (doctorLines
+                  ? `*Specialist Doctors:*\n${doctorLines}`
+                  : "*Specialist Doctors:*\n• Details available on request") +
+                "\n\n" +
+                (serviceLines
+                  ? `*Comprehensive Services:*\n${serviceLines}`
+                  : "*Comprehensive Services:*\n• Reach out to learn more") +
+                "\n\nWould you like to take the next step?",
+              true,
+              ["Book Appointment", "Find Doctor", "Other Services"]
+            );
+          } else {
+            addMessage(
+              "Please choose a department first so I can share detailed information.",
+              true,
+              departments
+            );
+          }
+          break;
+        case "Other Services":
+          {
+            const alternativeDepartments = departments.filter(
+              (dept) => dept !== lastSelectedDepartment
+            );
+            const suggestions = (alternativeDepartments.length
+              ? alternativeDepartments
+              : departments)
+              .slice(0, 6)
+              .join(", ");
+
+            addMessage(
+              `Here are other departments you can explore: ${suggestions}. Select one for details.`,
+              true,
+              departments
+            );
+          }
+          break;
         default:
           if (departments.includes(option)) {
+            setLastSelectedDepartment(option);
             const deptDoctors = doctors[option as keyof typeof doctors] || [];
             const deptServices =
               services[option as keyof typeof services] || [];
@@ -543,6 +675,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         case 3: // Department
           {
             setAppointmentData((prev) => ({ ...prev, department: value }));
+            setLastSelectedDepartment(value);
             setAppointmentStep(4);
             const deptDoctors = doctors[value as keyof typeof doctors] || [];
             addMessage(
@@ -592,18 +725,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           );
           break;
         case 7: // Notes
-          setAppointmentData((prev) => ({
-            ...prev,
-            notes: value.toLowerCase() === "none" ? "" : value,
-          }));
-          confirmAppointment();
+          {
+            const cleanedNotes = value.toLowerCase() === "none" ? "" : value;
+            const completedData = {
+              ...appointmentData,
+              notes: cleanedNotes,
+            };
+            setAppointmentData(completedData);
+            confirmAppointment(completedData);
+          }
           break;
       }
     });
   };
 
-  const confirmAppointment = () => {
-    const finalData = { ...appointmentData };
+  const confirmAppointment = (dataOverride?: AppointmentData) => {
+    const finalData = { ...(dataOverride || appointmentData) };
 
     // Validate appointment data
     const validation = validateAppointmentData(finalData);
@@ -629,8 +766,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
       const displayTime = finalData.time || "To be decided";
       const doctorLabel = finalData.doctor || "To be assigned";
 
-      // Send WhatsApp message before confirmation message
-      sendWhatsAppAppointment(finalData);
+      // Prepare WhatsApp message and store the link for user-triggered opening
+      const whatsappUrl = sendWhatsAppAppointment(finalData, false);
+      setPendingWhatsAppUrl(whatsappUrl);
 
       addMessage(
         `✅ *Appointment Request Sent!*\n\n👤 **Name:** ${
@@ -639,9 +777,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           finalData.department
         }\n👨‍⚕️ **Doctor:** ${doctorLabel}\n📅 **Date:** ${displayDate}\n⏰ **Time:** ${displayTime}\n📝 **Notes:** ${
           finalData.notes || "None"
-        }\n\n📱 *We’ve redirected your request to our care team on WhatsApp.* They’ll confirm your slot shortly!\n\nIs there anything else I can help you with?`,
+        }\n\n📱 *Tap “Open WhatsApp” to share these details with our care team.* They’ll confirm your slot shortly!\n\nIs there anything else I can help you with?`,
         true,
         [
+          "Open WhatsApp",
           "Book Another Appointment",
           "Our Services",
           "Contact Information",
@@ -659,6 +798,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
         date: "",
         time: "",
         notes: "",
+        doctor: "",
       });
     }, 1200);
   };
