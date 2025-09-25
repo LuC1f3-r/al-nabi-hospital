@@ -10,7 +10,10 @@ export interface AppointmentData {
   doctor?: string;
 }
 
-export const sendWhatsAppAppointment = (appointmentData: AppointmentData) => {
+export const sendWhatsAppAppointment = (
+  appointmentData: AppointmentData,
+  autoOpen: boolean = true
+) => {
   const displayDate = (() => {
     if (!appointmentData.date) return 'To be decided';
     const parsed = new Date(appointmentData.date);
@@ -36,13 +39,13 @@ Preferred Slot: ${displayDate} at ${displayTime}
 Notes: ${appointmentData.notes || 'N/A'}`;
 
   const encodedMessage = encodeURIComponent(message);
-  const whatsappNumber = '919738878894'; // Al Nabi Hospital WhatsApp number
+  const whatsappNumber = '917090900086'; // Al Nabi Hospital WhatsApp number
 
-  // WhatsApp URL to send the message
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
 
-  // Open WhatsApp chat in new tab
-  window.open(whatsappUrl, '_blank');
+  if (autoOpen && typeof window !== 'undefined') {
+    window.open(whatsappUrl, '_blank');
+  }
 
   return whatsappUrl;
 };
