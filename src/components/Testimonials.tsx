@@ -156,6 +156,9 @@ const Testimonials = () => {
                         src={testimonials[currentIndex].image}
                         alt={testimonials[currentIndex].name}
                         className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover mx-auto border-2 border-blue-100 shadow-md"
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                       />
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
                         <div className="w-2 h-2 bg-white rounded-full"></div>

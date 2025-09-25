@@ -14,21 +14,19 @@
   }
   
   .chatbot-window {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
+    width: calc(100vw - 2rem);
+    max-width: 360px;
+    height: 72vh;
+    max-height: 560px;
+    border-radius: 1rem;
     margin: 0;
-    max-width: none;
-    max-height: none;
   }
   
   .chatbot-button {
-    min-width: 160px;
-    padding: 16px;
-    height: 56px;
-    font-size: 13px;
+    min-width: 130px;
+    padding: 14px;
+    height: 48px;
+    font-size: 12px;
   }
   
   .chatbot-messages {
@@ -266,14 +264,18 @@
 /* Extra Small Mobile */
 @media (max-width: 480px) {
   .chatbot-window {
-    inset: 0;
+    width: calc(100vw - 1.5rem);
+    max-width: 320px;
+    height: 70vh;
+    max-height: 520px;
+    border-radius: 0.75rem;
   }
   
   .chatbot-button {
-    min-width: 140px;
-    padding: 14px;
-    height: 52px;
-    font-size: 12px;
+    min-width: 120px;
+    padding: 12px;
+    height: 46px;
+    font-size: 11px;
   }
   
   .chatbot-messages {

@@ -1024,9 +1024,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           stiffness: 400,
           damping: 30,
         }}
-        className={`fixed ${isMobile ? "inset-0" : "bottom-6 right-6"} ${
-          isMobile ? "w-full h-full" : "w-96 h-[600px]"
-        } bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border border-gray-200 chatbot-window chatbot-container`}
+        className={`fixed ${isMobile ? "bottom-4 right-4" : "bottom-6 right-6"} ${
+          isMobile
+            ? "w-[calc(100vw-2rem)] max-w-sm h-[72vh] max-h-[560px]"
+            : "w-96 h-[600px]"
+        } bg-white rounded-2xl shadow-2xl z-[80] flex flex-col overflow-hidden border border-gray-200 chatbot-window chatbot-container`}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-[#004F74] to-[#007BBA] p-4 flex items-center justify-between text-white shadow-lg">

@@ -447,6 +447,9 @@ const Navigation: React.FC = () => {
                           height: "4rem", // adjust as needed
                           width: "auto",
                         }}
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
                       />
                       <motion.div
                         className="absolute inset-0 bg-[#007BBA] rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-300"
@@ -659,9 +662,12 @@ const Navigation: React.FC = () => {
               <img
                 src={brandLogo}
                 alt="Al Nabi Hospital Logo"
-                className="h-10 w-auto object-contain"
-                style={{ maxWidth: '44px', borderRadius: '12px' }}
+                className="h-12 w-auto object-contain"
+                style={{ maxWidth: '60px', borderRadius: '12px' }}
                 aria-hidden="false"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
               />
               <button
                 className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#007BBA]"
