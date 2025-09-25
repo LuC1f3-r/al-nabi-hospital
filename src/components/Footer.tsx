@@ -8,11 +8,58 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useCallback, type ReactNode } from "react";
 import kingpin from "../assets/kingpin-logo.png";
 import logo from "../assets/logo.png";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const scrollToSection = useCallback(
+    (sectionId: string) => {
+      if (typeof window === "undefined") return;
+
+      const performScroll = () => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const headerOffset = 100;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition =
+            elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      };
+
+      if (location.pathname !== "/") {
+        navigate("/");
+        window.setTimeout(performScroll, 300);
+      } else {
+        performScroll();
+      }
+    },
+    [location.pathname, navigate]
+  );
+
+  const SectionButton = ({
+    section,
+    children,
+  }: {
+    section: string;
+    children: ReactNode;
+  }) => (
+    <button
+      type="button"
+      onClick={() => scrollToSection(section)}
+      className="text-blue-50 hover:text-white transition-colors duration-200 text-left"
+    >
+      {children}
+    </button>
+  );
+
   return (
     <footer className="bg-[#004F74] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -25,6 +72,9 @@ const Footer = () => {
                 alt="Al Nabi Hospital Logo"
                 className="h-10 sm:h-12 md:h-14 w-auto max-w-xs transition-transform duration-300 hover:scale-105 shadow-sm bg-white/80 p-1 rounded"
                 aria-label="Al Nabi Hospital"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
               />
             </div>
             <p className="text-blue-50 leading-relaxed text-sm">
@@ -69,36 +119,16 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link
-                  to="/about"
-                  className="text-blue-50 hover:text-white transition-colors duration-200"
-                >
-                  About Us
-                </Link>
+                <SectionButton section="about">About Us</SectionButton>
               </li>
               <li>
-                <Link
-                  to="/services"
-                  className="text-blue-50 hover:text-white transition-colors duration-200"
-                >
-                  Our Services
-                </Link>
+                <SectionButton section="services">Our Services</SectionButton>
               </li>
               <li>
-                <Link
-                  to="/doctors"
-                  className="text-blue-50 hover:text-white transition-colors duration-200"
-                >
-                  Our Doctors
-                </Link>
+                <SectionButton section="doctors">Our Doctors</SectionButton>
               </li>
               <li>
-                <Link
-                  to="/testimonials"
-                  className="text-blue-50 hover:text-white transition-colors duration-200"
-                >
-                  Testimonials
-                </Link>
+                <SectionButton section="testimonials">Testimonials</SectionButton>
               </li>
               <li>
                 <Link
@@ -185,6 +215,9 @@ const Footer = () => {
                 alt="KingpiN Vision Forge Logo"
                 className="h-8 sm:h-10 md:h-12 w-auto max-w-xs align-middle transition-transform duration-300 hover:scale-105 shadow-sm bg-white/80 p-1 rounded"
                 aria-label="KingpiN Vision Forge"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
               />
               <span className="font-bold text-lg tracking-tight">
                 <span className="text-red-500">K</span>ingpi

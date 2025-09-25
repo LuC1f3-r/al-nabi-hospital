@@ -224,6 +224,9 @@ const Doctors = () => {
                   src={doctor.image}
                   alt={doctor.name}
                   className="w-full h-64 object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                 />
                 <div
                   className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${

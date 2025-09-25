@@ -866,7 +866,7 @@ const ServiceDetail: React.FC = () => {
       </section>
 
       {/* Doctors Section */}
-      <section className="py-20 bg-[#F6FAFD]">
+      {/* <section className="py-20 bg-[#F6FAFD]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -899,7 +899,7 @@ const ServiceDetail: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-[#004F74] to-[#007BBA]">
@@ -927,7 +927,7 @@ const ServiceDetail: React.FC = () => {
                 <span>Book Appointment</span>
               </motion.button>
               
-              <motion.a
+              {/* <motion.a
                 href="tel:+914123456789"
                 className="bg-white/20 text-white px-8 py-4 rounded-full font-semibold hover:bg-white/30 transition-colors flex items-center justify-center space-x-2 backdrop-blur-sm"
                 whileHover={{ scale: 1.05 }}
@@ -935,17 +935,17 @@ const ServiceDetail: React.FC = () => {
               >
                 <Phone className="h-5 w-5" />
                 <span>Call Now</span>
-              </motion.a>
+              </motion.a> */}
             </div>
             
             <div className="mt-8 flex justify-center space-x-8 text-blue-100">
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
-                <span>+91 4 123 4567</span>
+                <span>+91 709 090 0086</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <span>info@alnabihospital.com</span>
+                <span>alnabihospital@gmail.com</span>
               </div>
             </div>
           </motion.div>
