@@ -623,11 +623,11 @@ const Careers: React.FC = () => {
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
               <div className="flex items-center space-x-2 text-gray-700">
                 <Mail className="h-5 w-5 text-primary-500" />
-                <span>careers@alnabihospital.com</span>
+                <span>alnabihospital@gmail.com</span>
               </div>
               <div className="flex items-center space-x-2 text-gray-700">
                 <Phone className="h-5 w-5 text-primary-500" />
-                <span>+91 4 123 4567</span>
+                <span>+91 709 090 0086</span>
               </div>
             </div>
           </motion.div>

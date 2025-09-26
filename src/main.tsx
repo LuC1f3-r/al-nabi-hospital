@@ -7,7 +7,7 @@ const bootstrapSEO = () => {
   const documentElement = document.documentElement;
   const head = document.head;
   const canonicalUrl = 'https://alnabihospital.com/';
-  const title = '🏥 Al Nabi Hospital — Trusted Healthcare';
+  const title = 'Al Nabi Hospital — Trusted Healthcare';
   const description =
     'Al Nabi Hospital delivers 24/7 multi-specialty healthcare, advanced diagnostics, and compassionate medical expertise in Vijayapura.';
   const imageUrl = 'https://alnabihospital.com/assets/logo-512.png';

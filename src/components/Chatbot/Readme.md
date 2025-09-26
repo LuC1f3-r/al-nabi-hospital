@@ -85,7 +85,7 @@ When an appointment is confirmed:
 📋 Please bring: ID proof, previous medical records (if any)
 
 📍 Location: Al Nabi Hospital, 123 Medical Center Drive, Bijapur
-📞 Contact: +91 4 123 4567
+📞 Contact: +91 709 090 0086
 
 Thank you for choosing Al Nabi Hospital! 🏥
 ```
@@ -224,8 +224,8 @@ This project is licensed under the MIT License.
 ## 🆘 Support
 
 For technical support or questions:
-- Email: tech@alnabihospital.com
-- Phone: +91 4 123 4567
+- Email: alnabihospital@gmail.com
+- Phone: +91 709 090 0086
 - GitHub Issues: Create an issue in the repository
 
 ---

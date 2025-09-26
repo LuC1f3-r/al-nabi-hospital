@@ -214,11 +214,11 @@ const Terms: React.FC = () => {
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
               <div className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 text-blue-200" />
-                <span className="text-blue-100">legal@alnabihospital.com</span>
+                <span className="text-blue-100">alnabihospital@gmail.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-5 w-5 text-blue-200" />
-                <span className="text-blue-100">+91 4 123 4567</span>
+                <span className="text-blue-100">+91 709 090 0086</span>
               </div>
             </div>
           </motion.div>

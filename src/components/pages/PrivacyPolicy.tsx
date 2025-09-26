@@ -364,12 +364,12 @@ const PrivacyPolicy: React.FC = () => {
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <Mail className="h-8 w-8 text-blue-200 mx-auto mb-3" />
                 <h3 className="font-semibold mb-2">Email Us</h3>
-                <p className="text-blue-100">privacy@alnabihospital.com</p>
+                <p className="text-blue-100">alnabihospital@gmail.com</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
                 <Phone className="h-8 w-8 text-blue-200 mx-auto mb-3" />
                 <h3 className="font-semibold mb-2">Call Us</h3>
-                <p className="text-blue-100">+91 4 123 4567</p>
+                <p className="text-blue-100">+91 709 090 0086</p>
               </div>
             </div>
             <p className="text-sm text-blue-200">
