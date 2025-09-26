@@ -18,7 +18,10 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Prevent automatic inclusion of ambient type packages like 'json5' or 'lodash' */
+    "types": []
   },
   "include": ["src"]
 }
