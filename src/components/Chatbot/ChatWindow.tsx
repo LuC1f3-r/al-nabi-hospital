@@ -551,7 +551,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           break;
         case "Emergency Info":
           addMessage(
-            "🚨 *Emergency Services - Available 24/7*\n\n📞 **Emergency Hotline:** +91 4 123 4568\n🏥 **Emergency Department:** Ground Floor, Building A\n\n*When to visit Emergency:*\n• Chest pain or difficulty breathing\n• Severe injuries or trauma\n• High fever with severe symptoms\n• Loss of consciousness\n• Severe allergic reactions\n• Uncontrolled bleeding\n• Severe abdominal pain\n• Stroke symptoms (FAST)\n\n⚡ **Response Time:** Average 5-10 minutes\n🚑 **Ambulance Service:** Available\n\nFor non-emergency appointments, I can help you book one now!",
+            "🚨 *Emergency Services - Available 24/7*\n\n📞 **Emergency Hotline:** +91 709 090 0086\n🏥 **Emergency Department:** Ground Floor, Building A\n\n*When to visit Emergency:*\n• Chest pain or difficulty breathing\n• Severe injuries or trauma\n• High fever with severe symptoms\n• Loss of consciousness\n• Severe allergic reactions\n• Uncontrolled bleeding\n• Severe abdominal pain\n• Stroke symptoms (FAST)\n\n⚡ **Response Time:** Average 5-10 minutes\n🚑 **Ambulance Service:** Available\n\nFor non-emergency appointments, I can help you book one now!",
             true,
             ["Book Appointment", "Contact Information", "Our Services"]
           );
@@ -913,7 +913,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           lowerInput.includes("urgent")
         ) {
           addMessage(
-            "🚑 *Emergency & Ambulance Services:*\n\n📞 **Emergency Hotline:** +91 4 123 4568\n🚑 **Ambulance Service:** 24/7 Available\n\n⚡ **Response Time:**\n• City: 10-15 minutes\n• Nearby areas: 20-30 minutes\n\n🏥 **Emergency Department:**\n• Level I Trauma Center\n• Cardiac Emergency Unit\n• Pediatric Emergency\n• Stroke Unit\n\n💳 **Emergency Payment:**\n• Cash/Card accepted\n• Insurance processing\n• EMI options available\n\nFor immediate emergency, call the hotline directly!",
+            "🚑 *Emergency & Ambulance Services:*\n\n📞 **Emergency Hotline:** +91 709 090 0086\n🚑 **Ambulance Service:** 24/7 Available\n\n⚡ **Response Time:**\n• City: 10-15 minutes\n• Nearby areas: 20-30 minutes\n\n🏥 **Emergency Department:**\n• Level I Trauma Center\n• Cardiac Emergency Unit\n• Pediatric Emergency\n• Stroke Unit\n\n💳 **Emergency Payment:**\n• Cash/Card accepted\n• Insurance processing\n• EMI options available\n\nFor immediate emergency, call the hotline directly!",
             true,
             ["Contact Information", "Emergency Info"]
           );

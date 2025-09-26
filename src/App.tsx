@@ -34,28 +34,50 @@ const MemoizedHomePage: React.FC = memo(() => (
 ));
 
 const App: React.FC = () => {
-  const contactObserverRef = useRef<IntersectionObserver | null>(null);
+  const visibilityObserverRef = useRef<IntersectionObserver | null>(null);
+  const contactVisibleRef = useRef(false);
+  const footerVisibleRef = useRef(false);
   const [showChatbot, setShowChatbot] = useState<boolean>(true);
 
   useEffect(() => {
     const contactSection = document.getElementById('contact-section');
-    if (!contactSection) return;
+    const footerSection = document.getElementById('site-footer');
 
-    contactObserverRef.current?.disconnect();
+    visibilityObserverRef.current?.disconnect();
 
-    contactObserverRef.current = new IntersectionObserver(
-      ([entry]) => {
-        setShowChatbot(!entry.isIntersecting);
+    if (!contactSection && !footerSection) {
+      setShowChatbot(true);
+      return () => {};
+    }
+
+    visibilityObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (contactSection && entry.target === contactSection) {
+            contactVisibleRef.current = entry.isIntersecting;
+          }
+          if (footerSection && entry.target === footerSection) {
+            footerVisibleRef.current = entry.isIntersecting;
+          }
+        });
+
+        setShowChatbot(
+          !(contactVisibleRef.current || footerVisibleRef.current)
+        );
       },
       {
         threshold: 0.2,
       }
     );
 
-    contactObserverRef.current.observe(contactSection);
+    [contactSection, footerSection].forEach((element) => {
+      if (element) {
+        visibilityObserverRef.current?.observe(element);
+      }
+    });
 
     return () => {
-      contactObserverRef.current?.disconnect();
+      visibilityObserverRef.current?.disconnect();
     };
   }, []);
 
