@@ -60,7 +60,7 @@ const About = () => {
             
             {/* Stats Card */}
             <motion.div 
-              className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-lg p-6"
+              className="absolute -bottom-6 right-0 md:-right-6 bg-white rounded-xl shadow-lg p-4 sm:p-6 max-w-[220px] w-full"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.4, delay: 0.4 }}
