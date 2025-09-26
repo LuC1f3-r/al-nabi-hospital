@@ -1,0 +1,25 @@
+{
+  "name": "Al Nabi Hospital",
+  "short_name": "Al Nabi",
+  "description": "Al Nabi Hospital delivers 24/7 multi-specialty healthcare, advanced diagnostics, and compassionate patient care in Vijayapura.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "lang": "en-IN",
+  "background_color": "#FFFFFF",
+  "theme_color": "#007BBA",
+  "icons": [
+    {
+      "src": "/assets/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
